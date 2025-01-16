@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.21)
 # manual dependency management
 
 # Only set the cxx_standard if it is not set by someone else
-if (NOT DEFINED CMAKE_CXX_STANDARD)
+if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
 endif()
 
@@ -25,7 +25,6 @@ project(
 include(cmake/PreventInSourceBuilds.cmake)
 include(ProjectOptions.cmake)
 
-
 test_repo_setup_options()
 
 test_repo_global_options()
@@ -38,21 +37,21 @@ test_repo_local_options()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 set(GIT_SHA
-    "Unknown"
-    CACHE STRING "SHA this build was generated from")
+  "Unknown"
+  CACHE STRING "SHA this build was generated from")
 string(
   SUBSTRING "${GIT_SHA}"
-            0
-            8
-            GIT_SHORT_SHA)
+  0
+  8
+  GIT_SHORT_SHA)
 
 target_compile_features(test_repo_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_library(test_repo::test_repo_options ALIAS test_repo_options)
 add_library(test_repo::test_repo_warnings ALIAS test_repo_warnings)
 
-#add_library(test_repo::test_repo_options INTERFACE IMPORTED)
-#add_library(test_repo::test_repo_warnings INTERFACE IMPORTED)
+# add_library(test_repo::test_repo_options INTERFACE IMPORTED)
+# add_library(test_repo::test_repo_warnings INTERFACE IMPORTED)
 
 # configure files based on CMake configuration options
 add_subdirectory(configured_files)
@@ -71,16 +70,6 @@ include(CTest)
 if(BUILD_TESTING)
   message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
   add_subdirectory(test)
-endif()
-
-
-if(test_repo_BUILD_FUZZ_TESTS)
-  message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
-  if (NOT test_repo_ENABLE_ADDRESS_SANITIZER AND NOT test_repo_ENABLE_THREAD_SANITIZER)
-    message(WARNING "You need asan or tsan enabled for meaningful fuzz testing")
-  endif()
-  add_subdirectory(fuzz_test)
-
 endif()
 
 # If MSVC is being used, and ASAN is enabled, we need to set the debugger environment
@@ -107,6 +96,7 @@ test_repo_package_project(
   intro
   test_repo_options
   test_repo_warnings
+
   # FIXME: this does not work! CK
   # PRIVATE_DEPENDENCIES_CONFIGURED project_options project_warnings
 )
@@ -115,7 +105,7 @@ test_repo_package_project(
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA
 set(CPACK_PACKAGE_FILE_NAME
-    "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
+  "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
 )
 
 include(CPack)
