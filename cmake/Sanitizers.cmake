@@ -6,7 +6,6 @@ function(
   ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
   ENABLE_SANITIZER_THREAD
   ENABLE_SANITIZER_MEMORY)
-
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     set(SANITIZERS "")
 
@@ -33,11 +32,12 @@ function(
     if(${ENABLE_SANITIZER_MEMORY} AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
       message(
         WARNING
-          "Memory sanitizer requires all the code (including libc++) to be MSan-instrumented otherwise it reports false positives"
+        "Memory sanitizer requires all the code (including libc++) to be MSan-instrumented otherwise it reports false positives"
       )
+
       if("address" IN_LIST SANITIZERS
-         OR "thread" IN_LIST SANITIZERS
-         OR "leak" IN_LIST SANITIZERS)
+        OR "thread" IN_LIST SANITIZERS
+        OR "leak" IN_LIST SANITIZERS)
         message(WARNING "Memory sanitizer does not work with Address, Thread or Leak sanitizer enabled")
       else()
         list(APPEND SANITIZERS "memory")
@@ -45,12 +45,26 @@ function(
     endif()
   elseif(MSVC)
     if(${ENABLE_SANITIZER_ADDRESS})
-      list(APPEND SANITIZERS "address")
+      if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        message(WARNING "MSVC only supports address sanitizer in release builds")
+      else()
+        list(APPEND SANITIZERS "address")
+        cmake_path(GET CMAKE_CXX_COMPILER PARENT_PATH MSVC_TOOLS_DIR)
+        install(
+          FILES
+          "${MSVC_TOOLS_DIR}/clang_rt.asan_dbg_dynamic-x86_64.dll"
+          "${MSVC_TOOLS_DIR}/clang_rt.asan_dbg_dynamic-x86_64.pdb"
+          "${MSVC_TOOLS_DIR}/clang_rt.asan_dynamic-x86_64.dll"
+          "${MSVC_TOOLS_DIR}/clang_rt.asan_dynamic-x86_64.pdb"
+          TYPE BIN
+        )
+      endif()
     endif()
+
     if(${ENABLE_SANITIZER_LEAK}
-       OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}
-       OR ${ENABLE_SANITIZER_THREAD}
-       OR ${ENABLE_SANITIZER_MEMORY})
+      OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}
+      OR ${ENABLE_SANITIZER_THREAD}
+      OR ${ENABLE_SANITIZER_MEMORY})
       message(WARNING "MSVC only supports address sanitizer")
     endif()
   endif()
@@ -63,28 +77,26 @@ function(
 
   if(LIST_OF_SANITIZERS)
     if(NOT
-       "${LIST_OF_SANITIZERS}"
-       STREQUAL
-       "")
+      "${LIST_OF_SANITIZERS}"
+      STREQUAL
+      "")
       if(NOT MSVC)
         target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
         target_link_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
       else()
         string(FIND "$ENV{PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
+
         if("${index_of_vs_install_dir}" STREQUAL "-1")
           message(
             SEND_ERROR
-              "Using MSVC sanitizers requires setting the MSVC environment before building the project. Please manually open the MSVC command prompt and rebuild the project."
+            "Using MSVC sanitizers requires setting the MSVC environment before building the project. Please manually open the MSVC command prompt and rebuild the project."
           )
         endif()
+
         target_compile_options(${project_name} INTERFACE /fsanitize=${LIST_OF_SANITIZERS} /Zi /INCREMENTAL:NO)
         target_compile_definitions(${project_name} INTERFACE _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION)
         target_link_options(${project_name} INTERFACE /INCREMENTAL:NO)
       endif()
     endif()
   endif()
-
 endfunction()
-
-
-

@@ -278,9 +278,7 @@ void game_iteration_canvas()
   refresh_ui.join();
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wbugprone-exception-escape"
-
+// NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, const char **argv)
 {
   try {
@@ -318,5 +316,3 @@ int main(int argc, const char **argv)
     spdlog::error("Unhandled exception in main: {}", e.what());
   }
 }
-
-#pragma clang diagnostic pop
