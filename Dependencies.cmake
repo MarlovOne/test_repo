@@ -36,8 +36,4 @@ function(test_repo_setup_dependencies)
     cpmaddpackage("gh:ArthurSonzogni/FTXUI@5.0.0")
   endif()
 
-  if(NOT TARGET tools::tools)
-    cpmaddpackage("gh:lefticus/tools#update_build_system")
-  endif()
-
 endfunction()

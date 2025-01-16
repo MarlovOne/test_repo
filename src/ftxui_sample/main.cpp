@@ -11,8 +11,6 @@
 #include <ftxui/component/screen_interactive.hpp>// for ScreenInteractive
 #include <spdlog/spdlog.h>
 
-#include <lefticus/tools/non_promoting_ints.hpp>
-
 // This file will be generated automatically when cur_you run the CMake
 // configuration step. It creates a namespace called `test_repo`. You can modify
 // the source template at `configured_files/config.hpp.in`.
@@ -42,20 +40,12 @@ template<std::size_t Width, std::size_t Height> struct GameBoard
     }
   }
 
-  void visit(auto visitor)
-  {
-    for (std::size_t cur_x = 0; cur_x < width; ++cur_x) {
-      for (std::size_t cur_y = 0; cur_y < height; ++cur_y) { visitor(cur_x, cur_y, *this); }
-    }
-  }
-
   [[nodiscard]] bool get(std::size_t cur_x, std::size_t cur_y) const { return values.at(cur_x).at(cur_y); }
 
   [[nodiscard]] bool &get(std::size_t cur_x, std::size_t cur_y) { return values.at(cur_x).at(cur_y); }
 
   GameBoard()
   {
-    visit([](const auto cur_x, const auto cur_y, auto &gameboard) { gameboard.set(cur_x, cur_y, true); });
   }
 
   void update_strings()
@@ -165,9 +155,9 @@ void consequence_game()
 
 struct Color
 {
-  lefticus::tools::uint_np8_t R{ static_cast<std::uint8_t>(0) };
-  lefticus::tools::uint_np8_t G{ static_cast<std::uint8_t>(0) };
-  lefticus::tools::uint_np8_t B{ static_cast<std::uint8_t>(0) };
+  uint8_t R{ static_cast<std::uint8_t>(0) };
+  uint8_t G{ static_cast<std::uint8_t>(0) };
+  uint8_t B{ static_cast<std::uint8_t>(0) };
 };
 
 // A simple way of representing a bitmap on screen using only characters
@@ -194,8 +184,8 @@ struct Bitmap : ftxui::Node
         pixel.character = "▄";
         const auto &top_color = at(cur_x, cur_y * 2);
         const auto &bottom_color = at(cur_x, cur_y * 2 + 1);
-        pixel.background_color = ftxui::Color{ top_color.R.get(), top_color.G.get(), top_color.B.get() };
-        pixel.foreground_color = ftxui::Color{ bottom_color.R.get(), bottom_color.G.get(), bottom_color.B.get() };
+        pixel.background_color = ftxui::Color{ top_color.R, top_color.G, top_color.B };
+        pixel.foreground_color = ftxui::Color{ bottom_color.R, bottom_color.G, bottom_color.B };
       }
     }
   }
@@ -242,23 +232,6 @@ void game_iteration_canvas()
     for (std::size_t row = 0; row < bm->height(); ++row) {
       for (std::size_t col = 0; col < max_col; ++col) { ++(bm->at(col, row).G); }
     }
-
-    // for the fun of it, let's have a second window doing interesting things
-    auto &small_bm_pixel =
-      small_bm->data().at(static_cast<std::size_t>(elapsed_time.count()) % small_bm->data().size());
-
-    switch (elapsed_time.count() % 3) {
-    case 0:
-      small_bm_pixel.R += 11;// NOLINT Magic Number
-      break;
-    case 1:
-      small_bm_pixel.G += 11;// NOLINT Magic Number
-      break;
-    case 2:
-      small_bm_pixel.B += 11;// NOLINT Magic Number
-      break;
-    }
-
 
     ++max_row;
     if (max_row >= bm->height()) { max_row = 0; }
