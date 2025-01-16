@@ -35,7 +35,7 @@ jobs:
           - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-15.0.2".
-          - llvm-15.0.2
+          - llvm-15
           - gcc-11
         generator:
           - "Ninja Multi-Config"
@@ -52,6 +52,9 @@ jobs:
           # mingw is determined by this author to be too buggy to support
           - os: windows-2019
             compiler: gcc-11
+
+          - os: macos-14
+            compiler: llvm-15.0.2
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
