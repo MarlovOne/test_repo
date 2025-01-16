@@ -44,8 +44,6 @@ template<std::size_t Width, std::size_t Height> struct GameBoard
 
   [[nodiscard]] bool &get(std::size_t cur_x, std::size_t cur_y) { return values.at(cur_x).at(cur_y); }
 
-  GameBoard() = default;
-
   void update_strings()
   {
     for (std::size_t cur_x = 0; cur_x < width; ++cur_x) {
