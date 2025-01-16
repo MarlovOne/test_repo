@@ -3,7 +3,7 @@ include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
 macro(test_repo_supports_sanitizers)
-  if(((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32) OR(CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*" AND APPLE))
+  if(((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32) OR NOT(CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*" AND APPLE))
     set(SUPPORTS_UBSAN ON)
   else()
     set(SUPPORTS_UBSAN OFF)
