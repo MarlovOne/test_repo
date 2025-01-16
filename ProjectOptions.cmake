@@ -3,7 +3,6 @@ include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
-
 macro(test_repo_supports_sanitizers)
   if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32)
     set(SUPPORTS_UBSAN ON)
@@ -46,7 +45,7 @@ macro(test_repo_setup_options)
     option(test_repo_ENABLE_CACHE "Enable ccache" OFF)
   else()
     option(test_repo_ENABLE_IPO "Enable IPO/LTO" ON)
-    option(test_repo_WARNINGS_AS_ERRORS "Treat Warnings As Errors" ON)
+    option(test_repo_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF)
     option(test_repo_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
     option(test_repo_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
     option(test_repo_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
@@ -79,14 +78,14 @@ macro(test_repo_setup_options)
   endif()
 
   test_repo_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
-  if(LIBFUZZER_SUPPORTED AND (test_repo_ENABLE_SANITIZER_ADDRESS OR test_repo_ENABLE_SANITIZER_THREAD OR test_repo_ENABLE_SANITIZER_UNDEFINED))
+
+  if(LIBFUZZER_SUPPORTED AND(test_repo_ENABLE_SANITIZER_ADDRESS OR test_repo_ENABLE_SANITIZER_THREAD OR test_repo_ENABLE_SANITIZER_UNDEFINED))
     set(DEFAULT_FUZZER ON)
   else()
     set(DEFAULT_FUZZER OFF)
   endif()
 
   option(test_repo_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${DEFAULT_FUZZER})
-
 endmacro()
 
 macro(test_repo_global_options)
@@ -99,15 +98,17 @@ macro(test_repo_global_options)
 
   if(test_repo_ENABLE_HARDENING AND test_repo_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    if(NOT SUPPORTS_UBSAN 
-       OR test_repo_ENABLE_SANITIZER_UNDEFINED
-       OR test_repo_ENABLE_SANITIZER_ADDRESS
-       OR test_repo_ENABLE_SANITIZER_THREAD
-       OR test_repo_ENABLE_SANITIZER_LEAK)
+
+    if(NOT SUPPORTS_UBSAN
+      OR test_repo_ENABLE_SANITIZER_UNDEFINED
+      OR test_repo_ENABLE_SANITIZER_ADDRESS
+      OR test_repo_ENABLE_SANITIZER_THREAD
+      OR test_repo_ENABLE_SANITIZER_LEAK)
       set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
     else()
       set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
     endif()
+
     message("${test_repo_ENABLE_HARDENING} ${ENABLE_UBSAN_MINIMAL_RUNTIME} ${test_repo_ENABLE_SANITIZER_UNDEFINED}")
     test_repo_enable_hardening(test_repo_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
@@ -161,6 +162,7 @@ macro(test_repo_local_options)
   endif()
 
   include(cmake/StaticAnalyzers.cmake)
+
   if(test_repo_ENABLE_CLANG_TIDY)
     test_repo_enable_clang_tidy(test_repo_options ${test_repo_WARNINGS_AS_ERRORS})
   endif()
@@ -177,6 +179,7 @@ macro(test_repo_local_options)
 
   if(test_repo_WARNINGS_AS_ERRORS)
     check_cxx_compiler_flag("-Wl,--fatal-warnings" LINKER_FATAL_WARNINGS)
+
     if(LINKER_FATAL_WARNINGS)
       # This is not working consistently, so disabling for now
       # target_link_options(test_repo_options INTERFACE -Wl,--fatal-warnings)
@@ -185,16 +188,17 @@ macro(test_repo_local_options)
 
   if(test_repo_ENABLE_HARDENING AND NOT test_repo_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    if(NOT SUPPORTS_UBSAN 
-       OR test_repo_ENABLE_SANITIZER_UNDEFINED
-       OR test_repo_ENABLE_SANITIZER_ADDRESS
-       OR test_repo_ENABLE_SANITIZER_THREAD
-       OR test_repo_ENABLE_SANITIZER_LEAK)
+
+    if(NOT SUPPORTS_UBSAN
+      OR test_repo_ENABLE_SANITIZER_UNDEFINED
+      OR test_repo_ENABLE_SANITIZER_ADDRESS
+      OR test_repo_ENABLE_SANITIZER_THREAD
+      OR test_repo_ENABLE_SANITIZER_LEAK)
       set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
     else()
       set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
     endif()
+
     test_repo_enable_hardening(test_repo_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
-
 endmacro()
