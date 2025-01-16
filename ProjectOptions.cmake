@@ -1,5 +1,4 @@
 include(cmake/SystemLink.cmake)
-include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
@@ -76,16 +75,6 @@ macro(test_repo_setup_options)
       test_repo_ENABLE_PCH
       test_repo_ENABLE_CACHE)
   endif()
-
-  test_repo_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
-
-  if(LIBFUZZER_SUPPORTED AND(test_repo_ENABLE_SANITIZER_ADDRESS OR test_repo_ENABLE_SANITIZER_THREAD OR test_repo_ENABLE_SANITIZER_UNDEFINED))
-    set(DEFAULT_FUZZER ON)
-  else()
-    set(DEFAULT_FUZZER OFF)
-  endif()
-
-  option(test_repo_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${DEFAULT_FUZZER})
 endmacro()
 
 macro(test_repo_global_options)
