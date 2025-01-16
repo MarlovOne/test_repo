@@ -79,8 +79,7 @@ template<std::size_t Width, std::size_t Height> struct GameBoard
 void consequence_game()
 {
   auto screen = ftxui::ScreenInteractive::TerminalOutput();
-  
-  // NOLINTNEXTLINE(bugprone-exception-escape)
+
   GameBoard<3, 3> game_board;
 
   std::string quit_text;
@@ -279,6 +278,9 @@ void game_iteration_canvas()
   refresh_ui.join();
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wbugprone-exception-escape"
+
 int main(int argc, const char **argv)
 {
   try {
@@ -316,3 +318,5 @@ int main(int argc, const char **argv)
     spdlog::error("Unhandled exception in main: {}", e.what());
   }
 }
+
+#pragma clang diagnostic pop
