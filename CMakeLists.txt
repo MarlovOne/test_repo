@@ -17,7 +17,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set the project name and language
 project(
   test_repo
-  VERSION 0.0.1
+  VERSION 0.0.2
   DESCRIPTION ""
   HOMEPAGE_URL "https://github.com/MarlovOne/test_repo"
   LANGUAGES CXX C)
@@ -94,6 +94,7 @@ include(cmake/PackageProject.cmake)
 test_repo_package_project(
   TARGETS
   intro
+  sample_library
   test_repo_options
   test_repo_warnings
 
