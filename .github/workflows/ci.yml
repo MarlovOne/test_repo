@@ -33,6 +33,7 @@ jobs:
         os:
           - ubuntu-20.04
           - macos-14
+          - macos-13
           - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
@@ -54,9 +55,6 @@ jobs:
           - os: windows-2019
             compiler: gcc-11
 
-          - os: macos-14
-            compiler: llvm-18.1.8
-
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
@@ -69,6 +67,9 @@ jobs:
             gcov_executable: "llvm-cov gcov"
 
           - os: macos-14
+            enable_ipo: Off
+
+          - os: macos-13
             enable_ipo: Off
 
           # Set up preferred package generators, for given build configurations
