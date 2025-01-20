@@ -33,7 +33,6 @@ jobs:
         os:
           - ubuntu-20.04
           - macos-14
-          - macos-13
           - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
@@ -45,7 +44,6 @@ jobs:
           - Release
           - Debug
         packaging_maintainer_mode:
-          - ON
           - OFF
         build_shared:
           - OFF
@@ -158,10 +156,7 @@ jobs:
           vcpkg: false
           ccache: true
           clangtidy: ${{ env.CLANG_TIDY_VERSION }}
-
-
           cppcheck: true
-
           gcovr: true
           opencppcoverage: true
 
