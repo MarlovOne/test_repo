@@ -28,7 +28,7 @@ jobs:
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
-    needs: cancel
+    needs:  cancel
     strategy:
       fail-fast: false
 
@@ -42,7 +42,7 @@ jobs:
       matrix:
         os:
           - ubuntu-20.04
-          - macos-15
+          - macos-14
           - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
@@ -74,7 +74,7 @@ jobs:
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
-          - os: macos-15
+          - os: macos-14
             enable_ipo: Off
 
           # Set up preferred package generators, for given build configurations
