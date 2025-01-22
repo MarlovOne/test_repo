@@ -17,7 +17,7 @@ macro(test_repo_supports_sanitizers)
 endmacro()
 
 macro(test_repo_setup_options)
-  option(test_repo_ENABLE_HARDENING "Enable hardening" ON)
+  option(test_repo_ENABLE_HARDENING "Enable hardening" OFF)
   option(test_repo_ENABLE_COVERAGE "Enable coverage reporting" OFF)
   cmake_dependent_option(
     test_repo_ENABLE_GLOBAL_HARDENING

@@ -28,6 +28,7 @@ jobs:
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
+    depends-on: cancel
     strategy:
       fail-fast: false
 
@@ -40,22 +41,22 @@ jobs:
       # and your own projects needs
       matrix:
         os:
-          - ubuntu-20.04
-          - macos-14
+          - ubuntu-24.04
+          - macos-15
           - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
           - llvm-18.1.8
-          - gcc-11
+          - gcc-12
         generator:
           - "Ninja Multi-Config"
         build_type:
           - Release
           - Debug
         packaging_maintainer_mode:
-          - OFF
+          - ON
         build_shared:
-          - OFF
+          - ON
 
         exclude:
           # mingw is determined by this author to be too buggy to support
