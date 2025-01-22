@@ -54,9 +54,9 @@ jobs:
           - Release
           - Debug
         packaging_maintainer_mode:
-          - ON
+          - OFF
         build_shared:
-          - ON
+          - OFF
 
         exclude:
           # mingw is determined by this author to be too buggy to support
