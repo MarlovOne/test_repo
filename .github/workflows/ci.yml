@@ -28,7 +28,7 @@ jobs:
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
-    depends-on: cancel
+    needs: cancel
     strategy:
       fail-fast: false
 
