@@ -50,19 +50,26 @@ jobs:
           - gcc
         generator:
           - "Ninja Multi-Config"
-        # Only build Release for tags - for packaging purposes, and both for non-tags
-        build_type: ${{ github.ref_type == 'tag' && 'Release' || 'Release, Debug' }}
+        build_type:
+          - Release
+          - Debug
         packaging_maintainer_mode:
           - OFF
           # - ON
         build_shared:
           # - OFF
           - ON
+        is_tag:
+          - ${{ startsWith(github.ref, 'refs/tags/') }}
 
         exclude:
           # mingw is determined by this author to be too buggy to support
           - os: windows-latest
             compiler: gcc
+
+          # Exclude Debug builds if tag is present - we aare packaging only release builds
+          - is_tag: true
+            build_type: Debug
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
@@ -128,7 +135,6 @@ jobs:
           #   packaging_maintainer_mode: On
           #   enable_ipo: On
           #   build_shared: On
-
 
     steps:
 
@@ -196,7 +202,7 @@ jobs:
 
       - name: Publish Tagged Release
         uses: softprops/action-gh-release@v2
-        if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.package_generator != '' }}
+        if: ${{ matrix.is_tag && matrix.package_generator != '' }}
         with:
           token: ${{ secrets.GH_PAT }}
           files: |
