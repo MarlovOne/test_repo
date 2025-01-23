@@ -168,14 +168,10 @@ jobs:
           opencppcoverage: true
 
       - name: Configure CMake
+        env:
+          CMAKE_CXX_FLAGS: ${{ (matrix.os == 'macos-latest' && matrix.compiler == 'clang++') && 'stdlib=libc++ -L/Users/runner/llvm/lib' || '' }}
         run: |
-          cmake -S . -B ./build \
-            -G "${{matrix.generator}}" \
-            -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} \
-            -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} \
-            -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} \
-            -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} \
-            -DGIT_SHA:STRING=${{ github.sha }}
+          cmake -S . -B ./build -G "${{matrix.generator}}" -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }} -DCMAKE_CXX_FLAGS=${{ env.CMAKE_CXX_FLAGS }}
 
       - name: Build
         # Execute the build.  You can specify a specific target with "--target <NAME>"
