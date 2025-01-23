@@ -43,7 +43,7 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          # - windows-2019
+          - windows-latest
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
           - llvm-19.1.2
@@ -60,7 +60,7 @@ jobs:
 
         exclude:
           # mingw is determined by this author to be too buggy to support
-          - os: windows-2019
+          - os: windows-latest
             compiler: gcc
 
         include:
@@ -83,7 +83,7 @@ jobs:
             package_generator: TBZ2
 
           # This exists solely to make sure a non-multiconfig build works
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             compiler: gcc
             generator: "Unix Makefiles"
             build_type: Debug
@@ -91,41 +91,41 @@ jobs:
             packaging_maintainer_mode: On
             enable_ipo: Off
 
-          # # Windows msvc builds
-          # - os: windows-2022
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Debug
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: On
+          # Windows msvc builds
+          - os: windows-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            build_type: Debug
+            packaging_maintainer_mode: On
+            enable_ipo: On
 
-          # - os: windows-2022
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Release
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: On
+          - os: windows-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            build_type: Release
+            packaging_maintainer_mode: On
+            enable_ipo: On
 
-          # - os: windows-2022
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Debug
-          #   packaging_maintainer_mode: Off
+          - os: windows-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            build_type: Debug
+            packaging_maintainer_mode: Off
 
-          # - os: windows-2022
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Release
-          #   packaging_maintainer_mode: Off
-          #   package_generator: ZIP
+          - os: windows-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            build_type: Release
+            packaging_maintainer_mode: Off
+            package_generator: ZIP
 
-          # - os: windows-2022
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Release
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: On
-          #   build_shared: On
+          - os: windows-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            build_type: Release
+            packaging_maintainer_mode: On
+            enable_ipo: On
+            build_shared: On
 
 
     steps:
