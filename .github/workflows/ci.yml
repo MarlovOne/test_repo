@@ -150,10 +150,10 @@ jobs:
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          # DO NOT ADD THIS FOR MACOS LLVM BUILDS
-          compiler: ${{ !contains(matrix.os, 'macos') && matrix.compiler || '' }}
+          # It is important not to install llvm on macos, but use the one that comes with the system
+          # Otherwise weird dyld errors will happen
+          compiler: ${{ !(contains(matrix.os, 'macos') && contains(matrix.compiler, 'llvm')) && matrix.compiler || '' }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
-
           cmake: true
           ninja: true
           vcpkg: false
