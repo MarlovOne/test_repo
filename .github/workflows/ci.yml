@@ -42,7 +42,7 @@ jobs:
       matrix:
         os:
           # - ubuntu-20.04
-          - macos-latest
+          - macos-15
           # - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
@@ -74,7 +74,7 @@ jobs:
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
-          - os: macos-latest
+          - os: macos-15
             enable_ipo: Off
 
           # Set up preferred package generators, for given build configurations
@@ -166,8 +166,8 @@ jobs:
           cppcheck: true
           gcovr: true
           opencppcoverage: true
-          apple-clang: 19.1.2
-          appleclang: 19.1.2
+          apple-llvm: 19.1.2
+          applellvm: 19.1.2
 
       - name: Configure CMake
         run: |
