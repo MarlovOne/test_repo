@@ -50,9 +50,8 @@ jobs:
           - gcc
         generator:
           - "Ninja Multi-Config"
-        build_type:
-          - Release
-          - Debug
+        # Only build Release for tags - for packaging purposes, and both for non-tags
+        build_type: ${{ github.ref_type == 'tag' && 'Release' || 'Release, Debug' }}
         packaging_maintainer_mode:
           - OFF
           # - ON
@@ -64,10 +63,6 @@ jobs:
           # mingw is determined by this author to be too buggy to support
           - os: windows-latest
             compiler: gcc
-
-          # Exclude Debug builds if triggered by a tag - we are only packaging Release builds
-          - build_type: Debug
-            if: ${{ github.ref_type == 'tag' }}
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
