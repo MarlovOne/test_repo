@@ -46,7 +46,7 @@ jobs:
           # - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
-          - apple-clang
+          - llvm
           - gcc
         generator:
           - "Ninja Multi-Config"
@@ -70,7 +70,7 @@ jobs:
             gcov_executable: gcov
             enable_ipo: On
 
-          - compiler: apple-clang
+          - compiler: llvm
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
@@ -162,10 +162,12 @@ jobs:
           ninja: true
           vcpkg: false
           ccache: true
-          clangtidy: ${{ env.CLANG_TIDY_VERSION }}
+          clangtidy: true
           cppcheck: true
           gcovr: true
           opencppcoverage: true
+          apple-llvm: true
+          applellvm: true
 
       - name: Configure CMake
         run: |
