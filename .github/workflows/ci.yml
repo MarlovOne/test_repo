@@ -11,7 +11,7 @@ on:
       - develop
 
 env:
-  CLANG_TIDY_VERSION: "18.1.8"
+  CLANG_TIDY_VERSION: "19.1.2"
   VERBOSE: 1
 
 
@@ -156,19 +156,17 @@ jobs:
         uses: aminya/setup-cpp@v1
         with:
           # DO NOT ADD THIS FOR MACOS LLVM BUILDS
-          # compiler: ${{ matrix.compiler }}
+          compiler: ${{ !contains(matrix.os, 'macos') && matrix.compiler || '' }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
 
           cmake: true
           ninja: true
           vcpkg: false
           ccache: true
-          clangtidy: 19.1.2
+          clangtidy: ${{ env.CLANG_TIDY_VERSION }}
           cppcheck: true
           gcovr: true
           opencppcoverage: true
-          # apple-llvm: 19.1.2
-          # applellvm: 19.1.2
 
       - name: Configure CMake
         run: |
