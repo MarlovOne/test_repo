@@ -46,7 +46,7 @@ jobs:
           # - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
-          - llvm
+          - apple-clang
           - gcc
         generator:
           - "Ninja Multi-Config"
@@ -70,7 +70,7 @@ jobs:
             gcov_executable: gcov
             enable_ipo: On
 
-          - compiler: llvm
+          - compiler: apple-clang
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
