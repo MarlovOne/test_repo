@@ -164,7 +164,7 @@ jobs:
           # ccache: true
           # clangtidy: 19.1.2
           # cppcheck: true
-          # gcovr: true
+          gcovr: true
           # opencppcoverage: true
           # apple-llvm: 19.1.2
           # applellvm: 19.1.2
