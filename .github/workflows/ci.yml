@@ -42,7 +42,7 @@ jobs:
       matrix:
         os:
           # - ubuntu-20.04
-          - macos-latest-large
+          - macos-latest
           # - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
