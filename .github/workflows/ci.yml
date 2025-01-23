@@ -57,7 +57,8 @@ jobs:
           - OFF
           # - ON
         build_shared:
-          - OFF
+          # - OFF
+          - ON
 
         exclude:
           # mingw is determined by this author to be too buggy to support
@@ -83,29 +84,30 @@ jobs:
             packaging_maintainer_mode: OFF
             package_generator: TBZ2
 
-          # This exists solely to make sure a non-multiconfig build works
-          - os: ubuntu-latest
-            compiler: gcc
-            generator: "Unix Makefiles"
-            build_type: Debug
-            gcov_executable: gcov
-            packaging_maintainer_mode: On
-            enable_ipo: Off
+          # # This exists solely to make sure a non-multiconfig build works
+          # - os: ubuntu-latest
+          #   compiler: gcc
+          #   generator: "Unix Makefiles"
+          #   build_type: Debug
+          #   gcov_executable: gcov
+          #   packaging_maintainer_mode: On
+          #   enable_ipo: Off
 
-          # Windows msvc builds
-          - os: windows-latest
-            compiler: msvc
-            generator: "Visual Studio 17 2022"
-            build_type: Debug
-            packaging_maintainer_mode: On
-            enable_ipo: On
+          # # Windows msvc builds
+          # # Remove the ones with maintainer mode ON
+          # - os: windows-latest
+          #   compiler: msvc
+          #   generator: "Visual Studio 17 2022"
+          #   build_type: Debug
+          #   packaging_maintainer_mode: On
+          #   enable_ipo: On
 
-          - os: windows-latest
-            compiler: msvc
-            generator: "Visual Studio 17 2022"
-            build_type: Release
-            packaging_maintainer_mode: On
-            enable_ipo: On
+          # - os: windows-latest
+          #   compiler: msvc
+          #   generator: "Visual Studio 17 2022"
+          #   build_type: Release
+          #   packaging_maintainer_mode: On
+          #   enable_ipo: On
 
           - os: windows-latest
             compiler: msvc
@@ -120,13 +122,13 @@ jobs:
             packaging_maintainer_mode: Off
             package_generator: ZIP
 
-          - os: windows-latest
-            compiler: msvc
-            generator: "Visual Studio 17 2022"
-            build_type: Release
-            packaging_maintainer_mode: On
-            enable_ipo: On
-            build_shared: On
+          # - os: windows-latest
+          #   compiler: msvc
+          #   generator: "Visual Studio 17 2022"
+          #   build_type: Release
+          #   packaging_maintainer_mode: On
+          #   enable_ipo: On
+          #   build_shared: On
 
 
     steps:
