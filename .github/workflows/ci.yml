@@ -110,6 +110,7 @@ jobs:
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Debug
+            is_tag: false
             packaging_maintainer_mode: Off
 
           - os: windows-latest
