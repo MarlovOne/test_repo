@@ -65,6 +65,10 @@ jobs:
           - os: windows-latest
             compiler: gcc
 
+          # Exclude Debug builds if triggered by a tag - we are only packaging Release builds
+          - build_type: Debug
+            if: ${{ github.ref_type == 'tag' }}
+
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
