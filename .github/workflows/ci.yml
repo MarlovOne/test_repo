@@ -155,7 +155,7 @@ jobs:
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          # compiler: ${{ matrix.compiler }}
+          compiler: ${{ matrix.compiler }}
           # vcvarsall: ${{ contains(matrix.os, 'windows' )}}
 
           cmake: true
@@ -166,7 +166,7 @@ jobs:
           # cppcheck: true
           gcovr: true
           # opencppcoverage: true
-          apple-llvm: 19.1.2
+          # apple-llvm: 19.1.2
           # applellvm: 19.1.2
 
       - name: Configure CMake
