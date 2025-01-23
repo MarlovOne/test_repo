@@ -152,14 +152,14 @@ jobs:
           envFile: '.github/constants.env'
 
 
-      # - name: Setup Cpp
-        # uses: aminya/setup-cpp@v1
-        # with:
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
           # compiler: ${{ matrix.compiler }}
           # vcvarsall: ${{ contains(matrix.os, 'windows' )}}
 
-          # cmake: true
-          # ninja: true
+          cmake: true
+          ninja: true
           # vcpkg: false
           # ccache: true
           # clangtidy: 19.1.2
