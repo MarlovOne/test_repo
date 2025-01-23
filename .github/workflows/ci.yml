@@ -155,17 +155,18 @@ jobs:
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          compiler: ${{ matrix.compiler }}
-          # vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+          # DO NOT ADD THIS FOR MACOS LLVM BUILDS
+          # compiler: ${{ matrix.compiler }}
+          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
 
           cmake: true
           ninja: true
-          # vcpkg: false
-          # ccache: true
-          # clangtidy: 19.1.2
-          # cppcheck: true
+          vcpkg: false
+          ccache: true
+          clangtidy: 19.1.2
+          cppcheck: true
           gcovr: true
-          # opencppcoverage: true
+          opencppcoverage: true
           # apple-llvm: 19.1.2
           # applellvm: 19.1.2
 
