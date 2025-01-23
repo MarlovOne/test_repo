@@ -166,7 +166,7 @@ jobs:
           # cppcheck: true
           gcovr: true
           # opencppcoverage: true
-          # apple-llvm: 19.1.2
+          apple-llvm: 19.1.2
           # applellvm: 19.1.2
 
       - name: Configure CMake
