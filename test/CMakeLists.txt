@@ -17,7 +17,7 @@ endif()
 
 # ---- Dependencies ----
 
-include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
+# include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
 
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 add_test(NAME cli.has_help COMMAND intro --help)
@@ -34,8 +34,7 @@ target_link_libraries(
   tests
   PRIVATE test_repo::test_repo_warnings
           test_repo::test_repo_options
-          test_repo::sample_library
-          Catch2::Catch2WithMain)
+          test_repo::sample_library)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
@@ -66,8 +65,7 @@ target_link_libraries(
   constexpr_tests
   PRIVATE test_repo::test_repo_warnings
           test_repo::test_repo_options
-          test_repo::sample_library
-          Catch2::Catch2WithMain)
+          test_repo::sample_library)
 
 catch_discover_tests(
   constexpr_tests
@@ -89,8 +87,7 @@ target_link_libraries(
   relaxed_constexpr_tests
   PRIVATE test_repo::test_repo_warnings
           test_repo::test_repo_options
-          test_repo::sample_library
-          Catch2::Catch2WithMain)
+          test_repo::sample_library)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
 
 catch_discover_tests(
