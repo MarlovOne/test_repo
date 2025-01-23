@@ -11,24 +11,24 @@ on:
       - develop
 
 env:
-  CLANG_TIDY_VERSION: "19.1.2"
+  LLVM_VERSION: "19.1.2"
   VERBOSE: 1
 
 
 jobs:
-  # cancel:
-  #   name: Cancel previous runs
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Cancel previous runs
-  #       uses: styfle/cancel-workflow-action@0.8.0
-  #       with:
-  #         access_token: ${{ secrets.GH_PAT }}
+  cancel:
+    name: Cancel previous runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ secrets.GH_PAT }}
 
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
-    # needs:  cancel
+    needs:  cancel
     strategy:
       fail-fast: false
 
@@ -74,7 +74,7 @@ jobs:
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
-          - os: macos-15
+          - os: macos-latest
             enable_ipo: Off
 
           # Set up preferred package generators, for given build configurations
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       # - name: Check for llvm version mismatches
-      #   if: ${{ contains(matrix.compiler, 'llvm') && !contains(matrix.compiler, env.CLANG_TIDY_VERSION) }}
+      #   if: ${{ contains(matrix.compiler, 'llvm') && !contains(matrix.compiler, env.LLVM_VERSION) }}
       #   uses: actions/github-script@v3
       #   with:
       #     script: |
@@ -163,7 +163,7 @@ jobs:
           ninja: true
           vcpkg: false
           ccache: true
-          clangtidy: ${{ env.CLANG_TIDY_VERSION }}
+          clangtidy: ${{ env.LLVM_VERSION }}
           cppcheck: true
           gcovr: true
           opencppcoverage: true
@@ -206,8 +206,6 @@ jobs:
           files: |
             build/*-*${{ matrix.build_type }}*-*.*
           
-
-
       - name: Publish to codecov
         uses: codecov/codecov-action@v2
         with:
