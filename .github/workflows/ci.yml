@@ -43,7 +43,6 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          - windows-latest
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
           - llvm-19.1.2
@@ -81,60 +80,27 @@ jobs:
             packaging_maintainer_mode: OFF
             package_generator: TBZ2
 
-          # # This exists solely to make sure a non-multiconfig build works
-          # - os: ubuntu-latest
-          #   compiler: gcc
-          #   generator: "Unix Makefiles"
-          #   build_type: Debug
-          #   gcov_executable: gcov
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: Off
-
-          # # Windows msvc builds
-          # # Remove the ones with maintainer mode ON
-          # - os: windows-latest
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Debug
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: On
-
-          # - os: windows-latest
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Release
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: On
-
+          # Set up preferred package generators, for given build configurations
           - os: windows-latest
-            compiler: msvc
             generator: "Visual Studio 17 2022"
-            build_type: Debug
-            packaging_maintainer_mode: Off
-
-          - os: windows-latest
             compiler: msvc
-            generator: "Visual Studio 17 2022"
-            build_type: Release
-            packaging_maintainer_mode: Off
-            package_generator: ZIP
 
-          # - os: windows-latest
-          #   compiler: msvc
-          #   generator: "Visual Studio 17 2022"
-          #   build_type: Release
-          #   packaging_maintainer_mode: On
-          #   enable_ipo: On
-          #   build_shared: On
-        
         exclude:
-          # mingw is determined by this author to be too buggy to support
+          # Include only msvc for windows
           - os: windows-latest
+            compiler: [gcc, llvm-19.1.2]
+
+          # Include only llvm for macos
+          - os: macos-latest
             compiler: gcc
 
           # Exclude Debug builds if tag is present - we aare packaging only release builds
           - is_tag: true
             build_type: Debug
+          
+            # Exclude Release builds if tag is not present
+          - is_tagged: false
+            build_type: Release
 
     steps:
 
@@ -198,7 +164,7 @@ jobs:
         if: matrix.package_generator != ''
         working-directory: ./build
         run: |
-          cpack -C ${{matrix.build_type}} -G ${{matrix.package_generator}}
+            cpack -C ${{matrix.build_type}} -G ${{ contains(matrix.os, 'windows') && 'ZIP' || 'TBZ2' }}
 
       - name: Publish Tagged Release
         uses: softprops/action-gh-release@v2
