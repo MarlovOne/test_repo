@@ -58,7 +58,7 @@ jobs:
         build_shared:
           # - OFF
           - ON
-        is_tag:
+        is_tagged:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
 
         include:
@@ -95,7 +95,7 @@ jobs:
             compiler: gcc
 
           # Exclude Debug builds if tag is present - we aare packaging only release builds
-          - is_tag: true
+          - is_tagged: true
             build_type: Debug
           
             # Exclude Release builds if tag is not present
