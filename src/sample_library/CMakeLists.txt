@@ -1,6 +1,6 @@
 include(GenerateExportHeader)
 
-add_library(sample_library sample_library.cpp)
+add_library(sample_library SHARED sample_library.cpp)
 
 add_library(test_repo::sample_library ALIAS sample_library)
 
