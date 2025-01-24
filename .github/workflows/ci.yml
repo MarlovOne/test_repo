@@ -80,13 +80,18 @@ jobs:
         exclude:
 
           - os: macos-latest
-            compiler: [gcc, msvc]
+            compiler: 
+              - msvc
+              - gcc
 
           - os: ubuntu-latest
-            compiler: msvc
+            compiler: 
+              - msvc
 
           - os: windows-latest
-            compiler: [gcc, llvm-19.1.2]
+            compiler: 
+              - llvm-19.1.2
+              - gcc
           
           # Exclude Debug builds if tag is present - we aare packaging only release builds
           - is_tagged: true
