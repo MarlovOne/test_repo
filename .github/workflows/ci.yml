@@ -69,16 +69,11 @@ jobs:
             enable_ipo: On
 
           - compiler: llvm-19.1.2
-            enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
+            enable_ipo: Off
 
           - os: macos-latest
             enable_ipo: Off
-
-          # Set up preferred package generators, for given build configurations
-          - build_type: Release
-            packaging_maintainer_mode: OFF
-            package_generator: TBZ2
 
           # Set up preferred package generators, for given build configurations
           - os: windows-latest
@@ -161,14 +156,14 @@ jobs:
           OpenCppCoverage.exe --export_type cobertura:coverage.xml --cover_children -- ctest -C ${{matrix.build_type}}
 
       - name: CPack
-        if: matrix.package_generator != ''
+        if: matrix.build_type == 'Release'
         working-directory: ./build
         run: |
             cpack -C ${{matrix.build_type}} -G ${{ contains(matrix.os, 'windows') && 'ZIP' || 'TBZ2' }}
 
       - name: Publish Tagged Release
         uses: softprops/action-gh-release@v2
-        if: ${{ matrix.is_tag && matrix.package_generator != '' }}
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         with:
           token: ${{ secrets.GH_PAT }}
           files: |
