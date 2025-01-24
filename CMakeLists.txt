@@ -103,8 +103,13 @@ test_repo_package_project(
 # Experience shows that explicit package naming can help make it easier to sort
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA
+if(BUILD_SHARED_LIBS)
+  set(LIB_TYPE_LABEL "shared")
+else()
+  set(LIB_TYPE_LABEL "static")
+endif()
 set(CPACK_PACKAGE_FILE_NAME
-  "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,shared,static>"
+  "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-${LIB_TYPE_LABEL}"
 )
 
 include(CPack)
