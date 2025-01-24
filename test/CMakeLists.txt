@@ -69,6 +69,14 @@ target_link_libraries(
           test_repo::sample_library
           Catch2::Catch2WithMain)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_custom_command(
+      TARGET constexpr_tests
+      PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:constexpr_tests> $<TARGET_FILE_DIR:constexpr_tests>
+      COMMAND_EXPAND_LISTS)
+endif()
+
 catch_discover_tests(
   constexpr_tests
   TEST_PREFIX
@@ -92,6 +100,14 @@ target_link_libraries(
           test_repo::sample_library
           Catch2::Catch2WithMain)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_custom_command(
+      TARGET relaxed_constexpr_tests
+      PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:relaxed_constexpr_tests> $<TARGET_FILE_DIR:relaxed_constexpr_tests>
+      COMMAND_EXPAND_LISTS)
+endif()
 
 catch_discover_tests(
   relaxed_constexpr_tests
