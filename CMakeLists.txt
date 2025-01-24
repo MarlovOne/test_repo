@@ -33,9 +33,6 @@ test_repo_setup_dependencies()
 
 test_repo_local_options()
 
-# don't know if this should be set globally from here or not...
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-
 set(GIT_SHA
   "Unknown"
   CACHE STRING "SHA this build was generated from")
