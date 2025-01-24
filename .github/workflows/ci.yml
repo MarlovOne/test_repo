@@ -81,26 +81,21 @@ jobs:
           # Exclude Ubuntu with Visual Studio
           - os: ubuntu-latest
             compiler: msvc
-            generator: "Visual Studio 17 2022"
 
           # Include only LLVM for macOS
           - os: macos-latest
-            compiler: gcc
-            generator: "Visual Studio 17 2022"
+            compiler: [gcc, msvc]
           
           # Include only LLVM for macOS
           - os: macos-latest
-            compiler: msvc
             generator: "Visual Studio 17 2022"
           
           # Include only MSVC for Windows
           - os: windows-latest
-            compiler: gcc
-            generator: "Ninja Multi-Config"
+            compiler: [gcc, llvm-19.1.2]
 
           # Include only MSVC for Windows
           - os: windows-latest
-            compiler: llvm-19.1.2
             generator: "Ninja Multi-Config"
           
           # Exclude Debug builds if tag is present - we aare packaging only release builds
