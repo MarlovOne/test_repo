@@ -47,8 +47,10 @@ jobs:
           # you can specify the version after `-` like "llvm-18.1.8".
           - llvm-19.1.2
           - gcc
+          - msvc
         generator:
           - "Ninja Multi-Config"
+          - "Visual Studio 17 2022"
         build_type:
           - Release
           - Debug
@@ -75,19 +77,20 @@ jobs:
           - os: macos-latest
             enable_ipo: Off
 
-          # Set up preferred package generators, for given build configurations
-          - os: windows-latest
-            generator: "Visual Studio 17 2022"
-            compiler: msvc
-
         exclude:
           # Include only msvc for windows
           - os: windows-latest
             compiler: [gcc, llvm-19.1.2]
+            generator: "Ninja Multi-Config"
 
           # Include only llvm for macos
           - os: macos-latest
-            compiler: gcc
+            compiler: [gcc, msvc]
+            generator: "Visual Studio 17 2022"
+
+          - os: ubuntu-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
 
           # Exclude Debug builds if tag is present - we aare packaging only release builds
           - is_tagged: true
