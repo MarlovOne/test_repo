@@ -47,10 +47,8 @@ jobs:
           # you can specify the version after `-` like "llvm-18.1.8".
           - llvm-19.1.2
           - gcc
-          - msvc
         generator:
           - "Ninja Multi-Config"
-          - "Visual Studio 17 2022"
         build_type:
           - Release
           - Debug
@@ -74,29 +72,17 @@ jobs:
             gcov_executable: "llvm-cov gcov"
             enable_ipo: Off
 
+          - os: windows-latest
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+
           - os: macos-latest
             enable_ipo: Off
 
         exclude:
-          # Exclude Ubuntu with Visual Studio
-          - os: ubuntu-latest
-            compiler: msvc
-
           # Include only LLVM for macOS
           - os: macos-latest
-            compiler: [gcc, msvc]
-          
-          # Include only LLVM for macOS
-          - os: macos-latest
-            generator: "Visual Studio 17 2022"
-          
-          # Include only MSVC for Windows
-          - os: windows-latest
-            compiler: [gcc, llvm-19.1.2]
-
-          # Include only MSVC for Windows
-          - os: windows-latest
-            generator: "Ninja Multi-Config"
+            compiler: gcc
           
           # Exclude Debug builds if tag is present - we aare packaging only release builds
           - is_tagged: true
