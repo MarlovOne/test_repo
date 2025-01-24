@@ -17,6 +17,7 @@ macro(test_repo_supports_sanitizers)
 endmacro()
 
 macro(test_repo_setup_options)
+  option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
   option(test_repo_ENABLE_HARDENING "Enable hardening" OFF)
   option(test_repo_ENABLE_COVERAGE "Enable coverage reporting" OFF)
   cmake_dependent_option(
