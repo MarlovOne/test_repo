@@ -113,7 +113,7 @@ jobs:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
-          oenerator: ${{ matrix.generator }}
+          generator: ${{ matrix.generator }}
 
       - name: Project Name
         uses: cardinalby/export-env-action@v2
