@@ -76,7 +76,7 @@ jobs:
 
           - compiler: msvc
             generator: "Visual Studio 17 2022"
-            enable_ipo: Off
+            enable_ipo: On
 
         exclude:
 
