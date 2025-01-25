@@ -174,11 +174,11 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
           files: |
-            build/*-*${{ matrix.build_type }}*-*.*
+            ${{ env.BUILD_DIR }}/*-*${{ matrix.build_type }}*-*.*
           
       - name: Publish to codecov
         uses: codecov/codecov-action@v2
         with:
           flags: ${{ runner.os }}
           name: ${{ runner.os }}-coverage
-          files: ./build/coverage.xml
+          files: ${{ env.BUILD_DIR }}/coverage.xml
