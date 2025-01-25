@@ -81,7 +81,7 @@ endif()
 include(cmake/PackageProject.cmake)
 
 # Add other targets that you want installed here
-netxten_package_project(
+test_repo_package_project(
   TARGETS
   intro
   sample_library
