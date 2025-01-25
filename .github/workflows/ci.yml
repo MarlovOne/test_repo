@@ -53,8 +53,8 @@ jobs:
           - Release
           - Debug
         packaging_maintainer_mode:
-          - OFF
-          # - ON
+          # - OFF
+          - ON
         build_shared_libs:
           # Always build shared libraries
           - ON
