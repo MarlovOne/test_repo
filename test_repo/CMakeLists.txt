@@ -17,38 +17,32 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set the project name and language
 project(
   test_repo
-  VERSION 0.0.2
+  VERSION 0.0.1
   DESCRIPTION ""
-  HOMEPAGE_URL "https://github.com/MarlovOne/test_repo"
+  HOMEPAGE_URL "https://github.com/JaneaSystems/test_repo-aquantavision"
   LANGUAGES CXX C)
 
-include(cmake/PreventInSourceBuilds.cmake)
 include(ProjectOptions.cmake)
-
 test_repo_setup_options()
-
 test_repo_global_options()
+test_repo_local_options()
+
 include(Dependencies.cmake)
 test_repo_setup_dependencies()
 
-test_repo_local_options()
-
 set(GIT_SHA
-  "Unknown"
-  CACHE STRING "SHA this build was generated from")
+    "Unknown"
+    CACHE STRING "SHA this build was generated from")
 string(
   SUBSTRING "${GIT_SHA}"
-  0
-  8
-  GIT_SHORT_SHA)
+            0
+            8
+            GIT_SHORT_SHA)
 
 target_compile_features(test_repo_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_library(test_repo::test_repo_options ALIAS test_repo_options)
 add_library(test_repo::test_repo_warnings ALIAS test_repo_warnings)
-
-# add_library(test_repo::test_repo_options INTERFACE IMPORTED)
-# add_library(test_repo::test_repo_warnings INTERFACE IMPORTED)
 
 # configure files based on CMake configuration options
 add_subdirectory(configured_files)
@@ -63,7 +57,6 @@ endif()
 
 # Adding the tests:
 include(CTest)
-include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
 
 if(BUILD_TESTING)
   message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
@@ -79,7 +72,7 @@ if(MSVC)
 endif()
 
 # set the startup project for the "play" button in MSVC
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT sample_executable)
 
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
@@ -87,29 +80,20 @@ endif()
 
 include(cmake/PackageProject.cmake)
 
-# Add other targets that you want installed here, by default we just package the one executable
-# we know we want to ship
-test_repo_package_project(
+# Add other targets that you want installed here
+netxten_package_project(
   TARGETS
   intro
   sample_library
+  sample_executable
   test_repo_options
-  test_repo_warnings
-
-  # FIXME: this does not work! CK
-  # PRIVATE_DEPENDENCIES_CONFIGURED project_options project_warnings
-)
+  test_repo_warnings)
 
 # Experience shows that explicit package naming can help make it easier to sort
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA
-if(BUILD_SHARED_LIBS)
-  set(LIB_TYPE_LABEL "shared")
-else()
-  set(LIB_TYPE_LABEL "static")
-endif()
 set(CPACK_PACKAGE_FILE_NAME
-  "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-${LIB_TYPE_LABEL}"
+    "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
 )
 
 include(CPack)

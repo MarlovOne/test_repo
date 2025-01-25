@@ -123,8 +123,8 @@
     ],
     "vim.leader": ",",
     "vim.handleKeys": {
-        "<C-a>": true,
-        "<C-f>": true,
+        "<C-a>": false,
+        "<C-f>": false,
         "<C-u>": true,
         "<C-d>": true,
         "<C-v>": true,
