@@ -80,15 +80,21 @@ jobs:
 
         exclude:
 
+          # Use only llvm for mac
           - os: macos-latest
             compiler: msvc
 
           - os: macos-latest
             compiler: gcc
 
+          # Use only gcc for ubuntu
           - os: ubuntu-latest
             compiler: msvc
 
+          - os: ubuntu-latest
+            compiler: llvm-19.1.2
+
+          # Use only msvc for windows
           - os: windows-latest
             compiler: llvm-19.1.2
           
@@ -99,7 +105,7 @@ jobs:
           - is_tagged: true
             build_type: Debug
           
-            # Exclude Release builds if tag is not present
+          # Exclude Release builds if tag is not present
           - is_tagged: false
             build_type: Release  
 

@@ -192,3 +192,12 @@ macro(test_repo_local_options)
     test_repo_enable_hardening(test_repo_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 endmacro()
+
+macro(test_repo_architecture_options)
+  
+  if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    message(WARNING "Setting default target architecture to x86_64;arm64 for Apple Silicon")
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+  endif()
+
+endmacro()

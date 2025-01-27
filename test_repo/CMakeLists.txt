@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.21)
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # strongly encouraged to enable this globally to avoid conflicts between
 # -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
@@ -26,6 +27,7 @@ include(ProjectOptions.cmake)
 test_repo_setup_options()
 test_repo_global_options()
 test_repo_local_options()
+test_repo_architecture_options()
 
 include(Dependencies.cmake)
 test_repo_setup_dependencies()
