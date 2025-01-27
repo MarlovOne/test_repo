@@ -13,6 +13,7 @@ on:
 env:
   LLVM_VERSION: "19.1.2"
   VERBOSE: 1
+  BUILD_DIR: ./test_repo/build
 
 
 jobs:
@@ -100,7 +101,7 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -S . -B ./build \
+          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} \
             -G "${{matrix.generator}}" \
             -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} \
             -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} \
@@ -114,11 +115,11 @@ jobs:
       - name: Build
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
-          cmake --build ./build --config ${{matrix.build_type}}
+          cmake --build ${{ env.BUILD_DIR }} --config ${{matrix.build_type}}
 
       - name: Unix - Test and coverage
         if: runner.os != 'Windows'
-        working-directory: ./build
+        working-directory: ${{ env.BUILD_DIR}}
         # Execute tests defined by the CMake configuration.
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
@@ -127,13 +128,13 @@ jobs:
 
       - name: Windows - Test and coverage
         if: runner.os == 'Windows'
-        working-directory: ./build
+        working-directory: ${{ env.BUILD_DIR }} 
         run: |
           OpenCppCoverage.exe --export_type cobertura:coverage.xml --cover_children -- ctest -C ${{matrix.build_type}}
 
       - name: CPack
         if: matrix.package_generator != ''
-        working-directory: ./build
+        working-directory: ${{ env.BUILD_DIR }}
         run: |
           cpack -C ${{matrix.build_type}} -G ${{matrix.package_generator}}
 
