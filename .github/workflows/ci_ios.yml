@@ -33,6 +33,7 @@ jobs:
           - build_type: Release
             enable_ipo: On
 
+        exclude:
           # Exclude Debug builds if tag is present - we aare packaging only release builds
           - is_tagged: true
             build_type: Debug
