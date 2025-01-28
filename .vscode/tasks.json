@@ -1,0 +1,71 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cmake",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/test_repo"
+            },
+            "command": "cmake -S . -B ./build"
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/test_repo"
+            },
+            "command": "cmake --build ./${input:build_dir}"
+        },
+        {
+            "label": "run_tests",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/test_repo/build"
+            },
+            "command": "ctest -C Debug"
+        },
+        {
+            "label": "cmake-android",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/test_repo"
+            },
+            "command": "cmake -S . -B ./build-android -DCMAKE_TOOLCHAIN_FILE=${NDK_PATH}/build/cmake/android.toolchain.cmake -DANDROID_ABI=${input:android_abi} -DANDROID_PLATFORM=${input:android_platform}"
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/test_repo"
+            },
+            "command": "cmake --build ./${input:build_dir} --target clean"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "android_abi",
+            "type": "pickString",
+            "description": "Select Android ABI",
+            "options": [
+                "arm64-v8a",
+                "armeabi-v7a",
+                "x86",
+                "x86_64"
+            ],
+            "default": "arm64-v8a"
+        },
+        {
+            "id": "android_platform",
+            "type": "promptString",
+            "description": "Enter Android API Level (e.g., 21)",
+            "default": "21"
+        },
+        {
+            "id": "build_dir",
+            "type": "promptString",
+            "description": "Enter build directory name",
+            "default": "build"
+        }
+    ]
+}
