@@ -44,8 +44,8 @@ jobs:
           # - OFF
           - ON
         build_shared_libs:
-          # Always build shared libraries
-          - ON
+          # - ON
+          - OFF
         is_tagged:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
 
@@ -110,6 +110,7 @@ jobs:
           cmake -S ./test_repo -B ${{ env.BUILD_DIR }} \
             -G "${{matrix.generator}}" \
             -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} \
+            -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} \
             -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} \
             -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} \
             -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} \
