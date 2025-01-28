@@ -60,6 +60,12 @@ endif()
 # Adding the tests:
 include(CTest)
 
+# If building on the android add -llog to the linker flags
+if(ANDROID_NDK_TOOLCHAIN_INCLUDED)
+  message(WARNING "Adding -llog to the linker flags for Android")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -llog")
+endif()
+
 # Do not build tests if cross compiling - unable to run them
 if(BUILD_TESTING AND NOT CMAKE_CROSSCOMPILING)
   message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
