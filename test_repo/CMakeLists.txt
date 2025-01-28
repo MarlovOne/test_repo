@@ -98,11 +98,27 @@ test_repo_package_project(
   test_repo_options
   test_repo_warnings)
 
+# Figure out the architecture
+if(CMAKE_SYSTEM_PROCESSOR)
+  set(PKG_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+else()
+  set(PKG_ARCH "unknown")
+endif()
+
+# Check if building for Android and overwrite the architecture
+if(ANDROID_ABI)
+  set(PKG_ARCH "${ANDROID_ABI}")
+endif()
+
+if(CMAKE_OSX_ARCHITECTURES)
+  set(PKG_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+endif()
+
 # Experience shows that explicit package naming can help make it easier to sort
 # out potential ABI related issues before they start, while helping you
 # track a build to a specific GIT SHA
 set(CPACK_PACKAGE_FILE_NAME
-    "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
+    "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-${PKG_ARCH}"
 )
 
 include(CPack)

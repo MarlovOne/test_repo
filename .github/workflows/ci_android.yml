@@ -1,4 +1,4 @@
-name: ci-android
+name: CI-Android
 on:
   pull_request:
   release:
@@ -18,7 +18,7 @@ env:
 
 jobs:
   Test_android:
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.arch}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
