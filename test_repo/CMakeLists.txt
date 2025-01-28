@@ -60,7 +60,8 @@ endif()
 # Adding the tests:
 include(CTest)
 
-if(BUILD_TESTING)
+# Do not build tests if cross compiling - unable to run them
+if(BUILD_TESTING AND NOT CMAKE_CROSSCOMPILING)
   message(AUTHOR_WARNING "Building Tests. Be sure to check out test/constexpr_tests.cpp for constexpr testing")
   add_subdirectory(test)
 endif()

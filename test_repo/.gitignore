@@ -1,5 +1,7 @@
 # Build directories and binary files
 build/
+build-android/
+
 # out/
 # out/coverage/*
 cmake-build-*/
