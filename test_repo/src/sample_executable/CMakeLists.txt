@@ -2,9 +2,7 @@ add_executable(sample_executable main.cpp)
 
 target_link_libraries(sample_executable PRIVATE test_repo::test_repo_options test_repo::test_repo_warnings)
 
-target_link_system_libraries(sample_executable 
-    PRIVATE 
-    test_repo::sample_library)
+target_link_system_libraries(sample_executable PRIVATE test_repo::sample_library)
 
 # Copy dlls to the target directory to be able to run it
 if(WIN32 AND BUILD_SHARED_LIBS)

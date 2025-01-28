@@ -15,8 +15,8 @@ set_target_properties(
              VISIBILITY_INLINES_HIDDEN YES)
 
 include(GenerateExportHeader)
-generate_export_header(sample_library 
-  EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/test_repo/sample_library_export.hpp)
+generate_export_header(sample_library EXPORT_FILE_NAME
+                       ${PROJECT_BINARY_DIR}/include/test_repo/sample_library_export.hpp)
 
 if(NOT BUILD_SHARED_LIBS)
   target_compile_definitions(sample_library PUBLIC SAMPLE_LIBRARY_STATIC_DEFINE)
