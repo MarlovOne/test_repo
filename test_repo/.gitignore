@@ -1,6 +1,7 @@
 # Build directories and binary files
 build/
 build-android/
+build-ios/
 
 # out/
 # out/coverage/*

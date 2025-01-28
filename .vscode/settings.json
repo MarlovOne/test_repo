@@ -1,5 +1,6 @@
 {
     "C_Cpp.default.compileCommands": "/home/lmark/git/test_repo/build/compile_commands.json",
+    "cmakeFormat.exePath": "/home/lmark/miniconda3/bin/cmake-format",
     "files.associations": {
         "memory": "cpp",
         "array": "cpp",

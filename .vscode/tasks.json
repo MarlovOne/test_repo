@@ -29,9 +29,17 @@
             "label": "cmake-android",
             "type": "shell",
             "options": {
+                "cwd": "${workspaceFolder}/test_repo",
+            },
+            "command": "cmake -S . -B ./build-android -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake -DANDROID_ABI=${input:android_abi} -DANDROID_PLATFORM=${input:android_platform}"
+        },
+        {
+            "label": "cmake-ios",
+            "type": "shell",
+            "options": {
                 "cwd": "${workspaceFolder}/test_repo"
             },
-            "command": "cmake -S . -B ./build-android -DCMAKE_TOOLCHAIN_FILE=${NDK_PATH}/build/cmake/android.toolchain.cmake -DANDROID_ABI=${input:android_abi} -DANDROID_PLATFORM=${input:android_platform}"
+            "command": "cmake -S . -B ./build-ios -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/ios.toolchain.cmake -DPLATFORM=${input:ios_platform} -DDEPLOYMENT_TARGET=${input:ios_deployment_target}"
         },
         {
             "label": "clean",
@@ -66,6 +74,23 @@
             "type": "promptString",
             "description": "Enter build directory name",
             "default": "build"
-        }
+        },
+        {
+            "id": "ios_platform",
+            "type": "pickString",
+            "description": "Select iOS Platform",
+            "options": [
+                "OS",
+                "SIMULATOR",
+                "OS64COMBINED"
+            ],
+            "default": "OS64COMBINED"
+        },
+        {
+            "id": "ios_deployment_target",
+            "type": "promptString",
+            "description": "Enter iOS Deployment Target Version (e.g., 13.0)",
+            "default": "13.0"
+        },
     ]
 }

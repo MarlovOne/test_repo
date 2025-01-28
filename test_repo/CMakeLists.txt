@@ -96,7 +96,9 @@ test_repo_package_project(
   sample_library
   sample_executable
   test_repo_options
-  test_repo_warnings)
+  test_repo_warnings
+  PUBLIC_INCLUDES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Figure out the architecture
 if(CMAKE_SYSTEM_PROCESSOR)
