@@ -36,28 +36,35 @@ jobs:
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
           - gcc
-        generator:
-          - "Ninja Multi-Config"
         build_type:
           - Release
+          - Debug
         packaging_maintainer_mode:
+          # - OFF
           - ON
-        build_shared:
+        build_shared_libs:
+          # Always build shared libraries
           - ON
-        is_tag:
+        is_tagged:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
           - compiler: gcc
+            generator: "Ninja Multi-Config"
             gcov_executable: gcov
             enable_ipo: On
 
-          # Set up preferred package generators, for given build configurations
-          - build_type: Release
-            packaging_maintainer_mode: OFF
-            package_generator: TBZ2
+        exclude:
+
+          # Exclude Debug builds if tag is present - we aare packaging only release builds
+          - is_tagged: true
+            build_type: Debug
+          
+          # Exclude Release builds if tag is not present
+          - is_tagged: false
+            build_type: Release  
 
     steps:
 
