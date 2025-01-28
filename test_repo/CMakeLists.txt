@@ -112,7 +112,7 @@ endif()
 
 # Check if building for macos and overwrite the architecture - builds for all architectures
 if(CMAKE_OSX_ARCHITECTURES)
-  set(PKG_ARCH "x86_64;arm64")
+  set(PKG_ARCH "x86_64-arm64")
 endif()
 
 # Experience shows that explicit package naming can help make it easier to sort
