@@ -135,4 +135,4 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
           files: |
-            ${{ env.BUILD_DIR }}/*
+            ${{ env.BUILD_DIR }}/*-*${{ matrix.build_type }}*-*.*
