@@ -127,14 +127,27 @@ function(test_repo_package_project)
   # ycm arg
   list(APPEND _PackageProject_PRIVATE_DEPENDENCIES ${_PRIVATE_DEPENDENCIES_CONFIG})
 
-  # Installation of package (compatible with vcpkg, etc)
-  install(
-    TARGETS ${_PackageProject_TARGETS}
-    EXPORT ${_PackageProject_EXPORT}
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT lib
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
-    PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${_PackageProject_NAME}" COMPONENT dev)
+  # Detect iOS platform
+  if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    # Installation of package (only for iOS builds)
+    install(
+      TARGETS ${_PackageProject_TARGETS}
+      EXPORT ${_PackageProject_EXPORT}
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT lib
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+      BUNDLE DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+      PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${_PackageProject_NAME}" COMPONENT dev)
+  else()
+    # Installation of package (compatible with vcpkg, etc)
+    install(
+      TARGETS ${_PackageProject_TARGETS}
+      EXPORT ${_PackageProject_EXPORT}
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT lib
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+      PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${_PackageProject_NAME}" COMPONENT dev)
+  endif()
 
   # install the usage file
   set(_targets_str "")

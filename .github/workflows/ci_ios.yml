@@ -26,12 +26,10 @@ jobs:
           - Debug
         packaging_maintainer_mode:
           - ON
+        enable_ipo:
+          - ON
         is_tagged:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
-
-        include:          
-          - build_type: Release
-            enable_ipo: On
 
         exclude:
           # Exclude Debug builds if tag is present - we aare packaging only release builds
