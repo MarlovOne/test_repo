@@ -8,10 +8,6 @@ on:
       - main
       - dev
 
-env:
-  VERBOSE: 1
-  BUILD_DIR: ./test_repo/build
-
 jobs:
   Test_iOS:
     name: ${{matrix.os}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
@@ -45,6 +41,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Load Constants
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '.github/constants.env'
 
       - name: Configure CMake
         run: |

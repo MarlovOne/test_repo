@@ -8,12 +8,6 @@ on:
       - main
       - develop
 
-env:
-  LLVM_VERSION: "19.1.2"
-  VERBOSE: 1
-  BUILD_DIR: ./test_repo/build
-
-
 jobs:
   Test_android:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.arch}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
@@ -83,7 +77,6 @@ jobs:
         uses: cardinalby/export-env-action@v2
         with:
           envFile: '.github/constants.env'
-
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1

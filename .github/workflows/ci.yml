@@ -8,11 +8,6 @@ on:
       - main
       - dev
 
-env:
-  LLVM_VERSION: "19.1.2"
-  VERBOSE: 1
-  BUILD_DIR: ./test_repo/build
-
 jobs:
   Cancel:
     name: Cancel previous runs
@@ -128,7 +123,7 @@ jobs:
           packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
           generator: ${{ matrix.generator }}
 
-      - name: Project Name
+      - name: Load Constants
         uses: cardinalby/export-env-action@v2
         with:
           envFile: '.github/constants.env'
