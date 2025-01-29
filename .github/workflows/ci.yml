@@ -102,6 +102,10 @@ jobs:
           
           - os: windows-latest
             compiler: gcc
+
+          # Exclude arm64 build for macos since we're building universal library
+          - os: macos-latest
+            architecture: arm64
           
           # Exclude Debug builds if tag is present - we aare packaging only release builds
           - is_tagged: true
@@ -129,7 +133,6 @@ jobs:
         with:
           envFile: '.github/constants.env'
 
-
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -145,7 +148,12 @@ jobs:
           cppcheck: true
           gcovr: true
           opencppcoverage: true
-          architecture: ${{ matrix.architecture }}
+
+      - name : Install ARM64 compiler
+        if: matrix.architecture == 'arm64' && matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-aarch64-linux-gnu
 
       - name: Configure CMake - x86_64
         if: matrix.architecture == 'x86_64'
