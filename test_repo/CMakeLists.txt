@@ -100,21 +100,28 @@ test_repo_package_project(
   PUBLIC_INCLUDES
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-# Figure out the architecture
+# Detect architecture
 if(CMAKE_SYSTEM_PROCESSOR)
   set(PKG_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
 else()
   set(PKG_ARCH "unknown")
 endif()
 
-# Check if building for Android and overwrite the architecture
+# Check if building for Android
 if(ANDROID_ABI)
   set(PKG_ARCH "${ANDROID_ABI}")
-endif()
 
-# Check if building for macos and overwrite the architecture - builds for all architectures
-if(CMAKE_OSX_ARCHITECTURES)
+  # Check if building for macOS (Universal Binary)
+elseif(CMAKE_OSX_ARCHITECTURES)
   set(PKG_ARCH "x86_64-arm64")
+
+  # Check if building for Windows ARM64
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  if(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
+    set(PKG_ARCH "arm64")
+  else()
+    set(PKG_ARCH "x86_64") # Default to x86_64 if not explicitly ARM64
+  endif()
 endif()
 
 # Experience shows that explicit package naming can help make it easier to sort
