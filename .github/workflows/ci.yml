@@ -24,7 +24,7 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
   Test:
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.architecture}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
     needs:  Cancel
     strategy:
