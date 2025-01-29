@@ -23,7 +23,7 @@ jobs:
         packaging_maintainer_mode:
           - ON
         enable_ipo:
-          - ON
+          - OFF
         build_shared_libs:
           # - ON
           - OFF
