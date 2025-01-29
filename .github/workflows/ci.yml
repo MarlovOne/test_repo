@@ -174,7 +174,7 @@ jobs:
       - name: Configure CMake - arm64 (Windows)
         if: matrix.architecture == 'arm64' && matrix.os == 'windows-latest'
         run: |
-          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} -G "${{ matrix.generator }}" -A ARM64 -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
+          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} -G "${{ matrix.generator }}" -A ARM64 -DCMAKE_CROSSCOMPILING=ON -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
 
       - name: Build
         # Execute the build.  You can specify a specific target with "--target <NAME>"
