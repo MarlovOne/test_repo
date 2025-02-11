@@ -15,7 +15,7 @@ mkdir -p ./install/macOS/opencv
 
 # Build the project
 cmake \
-    -S api \
+    -S test_repo \
     -B build/macOS \
     -DBUILD_SHARED_LIBS=OFF \
     -Dnetxten_ENABLE_IPO=OFF \
