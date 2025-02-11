@@ -1,5 +1,8 @@
 #! /bin/zsh
 
+# Exit immediatelly if a command exits with a non-zero status
+set -e
+
 # Get the directory containing this script
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
@@ -12,6 +15,7 @@ rm -rf artifacts/macOS
   
 mkdir -p ./build/macOS/opencv
 mkdir -p ./install/macOS/opencv
+mkdir -p ./artifacts/macOS
 
 # Build the project
 cmake \
