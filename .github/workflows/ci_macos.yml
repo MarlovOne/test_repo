@@ -69,4 +69,4 @@ jobs:
         run: |
           cd app
           flutter pub get
-          flutter build macos --release --verbose --no-codesign
+          flutter build macos --release --verbose
