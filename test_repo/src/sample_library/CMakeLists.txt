@@ -2,7 +2,7 @@ add_library(sample_library sample_library.cpp)
 
 add_library(test_repo::sample_library ALIAS sample_library)
 
-target_link_libraries(sample_library PRIVATE netxten::netxten_options netxten::netxten_warnings
+target_link_libraries(sample_library PRIVATE test_repo::test_repo_options test_repo::test_repo_warnings
                                              $<BUILD_INTERFACE:${OpenCV_LIBS}>)
 
 target_include_directories(

@@ -19,10 +19,10 @@ cmake \
     -S test_repo \
     -B build/macOS \
     -DBUILD_SHARED_LIBS=OFF \
-    -Dnetxten_ENABLE_IPO=OFF \
+    -Dtest_repo_ENABLE_IPO=OFF \
     -DCMAKE_BUILD_TYPE:STRING=Release \
-    -Dnetxten_PACKAGING_MAINTAINER_MODE:BOOL=ON \
-    -Dnetxten_ENABLE_COVERAGE:BOOL=OFF
+    -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=ON \
+    -Dtest_repo_ENABLE_COVERAGE:BOOL=OFF
 cmake \
     --build ./build/macOS \
     --config Release
