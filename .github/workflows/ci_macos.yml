@@ -55,19 +55,20 @@ jobs:
 
       - uses: dart-lang/setup-dart@v1
         
-      - name : Install dependencies
-        run: |
-          cd blabla
-          dart pub get
-          dart run ffigen --config ffigen.yaml
-
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
 
+      - name : Install dependencies
+        run: |
+          cd blabla
+          flutter pub get
+          dart run ffigen --config ffigen.yaml
+
       - name: install app
         run: |
+          cd app
           flutter pub get
           flutter build ios --release --verbose
