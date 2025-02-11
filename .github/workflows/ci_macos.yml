@@ -43,7 +43,7 @@ jobs:
           ./scripts/install_deps_macos.sh
       
       - name: Upload Built Library
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: opencvlibs
           path: ./install/macOS/opencv
