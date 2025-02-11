@@ -1,7 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <test_repo/sample_library.hpp>
 
-int factorial(int input) noexcept
+int test_repo::factorial(int input) noexcept
 {
   int result = 1;
 
@@ -13,7 +13,14 @@ int factorial(int input) noexcept
   return result;
 }
 
-void process_image(uint8_t *input_data, const int width, const int height, const int channels, uint8_t *output_data)
+int test_repo::add(int a, int b) { return a + b; }
+std::string test_repo::getProjectVersion() { return "0.0.1"; }
+
+void test_repo::process_image(uint8_t *input_data,
+  const int width,
+  const int height,
+  const int channels,
+  uint8_t *output_data)
 {
   if (!input_data || width <= 0 || height <= 0 || channels != 3) { return; }
 
