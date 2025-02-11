@@ -53,12 +53,10 @@ jobs:
           brew install eigen
           ./scripts/make_macOS.sh
 
-      - uses: dart-lang/setup-dart@v1
-        
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.6.1'
+          flutter-version: '3.22.2'
           channel: 'stable'
 
       - name : Install dependencies
