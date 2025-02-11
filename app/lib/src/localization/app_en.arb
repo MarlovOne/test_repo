@@ -1,0 +1,6 @@
+{
+  "appTitle": "test_repo",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
