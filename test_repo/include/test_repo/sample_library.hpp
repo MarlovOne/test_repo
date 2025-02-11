@@ -13,3 +13,6 @@
 }
 
 #endif
+
+SAMPLE_LIBRARY_EXPORT void
+  process_image(uint8_t *input_data, const int width, const int height, const int channels, uint8_t *output_data);
