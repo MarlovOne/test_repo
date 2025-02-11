@@ -5,6 +5,8 @@ add_library(test_repo::sample_library ALIAS sample_library)
 target_link_libraries(sample_library PRIVATE test_repo::test_repo_options test_repo::test_repo_warnings
                                              $<BUILD_INTERFACE:${OpenCV_LIBS}>)
 
+message(WARNING "OPENCV LIBS: ${OpenCV_LIBS} , ${OpenCV_INCLUDE_DIRS}")
+
 target_include_directories(
   sample_library ${WARNING_GUARD}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
