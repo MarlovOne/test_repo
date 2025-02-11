@@ -1,7 +1,7 @@
 #include "blabla.h"
 #include <cstring>
 #include <string>
-#include <test_repo/sample_library/sample_library.hpp>
+#include <test_repo/sample_library.hpp>
 
 FFI_PLUGIN_EXPORT int sum(int a, int b) { return test_repo::add(a, b); }
 FFI_PLUGIN_EXPORT int factorial(int input) {
