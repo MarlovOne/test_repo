@@ -42,12 +42,13 @@ jobs:
       #     brew install eigen
       #     ./scripts/install_deps_macos.sh
       
-      - name: Upload Built Library
-        uses: actions/upload-artifact@v4
-        with:
-          name: opencvlibs
-          path: ./install/macOS/opencv
+      # - name: Upload Built Library
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: opencvlibs
+      #     path: ./install/macOS/opencv
       
       - name: Configure CMake
         run: |
+          brew install eigen
           ./scripts/make_macOS.sh
