@@ -9,6 +9,9 @@ pushd "${SCRIPT_DIR}/.." > /dev/null
 # Remove previous build and artifacts
 rm -rf build/macOS
 rm -rf artifacts/macOS
+  
+mkdir -p ./build/macOS/opencv
+mkdir -p ./install/macOS/opencv
 
 # Build the project
 cmake \

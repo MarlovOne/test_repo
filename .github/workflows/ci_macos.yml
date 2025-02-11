@@ -37,10 +37,10 @@ jobs:
         with:
           envFile: '.github/constants.env'
 
-      - name: Configure CMake
-        run: |
-          brew install eigen
-          ./scripts/install_deps_macos.sh
+      # - name: Configure CMake
+      #   run: |
+      #     brew install eigen
+      #     ./scripts/install_deps_macos.sh
       
       - name: Upload Built Library
         uses: actions/upload-artifact@v4
