@@ -1,3 +1,4 @@
+#include <opencv2/opencv.hpp>
 #include <test_repo/sample_library.hpp>
 
 int factorial(int input) noexcept
