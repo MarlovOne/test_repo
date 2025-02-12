@@ -27,11 +27,7 @@ macro(test_repo_setup_dependencies)
     message(FATAL_ERROR "Unsupported platform")
   endif()
 
-  find_package(
-    Eigen3
-    3.4
-    REQUIRED
-    NO_MODULE)
+  find_package(Eigen3 REQUIRED NO_MODULE)
   find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
 endmacro()
