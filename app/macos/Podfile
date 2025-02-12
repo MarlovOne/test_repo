@@ -39,5 +39,11 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
+    target.build_configurations.each do |config|
+      # Ensure we start with inherited linker flags.
+      config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited)'
+      # Append the OpenCL framework flag.
+      config.build_settings['OTHER_LDFLAGS'] = "#{config.build_settings['OTHER_LDFLAGS']} -framework OpenCL"
+    end
   end
 end
