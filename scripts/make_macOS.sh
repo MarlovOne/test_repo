@@ -41,13 +41,15 @@ cmake \
 libtool -static -o artifacts/macOS/lib/libsample_library_combined.a  \
     artifacts/macOS/lib/libsample_library.a \
     install/macOS/opencv/lib/libopencv_core.a \
-    install/macOS/opencv/lib/libopencv_imgproc.a
+    install/macOS/opencv/lib/libopencv_imgproc.a \
+    install/macOS/opencv/lib/3rdparty/libittnotify.a \
+    install/macOS/opencv/lib/3rdparty/liblibjpeg-turbo.a \
+    install/macOS/opencv/lib/3rdparty/libzlib.a
 
 # Create the xcframework
 xcodebuild \
     -create-xcframework \
     -library artifacts/macOS/lib/libsample_library_combined.a \
-    -framework OpenCL \
     -headers artifacts/macOS/include \
     -output artifacts/macOS/libsample_library.xcframework
 
