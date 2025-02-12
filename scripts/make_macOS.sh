@@ -37,10 +37,16 @@ cmake \
     --install ./build/macOS \
     --prefix $(realpath ./artifacts/macOS)
 
+# Merge the static libraries
+libtool -static -o artifacts/macOS/lib/libsample_library_combined.a  \
+    artifacts/macOS/lib/libsample_library.a \
+    install/macOS/opencv/lib/libopencv_core.a \
+    install/macOS/opencv/lib/libopencv_imgproc.a
+
 # Create the xcframework
 xcodebuild \
     -create-xcframework \
-    -library artifacts/macOS/lib/libsample_library.a \
+    -library artifacts/macOS/lib/libsample_library_combined.a \
     -headers artifacts/macOS/include \
     -output artifacts/macOS/libsample_library.xcframework
 

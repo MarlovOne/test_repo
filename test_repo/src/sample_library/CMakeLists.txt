@@ -13,4 +13,4 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>
   PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>)
 
-set_target_properties(PROPERTIES VERSION ${PROJECT_VERSION} LINK_FLAGS "-all_load")
+set_target_properties(PROPERTIES VERSION ${PROJECT_VERSION})
