@@ -50,7 +50,7 @@ install_opencv_macos() {
     -DBUILD_TESTS=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_DOCS=OFF \
-    -DCMAKE_TOOLCHAIN_FILE=./test_repo/cmake/toolchain/ios.toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=$(pwd)/test_repo/cmake/toolchain/ios.toolchain.cmake \
     -DPLATFORM=OS64COMBINED \
     -DDEPLOYMENT_TARGET=13.0
 
