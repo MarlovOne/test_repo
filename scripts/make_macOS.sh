@@ -47,6 +47,7 @@ libtool -static -o artifacts/macOS/lib/libsample_library_combined.a  \
 xcodebuild \
     -create-xcframework \
     -library artifacts/macOS/lib/libsample_library_combined.a \
+    -framework OpenCL \
     -headers artifacts/macOS/include \
     -output artifacts/macOS/libsample_library.xcframework
 
