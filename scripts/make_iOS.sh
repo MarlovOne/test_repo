@@ -39,20 +39,26 @@ cmake --install ./build/ios --prefix $(realpath ./artifacts/ios)
 
 # iOS fat library contains lib for 2 destinations: iOS device and simulator
 # we need to split them before combining into xcframework to avoid error: "binaries with multiple platforms are not supported"
-mkdir -p artifacts/ios/lib/x86_64
-lipo artifacts/ios/lib/libsample_library.a -thin x86_64 -o artifacts/ios/lib/x86_64/libsample_library.a
-mkdir -p artifacts/ios/lib/arm64
-lipo artifacts/ios/lib/libsample_library.a -thin arm64 -o artifacts/ios/lib/arm64/libsample_library.a
+# mkdir -p artifacts/ios/lib/x86_64
+# lipo artifacts/ios/lib/libsample_library.a -thin x86_64 -o artifacts/ios/lib/x86_64/libsample_library.a
+# mkdir -p artifacts/ios/lib/arm64
+# lipo artifacts/ios/lib/libsample_library.a -thin arm64 -o artifacts/ios/lib/arm64/libsample_library.a
 
 # Create the xcframework
+# xcodebuild \
+#     -create-xcframework \
+#     -library artifacts/ios/lib/arm64/libsample_library.a \
+#     -headers artifacts/ios/include \
+#     -library artifacts/ios/lib/x86_64/libsample_library.a \
+#     -headers artifacts/ios/include \
+#     -output artifacts/ios/libsample_library.xcframework
+
 xcodebuild \
     -create-xcframework \
-    -library artifacts/ios/lib/arm64/libsample_library.a \
-    -headers artifacts/ios/include \
-    -library artifacts/ios/lib/x86_64/libsample_library.a \
+    -library artifacts/ios/lib/libsample_library.a \
     -headers artifacts/ios/include \
     -output artifacts/ios/libsample_library.xcframework
-
+ 
 # Copy the artifact to the ffi plugin
 rm -rf ./eperlium/ios/libsample_library.xcframework
 cp -rf ./artifacts/ios/libsample_library.xcframework ./eperlium/ios/libsample_library.xcframework
