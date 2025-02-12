@@ -54,6 +54,14 @@ cmake --install ./build/ios --prefix $(realpath ./artifacts/ios)
 #     -headers artifacts/ios/include \
 #     -output artifacts/ios/libsample_library.xcframework
 
+libtool -static -o artifacts/iOS/lib/libsample_library_combined.a  \
+    artifacts/iOS/lib/libsample_library.a \
+    install/iOS/opencv/lib/libopencv_core.a \
+    install/iOS/opencv/lib/libopencv_imgproc.a \
+    install/iOS/opencv/lib/opencv4/3rdparty/libittnotify.a \
+    install/iOS/opencv/lib/opencv4/3rdparty/liblibjpeg-turbo.a \
+    install/iOS/opencv/lib/opencv4/3rdparty/libzlib.a
+
 xcodebuild \
     -create-xcframework \
     -library artifacts/ios/lib/libsample_library.a \
