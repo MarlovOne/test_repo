@@ -19,7 +19,7 @@ mkdir -p ./artifacts/ios
 
 # Build the project
 cmake \
-    -S api \
+    -S test_repo \
     -B build/ios \
     -G Xcode \
     -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/ios.toolchain.cmake \
