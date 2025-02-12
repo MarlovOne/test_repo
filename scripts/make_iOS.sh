@@ -27,6 +27,7 @@ cmake \
     -DDEPLOYMENT_TARGET=13.0 \
     -Dnetxten_PACKAGING_MAINTAINER_MODE:BOOL=ON \
     -DBUILD_SHARED_LIBS=OFF \
+    -Dnetxten_ENABLE_IPO=OFF \
     -DEigen3_DIR="/opt/homebrew/Cellar/eigen/3.4.0_1/share/eigen3/cmake"
 
 cmake \
