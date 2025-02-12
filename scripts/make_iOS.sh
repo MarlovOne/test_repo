@@ -23,7 +23,7 @@ cmake \
     -B build/ios \
     -G Xcode \
     -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/ios.toolchain.cmake \
-    -DPLATFORM=OS64COMBINED \
+    -DPLATFORM=OS64 \
     -DDEPLOYMENT_TARGET=13.0 \
     -Dnetxten_PACKAGING_MAINTAINER_MODE:BOOL=ON \
     -DBUILD_SHARED_LIBS=OFF \

@@ -18,9 +18,10 @@ install_opencv_macos() {
     -B ./build/iOS/opencv \
     -DBUILD_LIST=core,imgproc \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_TOOLCHAIN_FILE=$(pwd)/test_repo/cmake/toolchain/ios.toolchain.cmake \
-    -DPLATFORM=OS64COMBINED \
-    -DDEPLOYMENT_TARGET=13.0 \
+    -DCMAKE_SYSTEM_NAME=iOS \
+    -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
+    -DCMAKE_SYSTEM_PROCESSOR=arm64 \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=13 \
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_opencv_apps=OFF \
     -DBUILD_PERF_TESTS=OFF \
