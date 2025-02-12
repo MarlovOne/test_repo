@@ -1,5 +1,8 @@
 #! /bin/zsh
 
+set -e
+set -x
+
 # Get the directory containing this script
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
@@ -9,6 +12,10 @@ pushd "${SCRIPT_DIR}/.." > /dev/null
 # Remove previous build and artifacts
 rm -rf build/ios
 rm -rf artifacts/ios
+
+mkdir -p ./build/ios/opencv
+mkdir -p ./install/ios/opencv
+mkdir -p ./artifacts/ios
 
 # Build the project
 cmake \

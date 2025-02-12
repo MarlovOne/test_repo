@@ -10,48 +10,48 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
 # Remove previous build and artifacts
-rm -rf build/macOS
-rm -rf artifacts/macOS
+rm -rf build/macos
+rm -rf artifacts/macos
   
-mkdir -p ./build/macOS/opencv
-mkdir -p ./install/macOS/opencv
-mkdir -p ./artifacts/macOS
+mkdir -p ./build/macos/opencv
+mkdir -p ./install/macos/opencv
+mkdir -p ./artifacts/macos
 
 # Build the project
 cmake \
     -G Xcode \
     -S test_repo \
-    -B build/macOS \
+    -B build/macos \
     -DBUILD_SHARED_LIBS=OFF \
     -Dtest_repo_ENABLE_IPO=OFF \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=ON \
     -Dtest_repo_ENABLE_COVERAGE:BOOL=OFF
 cmake \
-    --build ./build/macOS \
+    --build ./build/macos \
     --config Release
 
 # Install the project
-mkdir -p artifacts/macOS
+mkdir -p artifacts/macos
 cmake \
-    --install ./build/macOS \
-    --prefix $(realpath ./artifacts/macOS)
+    --install ./build/macos \
+    --prefix $(realpath ./artifacts/macos)
 
 # Merge the static libraries
-libtool -static -o artifacts/macOS/lib/libsample_library_combined.a  \
-    artifacts/macOS/lib/libsample_library.a \
-    install/macOS/opencv/lib/libopencv_core.a \
-    install/macOS/opencv/lib/libopencv_imgproc.a \
-    install/macOS/opencv/lib/opencv4/3rdparty/libittnotify.a \
-    install/macOS/opencv/lib/opencv4/3rdparty/liblibjpeg-turbo.a \
-    install/macOS/opencv/lib/opencv4/3rdparty/libzlib.a
+libtool -static -o artifacts/macos/lib/libsample_library_combined.a  \
+    artifacts/macos/lib/libsample_library.a \
+    install/macos/opencv/lib/libopencv_core.a \
+    install/macos/opencv/lib/libopencv_imgproc.a \
+    install/macos/opencv/lib/opencv4/3rdparty/libittnotify.a \
+    install/macos/opencv/lib/opencv4/3rdparty/liblibjpeg-turbo.a \
+    install/macos/opencv/lib/opencv4/3rdparty/libzlib.a
 
 # Create the xcframework
 xcodebuild \
     -create-xcframework \
-    -library artifacts/macOS/lib/libsample_library_combined.a \
-    -headers artifacts/macOS/include \
-    -output artifacts/macOS/libsample_library.xcframework
+    -library artifacts/macos/lib/libsample_library_combined.a \
+    -headers artifacts/macos/include \
+    -output artifacts/macos/libsample_library.xcframework
 
 # Copy the artifact to the ffi plugin
 rm -rf ./blabla/macos/libsample_library.xcframework
