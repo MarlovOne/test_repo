@@ -74,7 +74,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Check if ARCHS contains "arm64" and override it to "aarch64"
-for i in "${!ARCHS[@]}"; do
+for i in $(seq 1 ${#ARCHS[@]}); do
   if [[ "${ARCHS[$i]}" == "arm64" ]]; then
     ARCHS[$i]="aarch64"
   fi
