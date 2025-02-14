@@ -1,4 +1,4 @@
-#! /bin/zsh
+#! /bin/bash
 
 # Default architectures
 ARCHS_ALL=("arm64-v8a" "armeabi-v7a" "x86" "x86_64")
@@ -42,7 +42,7 @@ for ARCH in "${ARCHS[@]}"; do
         -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake \
         -DANDROID_ABI=${ARCH} \
         -DANDROID_PLATFORM=21 \
-        -Dnetxten_PACKAGING_MAINTAINER_MODE:BOOL=ON \
+        -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=ON \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=ON
     cmake \

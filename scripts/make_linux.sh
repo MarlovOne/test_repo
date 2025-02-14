@@ -1,4 +1,4 @@
-#! /bin/zsh
+#! /bin/bash
 
 # Default architectures, build type, maintainer mode, git sha, coverage flag, and build directory
 ARCHS_ALL=("x86_64" "aarch64")
@@ -74,7 +74,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Check if ARCHS contains "arm64" and override it to "aarch64"
-for i in $(seq 1 ${#ARCHS[@]}); do
+for i in "${!ARCHS[@]}"; do
   if [[ "${ARCHS[$i]}" == "arm64" ]]; then
     ARCHS[$i]="aarch64"
   fi
@@ -109,10 +109,10 @@ for ARCH in "${ARCHS[@]}"; do
   cmake \
       -S test_repo \
       -B "${BUILD_DIR}" \
-      -Dnetxten_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \
+      -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
       -DBUILD_SHARED_LIBS=ON \
-      -Dnetxten_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
+      -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
       -DGIT_SHA=${GIT_SHA} \
       $CMAKE_TOOLCHAIN_FILE
 
