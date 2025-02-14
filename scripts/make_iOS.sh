@@ -36,7 +36,9 @@ cmake \
 
 # Install the project
 mkdir -p artifacts/ios
-cmake --install ./build/ios --prefix $(realpath ./artifacts/ios)
+cmake \
+    --install ./build/ios \
+    --prefix $(realpath ./artifacts/ios)
 
 # iOS fat library contains lib for 2 destinations: iOS device and simulator
 # we need to split them before combining into xcframework to avoid error: "binaries with multiple platforms are not supported"
@@ -54,6 +56,7 @@ cmake --install ./build/ios --prefix $(realpath ./artifacts/ios)
 #     -headers artifacts/ios/include \
 #     -output artifacts/ios/libsample_library.xcframework
 
+# Merge the static libraries
 libtool -static -o artifacts/ios/lib/libsample_library_combined.a  \
     artifacts/ios/lib/libsample_library.a \
     install/ios/opencv/lib/libopencv_core.a \
@@ -62,6 +65,7 @@ libtool -static -o artifacts/ios/lib/libsample_library_combined.a  \
     install/ios/opencv/lib/opencv4/3rdparty/liblibjpeg-turbo.a \
     install/ios/opencv/lib/opencv4/3rdparty/libzlib.a
 
+# Create the xcframework
 xcodebuild \
     -create-xcframework \
     -library artifacts/ios/lib/libsample_library_combined.a \
@@ -70,7 +74,6 @@ xcodebuild \
  
 # Copy the artifact to the ffi plugin
 rm -rf ./blabla/ios/libsample_library.xcframework
-mkdir -p ./blabla/ios/libsample_library.xcframework
 cp -rf ./artifacts/ios/libsample_library.xcframework ./blabla/ios/libsample_library.xcframework
 
 popd > /dev/null
