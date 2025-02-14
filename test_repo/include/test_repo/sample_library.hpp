@@ -1,6 +1,7 @@
 #ifndef SAMPLE_LIBRARY_HPP
 #define SAMPLE_LIBRARY_HPP
 
+#include <cstdint>
 #include <string>
 
 namespace test_repo {
