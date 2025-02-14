@@ -7,7 +7,7 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
 install_opencv_macos() {
-  git clone https://github.com/opencv/opencv.git
+  git clone --depth 1 --branch 4.11.0 https://github.com/opencv/opencv.git
 
   rm -rf ./build/macOS/opencv
   rm -rf ./install/macOS/opencv
