@@ -1,5 +1,8 @@
 #! /bin/bash
 
+set -x
+set -e
+
 # Default architectures, build type, maintainer mode, git sha, coverage flag, and build directory
 ARCHS_ALL=("x86_64" "aarch64")
 ARCHS=("${ARCHS_ALL[@]}")
@@ -113,7 +116,7 @@ for ARCH in "${ARCHS[@]}"; do
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
       -DBUILD_SHARED_LIBS=ON \
       -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
-      -DGIT_SHA=${GIT_SHA} \
+      -DGIT_SHA:STRING=${GIT_SHA} \
       $CMAKE_TOOLCHAIN_FILE
 
   cmake \

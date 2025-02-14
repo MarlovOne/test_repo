@@ -1,5 +1,8 @@
 #! /bin/zsh
 
+set -x
+set -e
+
 # Default parameters
 BUILD_TYPE="Release"
 MAINTAINER_MODE="ON"
@@ -82,7 +85,7 @@ cmake \
    -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
    -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \
    -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
-   -DGIT_SHA=${GIT_SHA}
+   -DGIT_SHA:STRING=${GIT_SHA}
 
 # Build the project
 cmake \

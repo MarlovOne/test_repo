@@ -37,9 +37,6 @@ jobs:
         packaging_maintainer_mode:
           # - OFF
           - ON
-        build_shared_libs:
-          # - ON
-          - OFF
         is_tagged:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
 
@@ -49,7 +46,6 @@ jobs:
           - compiler: gcc
             generator: "Ninja Multi-Config"
             gcov_executable: gcov
-            enable_ipo: On
 
         exclude:
 
@@ -95,28 +91,21 @@ jobs:
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
-          ndk-version: r27c
+          ndk-version: r26
           add-to-path: true
 
       - name: Configure CMake
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           ./scripts/install_deps_android.sh
-          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} \
-            -G "${{matrix.generator}}" \
-            -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} \
-            -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} \
-            -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} \
-            -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} \
-            -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} \
-            -DGIT_SHA:STRING=${{ github.sha }} \
-            -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI=${{ matrix.arch }} \
-            -DANDROID_PLATFORM=android-21
-
-      - name: Build
-        # Execute the build.  You can specify a specific target with "--target <NAME>"
-        run: |
-          cmake --build ${{ env.BUILD_DIR }} --config ${{matrix.build_type}}
+          ./scripts/make_android.sh 
+            --arch ${{ matrix.arch }} \
+            --build-type ${{ matrix.build_type }} \
+            --maintainer-mode ${{ matrix.packaging_maintainer_mode }} \
+            --git-sha ${{ github.sha }} \
+            --enable-coverage ${{ matrix.build_type == 'Debug' }} \
+            --build-dir ${{ env.BUILD_DIR }}
 
       - name: CPack
         if: matrix.build_type == 'Release'

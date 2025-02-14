@@ -1,5 +1,8 @@
 #! /bin/zsh
 
+set -x
+set -e
+
 # Get the directory containing this script
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
