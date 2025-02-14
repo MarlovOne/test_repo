@@ -1,5 +1,6 @@
 name: CI
 on:
+  # TODO(lmark) temporarily enable pull request
   pull_request:
   push:
     tags:
@@ -7,6 +8,11 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - '.github/**'
+      - 'api/**'
+      - 'eperlium/**'
+      - 'scripts/**'
 
 jobs:
   Cancel:
@@ -16,7 +22,7 @@ jobs:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.8.0
         with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+          access_token: ${{ secrets.GH_PAT }}
 
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.architecture}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
@@ -48,32 +54,22 @@ jobs:
         packaging_maintainer_mode:
           # - OFF
           - ON
-        build_shared_libs:
-          # - ON
-          - OFF
         architecture:
           - x86_64
           - arm64
-        
         is_tagged:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
+        is_pr:
+          - ${{ github.event_name == 'pull_request' }}
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
           - compiler: gcc
-            generator: "Ninja Multi-Config"
             gcov_executable: gcov
-            enable_ipo: On
 
           - compiler: llvm-19.1.2
-            generator: "Ninja Multi-Config"
             gcov_executable: "llvm-cov gcov"
-            enable_ipo: Off
-
-          - compiler: msvc
-            generator: "Visual Studio 17 2022"
-            enable_ipo: Off
 
         exclude:
 
@@ -109,7 +105,11 @@ jobs:
           # Exclude Release builds if tag is not present
           - is_tagged: false
             build_type: Release  
-
+          
+          # Remove arm builds for untagged commits
+          - is_tagged: false
+            architecture: arm64
+            
     steps:
 
       - name: Checkout Repository 
@@ -121,9 +121,8 @@ jobs:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
           packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
-          generator: ${{ matrix.generator }}
 
-      - name: Load Constants
+      - name: Project Name
         uses: cardinalby/export-env-action@v2
         with:
           envFile: '.github/constants.env'
@@ -144,37 +143,45 @@ jobs:
           gcovr: true
           opencppcoverage: true
 
-      - name : Install ARM64 compiler
+      - name : Install ARM64 cross-compiler (Linux)
         if: matrix.architecture == 'arm64' && matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install -y g++-aarch64-linux-gnu
       
-      - name: Setup Windows ARM64 MSVC Environment
-        if: matrix.architecture == 'arm64' && matrix.os == 'windows-latest' && matrix.compiler == 'msvc'
-        shell: cmd
+      - name: Build (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64_arm64
-
-      - name: Configure CMake - x86_64
-        if: matrix.architecture == 'x86_64'
-        run: |
-          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} -G "${{ matrix.generator }}" -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
+          ./scripts/make_linux.sh \
+            --arch ${{ matrix.architecture }} \
+            --build-type ${{ matrix.build_type }} \
+            --maintainer-mode ${{ matrix.packaging_maintainer_mode }} \
+            --enable-coverage ${{ matrix.build_type == 'Debug' }} \
+            --git-sha ${{ github.sha }} \
+            --build-dir ${{ env.BUILD_DIR }}
       
-      - name: Configure CMake - arm64 (Linux)
-        if: matrix.architecture == 'arm64' && matrix.os == 'ubuntu-latest'
+      - name: Build (Windows)
+        if: matrix.os == 'windows-latest'
         run: |
-          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} -G "${{ matrix.generator }}" -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/toolchain-arm64.cmake -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
-      
-      - name: Configure CMake - arm64 (Windows)
-        if: matrix.architecture == 'arm64' && matrix.os == 'windows-latest'
-        run: |
-          cmake -S ./test_repo -B ${{ env.BUILD_DIR }} -G "${{ matrix.generator }}" -A ARM64 -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.architecture }} -DBUILD_TESTING:BOOL=False -DBUILD_SHARED_LIBS=${{matrix.build_shared_libs}} -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+          .\scripts\make_windows.ps1 `
+            -arch ${{ matrix.architecture }} `
+            -build-type ${{ matrix.build_type }} `
+            -maintainer-mode ${{ matrix.packaging_maintainer_mode }} `
+            -enable-coverage ${{ matrix.build_type == 'Debug' }} `
+            -git-sha ${{ github.sha }} \
+            -build-dir ${{ env.BUILD_DIR }}
 
-      - name: Build
-        # Execute the build.  You can specify a specific target with "--target <NAME>"
+      - name: Build (macOS)
+        if: matrix.os == 'macos-latest'
         run: |
-          cmake --build ${{ env.BUILD_DIR }} --config ${{matrix.build_type}}
+          ./scripts/make_macos.sh \
+            --arch ${{ matrix.architecture }} \
+            --build-type ${{ matrix.build_type }} \
+            --maintainer-mode ${{ matrix.packaging_maintainer_mode }} \
+            --enable-coverage ${{ matrix.build_type == 'Debug' }} \
+            --git-sha ${{ github.sha }} \
+            --build-dir ${{ env.BUILD_DIR }}
 
       - name: Unix - Test and coverage
         if: runner.os != 'Windows' && matrix.architecture == 'x86_64'
