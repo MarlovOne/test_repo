@@ -100,6 +100,7 @@ jobs:
 
       - name: Configure CMake
         run: |
+          ./scripts/install_deps_android.sh
           cmake -S ./test_repo -B ${{ env.BUILD_DIR }} \
             -G "${{matrix.generator}}" \
             -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} \

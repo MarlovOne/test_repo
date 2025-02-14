@@ -37,16 +37,16 @@ jobs:
         with:
           envFile: '.github/constants.env'
 
-      - name: Configure CMake
-        run: |
-          brew install eigen
-          ./scripts/install_deps_ios.sh
+      # - name: Configure CMake
+      #   run: |
+      #     brew install eigen
+      #     ./scripts/install_deps_ios.sh
       
-      - name: Upload Built Library
-        uses: actions/upload-artifact@v4
-        with:
-          name: opencvlibs
-          path: ./install/iOS/opencv
+      # - name: Upload Built Library
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: opencvlibs
+      #     path: ./install/iOS/opencv
       
       - name: Configure CMake
         run: |

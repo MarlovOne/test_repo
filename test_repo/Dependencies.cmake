@@ -10,24 +10,31 @@ macro(test_repo_setup_dependencies)
     cpmaddpackage("gh:catchorg/Catch2@3.3.2")
   endif()
 
+  if(NOT EIGEN_FOUND)
+    cpmaddpackage("gl:libeigen/eigen#3.4")
+  endif()
+
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../install/Linux/opencv/${CMAKE_SYSTEM_PROCESSOR}/lib/cmake/opencv4)
+    cpmaddpackage("gh:MarlovOne/opencv-staticlib#linux-4.11")
+    set(OpenCV_DIR ${CPM_PACKAGE_opencv-staticlib_SOURCE_DIR}/${CMAKE_SYSTEM_PROCESSOR}/lib/cmake/opencv4)
   elseif(ANDROID)
+    # Run scripts/install_deps_android.sh to install OpenCV
     set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../install/android/opencv/OpenCV-android-sdk/sdk/native/jni)
   elseif(WIN32)
+    cpmaddpackage("gh:MarlovOne/opencv-staticlib#windows-4.11")
     set(OpenCV_DIR
-        ${CMAKE_SOURCE_DIR}/../install/Windows/opencv/${CMAKE_VS_PLATFORM_NAME}/${CMAKE_VS_PLATFORM_NAME}/vc17/staticlib
-    )
+        ${CPM_PACKAGE_opencv-staticlib_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}/${CMAKE_VS_PLATFORM_NAME}/vc17/staticlib)
   elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
-    set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../install/macos/opencv/lib/cmake/opencv4)
+    cpmaddpackage("gh:MarlovOne/opencv-staticlib#macos-4.11")
+    set(OpenCV_DIR ${CPM_PACKAGE_opencv-staticlib_SOURCE_DIR}/arm64-x64/lib/cmake/opencv4)
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
-    set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../install/ios/opencv/lib/cmake/opencv4)
+    cpmaddpackage("gh:MarlovOne/opencv-staticlib#ios-4.11")
+    set(OpenCV_DIR ${CPM_PACKAGE_opencv-staticlib_SOURCE_DIR}/arm64/lib/cmake/opencv4)
   else()
     message(FATAL_ERROR "Unsupported platform")
   endif()
 
-  find_package(Eigen3 REQUIRED NO_MODULE)
   find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
 endmacro()
