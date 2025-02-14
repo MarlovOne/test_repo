@@ -76,7 +76,7 @@ foreach ($ARCH in $ARCHS) {
 
     if ($ARCH -eq "x64_arm64") {
         cmake -S test_repo -B $BuildDir `
-            -Dtest_repo_PACKAGING_MAINTAINER_MODE=$maintainerMode `
+            -Dnetxten_PACKAGING_MAINTAINER_MODE=$maintainerMode `
             -G "Visual Studio 17 2022" `
             -A ARM64 `
             -DBUILD_TESTING=OFF `
@@ -85,16 +85,16 @@ foreach ($ARCH in $ARCHS) {
             -DCMAKE_BUILD_TYPE=$buildType `
             -DBUILD_SHARED_LIBS=ON `
             -DGIT_SHA=$gitSha `
-            -Dtest_repo_ENABLE_COVERAGE=$enableCoverage
+            -Dnetxten_ENABLE_COVERAGE=$enableCoverage
     }
     elseif ($ARCH -eq "x64") {
         cmake -S test_repo -B $BuildDir `
-            -Dtest_repo_PACKAGING_MAINTAINER_MODE=$maintainerMode `
+            -Dnetxten_PACKAGING_MAINTAINER_MODE=$maintainerMode `
             -G "Visual Studio 17 2022" `
             -DCMAKE_BUILD_TYPE=$buildType `
             -DBUILD_SHARED_LIBS=ON `
             -DGIT_SHA=$gitSha `
-            -Dtest_repo_ENABLE_COVERAGE=$enableCoverage
+            -Dnetxten_ENABLE_COVERAGE=$enableCoverage
     }
     else {
         Write-Host "Unsupported architecture: $ARCH"

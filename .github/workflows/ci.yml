@@ -166,11 +166,11 @@ jobs:
           Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
           .\scripts\make_windows.ps1 `
             -arch ${{ matrix.architecture }} `
-            -build-type ${{ matrix.build_type }} `
-            -maintainer-mode ${{ matrix.packaging_maintainer_mode }} `
-            -enable-coverage ${{ matrix.build_type == 'Debug' }} `
-            -git-sha ${{ github.sha }} \
-            -build-dir ${{ env.BUILD_DIR }}
+            -buildType ${{ matrix.build_type }} `
+            -maintainerMode ${{ matrix.packaging_maintainer_mode }} `
+            -enableCoverage ${{ matrix.build_type == 'Debug' }} `
+            -gitSha ${{ github.sha }} \
+            -buildDir ${{ env.BUILD_DIR }}
 
       - name: Build (macOS)
         if: matrix.os == 'macos-latest'
