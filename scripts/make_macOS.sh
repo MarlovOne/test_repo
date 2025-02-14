@@ -75,7 +75,7 @@ rm -rf artifacts/macos
 
 # Configure the project with CMake
 cmake \
-   -S api \
+   -S test_repo \
    -B "$BUILD_DIR" \
    -DBUILD_SHARED_LIBS=OFF \
    -Dnetxten_ENABLE_IPO=OFF \

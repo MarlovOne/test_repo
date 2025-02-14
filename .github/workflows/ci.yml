@@ -176,7 +176,6 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           ./scripts/make_macos.sh \
-            --arch ${{ matrix.architecture }} \
             --build-type ${{ matrix.build_type }} \
             --maintainer-mode ${{ matrix.packaging_maintainer_mode }} \
             --enable-coverage ${{ matrix.build_type == 'Debug' }} \

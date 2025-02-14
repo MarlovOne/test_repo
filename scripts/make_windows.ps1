@@ -30,6 +30,8 @@ param(
 if ($arch) {
     if ($arch -eq "aarch64") {
         $ARCHS = @("x64_arm64")
+    } elseif ($arch -eq "x86_64") {
+        $ARCHS = @("x64")
     }
     else {
         $ARCHS = @($arch)
@@ -73,7 +75,7 @@ foreach ($ARCH in $ARCHS) {
     Remove-Item $tempFile
 
     if ($ARCH -eq "x64_arm64") {
-        cmake -S api -B $BuildDir `
+        cmake -S test_repo -B $BuildDir `
             -Dnetxten_PACKAGING_MAINTAINER_MODE=$maintainerMode `
             -G "Visual Studio 17 2022" `
             -A ARM64 `
@@ -86,7 +88,7 @@ foreach ($ARCH in $ARCHS) {
             -Dnetxten_ENABLE_COVERAGE=$enableCoverage
     }
     elseif ($ARCH -eq "x64") {
-        cmake -S api -B $BuildDir `
+        cmake -S test_repo -B $BuildDir `
             -Dnetxten_PACKAGING_MAINTAINER_MODE=$maintainerMode `
             -G "Visual Studio 17 2022" `
             -DCMAKE_BUILD_TYPE=$buildType `
