@@ -64,7 +64,7 @@ libtool -static -o artifacts/ios/lib/libsample_library_combined.a  \
 
 xcodebuild \
     -create-xcframework \
-    -library artifacts/ios/lib/libsample_library.a \
+    -library artifacts/ios/lib/libsample_library_combined.a \
     -headers artifacts/ios/include \
     -output artifacts/ios/libsample_library.xcframework
  
