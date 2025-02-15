@@ -262,6 +262,7 @@ jobs:
           echo "APP_PATH=app/build/macos/Build/Products/${{ matrix.build_type }}" >> $GITHUB_ENV
 
       - name: Package app into zip
+        if: ${{ !contains(matrix.os, 'windows') }}
         shell: bash
         run: |
           cd ${{ env.APP_PATH }}
@@ -270,6 +271,18 @@ jobs:
           zip -r "$ZIP_FILE" *
           ls -lh "$ZIP_FILE"
       
+      - name: Package app into zip (windows, PowerShell)
+        if: ${{ contains(matrix.os, 'windows') }}
+        shell: pwsh
+        env:
+          APP_PATH: ${{ env.APP_PATH }}
+        run: |
+          Set-Location $env:APP_PATH
+          $TAG = ($env:GITHUB_REF -split "/")[-1]
+          $ZIP_FILE = "${{ env.PROJECT_NAME }}-windows-${{ matrix.architecture}}-${{ matrix.build_type }}-$TAG.zip"
+          Compress-Archive -Path "$env:APP_PATH\*" -DestinationPath $ZIP_FILE
+          Get-ChildItem $ZIP_FILE | Format-Table Name, Length
+
       - name: Publish Tagged Release (App)
         if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         uses: softprops/action-gh-release@v2
