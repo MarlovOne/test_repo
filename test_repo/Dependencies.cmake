@@ -20,7 +20,7 @@ macro(test_repo_setup_dependencies)
     set(OpenCV_DIR ${CPM_PACKAGE_opencv-staticlib_SOURCE_DIR}/${CMAKE_SYSTEM_PROCESSOR}/lib/cmake/opencv4)
   elseif(ANDROID)
     # Run scripts/install_deps_android.sh to install OpenCV
-    set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../install/android/opencv/OpenCV-android-sdk/sdk/native/jni)
+    set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../install/Android/opencv/OpenCV-android-sdk/sdk/native/jni)
   elseif(WIN32)
     cpmaddpackage("gh:MarlovOne/opencv-staticlib#windows-4.11")
     set(OpenCV_DIR
