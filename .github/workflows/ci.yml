@@ -162,11 +162,13 @@ jobs:
       
       - name: Build (Windows)
         if: matrix.os == 'windows-latest'
+        # A Note - OpenCV libraries are built in Release, thus the rest of the stuff
+        # needs to be in a Release build as well, otherwise linking will fail
         run: |
           Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
           .\scripts\make_windows.ps1 `
             -arch ${{ matrix.architecture }} `
-            -buildType ${{ matrix.build_type }} `
+            -buildType Release `
             -maintainerMode ${{ matrix.packaging_maintainer_mode }} `
             -enableCoverage ${{ matrix.build_type == 'Debug' }} `
             -gitSha ${{ github.sha }} `
