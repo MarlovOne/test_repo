@@ -111,7 +111,8 @@ cmake \
 mkdir -p artifacts/ios
 cmake \
     --install "$BUILD_DIR" \
-    --prefix $(realpath ./artifacts/ios)
+    --prefix $(realpath ./artifacts/ios) \
+    --config ${BUILD_TYPE}
 
 # Merge the static libraries
 libtool -static -o artifacts/ios/lib/libsample_library_combined.a  \
