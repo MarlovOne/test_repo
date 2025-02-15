@@ -225,6 +225,8 @@ jobs:
         with:
           flutter-version: '3.27.4'
           channel: 'stable'
+      
+      - name: Install Flutter Dependencies
         run: |
           cd blabla
           flutter pub get
