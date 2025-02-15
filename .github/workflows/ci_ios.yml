@@ -87,3 +87,18 @@ jobs:
             --${{ matrix.build_type == 'Release' && 'release' || 'debug' }}  \
             --verbose \
             --no-codesign
+
+      - name: Package Runner.app into zip
+        run: |
+          cd app/build/ios/iphoneos
+          TAG="${GITHUB_REF##*/}"
+          ZIP_FILE="${{ env.PROJECT_NAME }}-iOS-arm64-${{ matrix.build_type }}-${TAG}.zip"
+          zip -r "$ZIP_FILE" Runner.app
+          ls -lh "$ZIP_FILE"
+
+      - name: Publish Tagged Release (App)
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GH_PAT }}
+          files: |
+            app/build/ios/iphoneos/*-*${{ matrix.build_type }}*-*.*

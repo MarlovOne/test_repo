@@ -233,7 +233,7 @@ jobs:
           dart run ffigen --config ffigen.yaml
 
       - name: Build App (Linux)
-        if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'ubuntu') }}
+        if: ${{ contains(matrix.os, 'ubuntu') }}
         env:
           PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
         run: |
@@ -242,11 +242,11 @@ jobs:
           flutter pub get
           flutter build linux \
             --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
-            --verbose
+            --verbose \
             --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
 
       - name: Build App (Windows)
-        if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'windows') }}
+        if: ${{ matrix.architecture == 'x86_64' && contains(matrix.os, 'windows') }}
         run: |
           cd app
           flutter pub get
