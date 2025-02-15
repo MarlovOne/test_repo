@@ -86,7 +86,7 @@ mkdir -p "$BUILD_DIR"
 mkdir -p ./install/ios
 mkdir -p ./artifacts/ios
 
-# Build the project using CMake with the Xcode generator
+# Configure the project with CMake using the Xcode generator
 cmake \
     -S test_repo \
     -B "$BUILD_DIR" \
@@ -100,9 +100,11 @@ cmake \
     -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
     -DGIT_SHA=${GIT_SHA}
 
+# Build the project
 cmake \
     --build "$BUILD_DIR" \
-    --config ${BUILD_TYPE}
+    --config ${BUILD_TYPE} \
+    --verbose
 
 # Install the project
 mkdir -p artifacts/ios
