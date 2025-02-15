@@ -92,11 +92,11 @@ for ARCH in "${ARCHS[@]}"; do
     # Use provided BUILD_DIR if available; otherwise, default to build/android/<arch>
     if [[ -z "${BUILD_DIR}" ]]; then
         BUILD_DIR="$PWD/build/android/${ARCH}"
-    else
+    fi
 
     # Build the project
     cmake \
-        -S api \
+        -S test_repo \
         -B "${BUILD_DIR}" \
         -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \
         -DANDROID_ABI="${ARCH}" \
