@@ -10,6 +10,11 @@ macro(test_repo_setup_dependencies)
     cpmaddpackage("gh:catchorg/Catch2@3.3.2")
   endif()
 
+  # TODO(lmark): This if a forked dependency, move it to Marcus after
+  if(NOT CPPYSTRUCT_SOURCE_DIR)
+    cpmaddpackage("gh:MarlovOne/cppystruct#master")
+  endif()
+
   if(NOT EIGEN_FOUND)
     cpmaddpackage("gl:libeigen/eigen#3.4")
   endif()

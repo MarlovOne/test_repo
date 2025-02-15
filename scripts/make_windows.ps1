@@ -5,21 +5,21 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("x86_64", "aarch64", "x64", "arm64")]
+    [ValidateSet("x86_64", "aarch64", "x64", "x64_arm64")]
     [string]$arch,
 
     [Parameter(Mandatory = $false)]
     [string]$buildType = "Release",
 
     [Parameter(Mandatory = $false)]
-    [ValidateSet("ON","OFF")]
+    [ValidateSet("ON", "OFF")]
     [string]$maintainerMode = "ON",
 
     [Parameter(Mandatory = $false)]
     [string]$gitSha = "",
 
     [Parameter(Mandatory = $false)]
-    [ValidateSet("TRUE","FALSE")]
+    [ValidateSet("TRUE", "FALSE")]
     [string]$enableCoverage = "FALSE",
 
     [Parameter(Mandatory = $false)]
@@ -30,7 +30,8 @@ param(
 if ($arch) {
     if ($arch -eq "aarch64") {
         $ARCHS = @("x64_arm64")
-    } elseif ($arch -eq "x86_64") {
+    }
+    elseif ($arch -eq "x86_64") {
         $ARCHS = @("x64")
     }
     else {
@@ -38,7 +39,7 @@ if ($arch) {
     }
 }
 else {
-    $ARCHS = @("x64", "x64_arm64")
+    $ARCHS = @("x64")
 }
 
 # Get the directory containing this script
