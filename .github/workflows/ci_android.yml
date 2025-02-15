@@ -138,6 +138,6 @@ jobs:
           cd app
           flutter pub get
           flutter build apk \
-            --release \
+            --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
             --verbose
             --target-platform ${{ matrix.arch == 'arm64-v8a' && 'android-arm64' || matrix.arch == 'x86_64' && 'android-x64' || matrix.arch == 'armeabi-v7a' && 'android-arm' || 'android-x86' }}

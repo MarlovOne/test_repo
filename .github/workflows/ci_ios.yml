@@ -85,6 +85,6 @@ jobs:
           cd app
           flutter pub get
           flutter build ios \
-            --${{ matrix.build_type | lower }} \
+            --${{ matrix.build_type == 'Release' && 'release' || 'debug' }}  \
             --verbose \
             --no-codesign

@@ -239,7 +239,7 @@ jobs:
           cd app
           flutter pub get
           flutter build linux \
-            --${{ matrix.build_type | lower }} \
+            --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
             --verbose \
             --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
 
@@ -255,4 +255,4 @@ jobs:
         run: |
           cd app
           flutter pub get
-          flutter build macos --${{ matrix.build_type | lower }} --verbose
+          flutter build macos --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} --verbose
