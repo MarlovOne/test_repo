@@ -83,21 +83,22 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Push to parent directory of scripts folder
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
+# Use provided BUILD_DIR if available; otherwise, default to build/android/<arch>
+if [[ -z "${BUILD_DIR}" ]]; then
+    BUILD_DIR="$PWD/build/android"
+fi
+
 # Remove previous build and artifacts
-rm -rf build/android
+rm -rf $BUILD_DIR
 rm -rf artifacts/android
 
 for ARCH in "${ARCHS[@]}"; do
     
-    # Use provided BUILD_DIR if available; otherwise, default to build/android/<arch>
-    if [[ -z "${BUILD_DIR}" ]]; then
-        BUILD_DIR="$PWD/build/android/${ARCH}"
-    fi
-
+    
     # Build the project
     cmake \
         -S test_repo \
-        -B "${BUILD_DIR}" \
+        -B "${BUILD_DIR}/${ARCH}" \
         -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \
         -DANDROID_ABI="${ARCH}" \
         -DANDROID_PLATFORM=21 \
@@ -108,14 +109,14 @@ for ARCH in "${ARCHS[@]}"; do
         -DGIT_SHA:STRING=${GIT_SHA}
         
     cmake \
-        --build "${BUILD_DIR}" \
+        --build "${BUILD_DIR}/${ARCH}" \
         --config ${BUILD_TYPE} \
         --verbose
 
     # Install the project
     mkdir -p artifacts/android/${ARCH}
     cmake \
-        --install "${BUILD_DIR}" \
+        --install "${BUILD_DIR}/${ARCH}" \
         --prefix "$(realpath ./artifacts/android/${ARCH})"
 
     # Copy the artifact to the ffi plugin

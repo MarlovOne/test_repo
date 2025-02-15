@@ -10,7 +10,7 @@ on:
 
 jobs:
   Test_android:
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.arch}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -28,9 +28,6 @@ jobs:
         compiler:
           # you can specify the version after `-` like "llvm-18.1.8".
           - gcc
-        arch:
-          - arm64-v8a
-          - x86_64
         build_type:
           - Release
           - Debug
@@ -94,13 +91,13 @@ jobs:
           ndk-version: r26
           add-to-path: true
 
+      # Note: Need to build all of the architectures for the app flutter run to work
       - name: Configure CMake
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           ./scripts/install_deps_android.sh
           ./scripts/make_android.sh \
-            --arch ${{ matrix.arch }} \
             --build-type ${{ matrix.build_type }} \
             --maintainer-mode ${{ matrix.packaging_maintainer_mode }} \
             --git-sha ${{ github.sha }} \
@@ -140,4 +137,3 @@ jobs:
           flutter build apk \
             --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
             --verbose
-            --target-platform ${{ matrix.arch == 'arm64-v8a' && 'android-arm64' || matrix.arch == 'x86_64' && 'android-x64' || matrix.arch == 'armeabi-v7a' && 'android-arm' || 'android-x86' }}
