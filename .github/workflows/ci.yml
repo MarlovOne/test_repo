@@ -238,24 +238,22 @@ jobs:
           PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
         run: |
           sudo apt-get update && sudo apt-get -y install libgtk-3-0 libgtk-3-dev
-          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
-          flutter doctor
-          $(pkg-config --libs gtk+-3.0) || true
-          $(pkg-config --list-all | grep gtk) || true
-          $(pkg-config --exists --print-errors 'gtk+-3.0') || true
           cd app
           flutter pub get
           flutter build linux \
             --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
-            --verbose
-#--target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
+            --verbose \
+            --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}
+          echo "APP_PATH=app/build/linux" >> $GITHUB_ENV
 
       - name: Build App (Windows)
         if: ${{ matrix.architecture == 'x86_64' && contains(matrix.os, 'windows') }}
+        shell: powershell
         run: |
           cd app
           flutter pub get
           flutter build windows --release --verbose
+          echo "APP_PATH=app/build/windows" >> $GITHUB_ENV
 
       - name: Build App (macOS)
         if: ${{ contains(matrix.os, 'macos') }}
@@ -263,3 +261,29 @@ jobs:
           cd app
           flutter pub get
           flutter build macos --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} --verbose
+          echo "APP_PATH=app/build/macos" >> $GITHUB_ENV
+
+      - name: Package Runner.app into zip (not windows)
+        if: ${{ !contains(matrix.os, 'windows') }}
+        run: |
+          cd ${{ env.APP_PATH }}
+          TAG="${GITHUB_REF##*/}"
+          ZIP_FILE="${{ env.PROJECT_NAME }}-iOS-arm64-${{ matrix.build_type }}-${TAG}.zip"
+          zip -r "$ZIP_FILE" Runner.app
+          ls -lh "$ZIP_FILE"
+      
+      - name: Package Runner.app into zip (not windows)
+        if: ${{ contains(matrix.os, 'windows') }}
+        run: |
+          cd ${{ env.APP_PATH }}
+          TAG="${GITHUB_REF##*/}"
+          ZIP_FILE="${{ env.PROJECT_NAME }}-iOS-arm64-${{ matrix.build_type }}-${TAG}.zip"
+          powershell.exe -Command "Compress-Archive -Path '${APP_PATH}\\*' -DestinationPath '${ZIP_FILE}'"
+
+      - name: Publish Tagged Release (App)
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GH_PAT }}
+          files: |
+            ${{ env.APP_PATH }}/*-*${{ matrix.build_type }}*-*.*
