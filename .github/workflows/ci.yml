@@ -268,16 +268,16 @@ jobs:
         run: |
           cd ${{ env.APP_PATH }}
           TAG="${GITHUB_REF##*/}"
-          ZIP_FILE="${{ env.PROJECT_NAME }}-iOS-arm64-${{ matrix.build_type }}-${TAG}.zip"
-          zip -r "$ZIP_FILE" Runner.app
+          ZIP_FILE="${{ env.PROJECT_NAME }}-${{ matrix.os }}-${{ matrix.architecture }}-${{ matrix.build_type }}-${TAG}.zip"
+          zip -r "$ZIP_FILE" *
           ls -lh "$ZIP_FILE"
       
-      - name: Package Runner.app into zip (not windows)
+      - name: Package Runner.app into zip (windows)
         if: ${{ contains(matrix.os, 'windows') }}
         run: |
           cd ${{ env.APP_PATH }}
           TAG="${GITHUB_REF##*/}"
-          ZIP_FILE="${{ env.PROJECT_NAME }}-iOS-arm64-${{ matrix.build_type }}-${TAG}.zip"
+          ZIP_FILE="${{ env.PROJECT_NAME }}-${{ matrix.os }}-${{ matrix.architecture}}-${{ matrix.build_type }}-${TAG}.zip"
           powershell.exe -Command "Compress-Archive -Path '${APP_PATH}\\*' -DestinationPath '${ZIP_FILE}'"
 
       - name: Publish Tagged Release (App)
