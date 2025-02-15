@@ -139,6 +139,7 @@ jobs:
             --verbose
       
       - name: Package Runner.apk into zip
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         run: |
           cd app/build/app/outputs/flutter-apk/
           TAG="${GITHUB_REF##*/}"
