@@ -281,7 +281,6 @@ jobs:
           $TAG = ($env:GITHUB_REF -split "/")[-1]
           $ZIP_FILE = "${{ env.PROJECT_NAME }}-windows-${{ matrix.architecture}}-${{ matrix.build_type }}-$TAG.zip"
           Compress-Archive -Path "$env:APP_PATH\*" -DestinationPath $ZIP_FILE
-          Get-ChildItem $ZIP_FILE | Format-Table Name, Length
 
       - name: Publish Tagged Release (App)
         if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
