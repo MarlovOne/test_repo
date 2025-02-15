@@ -98,7 +98,8 @@ cmake \
     -DBUILD_SHARED_LIBS=OFF \
     -Dtest_repo_ENABLE_IPO=OFF \
     -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
-    -DGIT_SHA=${GIT_SHA}
+    -DGIT_SHA=${GIT_SHA} \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 
 # Build the project
 cmake \
