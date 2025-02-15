@@ -228,20 +228,22 @@ jobs:
       
       - name: Install Flutter Dependencies
         run: |
-          sudo apt -y install libgtk-3-0
           cd blabla
           flutter pub get
           dart run ffigen --config ffigen.yaml
 
       - name: Build App (Linux)
-        if: ${{ contains(matrix.os, 'ubuntu') }}
+        if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'ubuntu') }}
+        env:
+          PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
         run: |
+          sudo apt-get update && sudo apt-get -y install libgtk-3-0
           cd app
           flutter pub get
           flutter build linux \
             --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
-            --verbose \
-            --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
+            --verbose
+# --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
 
       - name: Build App (Windows)
         if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'windows') }}
