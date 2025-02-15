@@ -119,7 +119,7 @@ for ARCH in "${ARCHS[@]}"; do
         --prefix "$(realpath ./artifacts/android/${ARCH})"
 
     # Copy the artifact to the ffi plugin
-    cp -rf ./artifacts/android/${ARCH}/* ./eperlium/android/lib/${ARCH}/
+    cp -rf ./artifacts/android/${ARCH}/* ./blabla/android/lib/${ARCH}/
 
 done
 
