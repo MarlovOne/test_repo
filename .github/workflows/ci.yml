@@ -246,29 +246,12 @@ jobs:
 
       - name: Build App (Windows)
         if: ${{ matrix.architecture == 'x86_64' && contains(matrix.os, 'windows') }}
-        shell: pwsh
-        env:
-          APP_PATH: ${{ env.APP_PATH }}
-          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+        shell: powershell
         run: |
-          # Change to the directory containing the app
-          Set-Location $env:APP_PATH
-          
-          # Extract the tag from GITHUB_REF (e.g., refs/tags/v1.0.0 -> v1.0.0)
-          $TAG = ($env:GITHUB_REF -split "/")[-1]
-          
-          # Construct the zip file name
-          $ZIP_FILE = "${env:PROJECT_NAME}-windows-${{ matrix.architecture }}-${{ matrix.build_type }}-$TAG.zip"
-          Write-Host "Packaging into: $ZIP_FILE"
-          
-          # Get all files recursively in the current directory, excluding any that match the locked file pattern
-          $files = Get-ChildItem -Path . -Recurse -File | Where-Object { $_.FullName -notmatch "runner-provisioner-Windows\\provisioner.log" }
-          
-          # Use Compress-Archive with the filtered list of files
-          Compress-Archive -Path ($files | ForEach-Object { $_.FullName }) -DestinationPath $ZIP_FILE
-          
-          # List the created zip file
-          Get-ChildItem $ZIP_FILE | Format-Table Name, Length
+          cd app
+          flutter pub get
+          flutter build windows --release --verbose
+          echo "APP_PATH=app\build\windows" >> $GITHUB_ENV
 
       - name: Build App (macOS)
         if: ${{ contains(matrix.os, 'macos') }}
@@ -293,11 +276,26 @@ jobs:
         shell: pwsh
         env:
           APP_PATH: ${{ env.APP_PATH }}
+          PROJECT_NAME: ${{ env.PROJECT_NAME }}
         run: |
+          # Change to the directory containing the app
           Set-Location $env:APP_PATH
+          
+          # Extract the tag from GITHUB_REF (e.g., refs/tags/v1.0.0 -> v1.0.0)
           $TAG = ($env:GITHUB_REF -split "/")[-1]
-          $ZIP_FILE = "${{ env.PROJECT_NAME }}-windows-${{ matrix.architecture}}-${{ matrix.build_type }}-$TAG.zip"
-          Compress-Archive -Path "$env:APP_PATH\*" -DestinationPath $ZIP_FILE
+          
+          # Construct the zip file name
+          $ZIP_FILE = "${env:PROJECT_NAME}-windows-${{ matrix.architecture }}-${{ matrix.build_type }}-$TAG.zip"
+          Write-Host "Packaging into: $ZIP_FILE"
+          
+          # Get all files recursively in the current directory, excluding any that match the locked file pattern
+          $files = Get-ChildItem -Path . -Recurse -File | Where-Object { $_.FullName -notmatch "runner-provisioner-Windows\\provisioner.log" }
+          
+          # Use Compress-Archive with the filtered list of files
+          Compress-Archive -Path ($files | ForEach-Object { $_.FullName }) -DestinationPath $ZIP_FILE
+          
+          # List the created zip file
+          Get-ChildItem $ZIP_FILE | Format-Table Name, Length
 
       - name: Publish Tagged Release (App)
         if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
