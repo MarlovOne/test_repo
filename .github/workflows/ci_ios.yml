@@ -84,4 +84,7 @@ jobs:
         run: |
           cd app
           flutter pub get
-          flutter build ios --release --verbose --no-codesign
+          flutter build ios \
+            --${{ matrix.build_type | lower }} \
+            --verbose \
+            --no-codesign

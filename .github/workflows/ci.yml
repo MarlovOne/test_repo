@@ -228,6 +228,7 @@ jobs:
       
       - name: Install Flutter Dependencies
         run: |
+          sudo apt -y install libgtk-3-0
           cd blabla
           flutter pub get
           dart run ffigen --config ffigen.yaml
@@ -238,7 +239,7 @@ jobs:
           cd app
           flutter pub get
           flutter build linux \
-            --release \
+            --${{ matrix.build_type | lower }} \
             --verbose \
             --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
 
@@ -254,4 +255,4 @@ jobs:
         run: |
           cd app
           flutter pub get
-          flutter build macos --release --verbose
+          flutter build macos --${{ matrix.build_type | lower }} --verbose
