@@ -56,7 +56,7 @@ foreach ($ARCH in $ARCHS) {
     }
     
     $InstallDir = "$PWD\install\Windows\backend\$ARCH"
-    $targetPath = "eperlium\windows\arch\$ARCH"
+    $targetPath = "blabla\windows\arch\$ARCH"
 
     # Remove previous build and artifacts
     Remove-Item -Recurse -Force $BuildDir -ErrorAction SilentlyContinue

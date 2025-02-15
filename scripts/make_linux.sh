@@ -100,7 +100,7 @@ for ARCH in "${ARCHS[@]}"; do
   fi
   
   rm -rf $BUILD_DIR
-  rm -rf eperlium/linux/arch/${ARCH}/
+  rm -rf blabla/linux/arch/${ARCH}/
 
   # Set the toolchain file for cross-compilation
   CMAKE_TOOLCHAIN_FILE=""
@@ -130,8 +130,8 @@ for ARCH in "${ARCHS[@]}"; do
       --install "${BUILD_DIR}" \
       --prefix $(realpath ./artifacts/Linux/backend/${ARCH})
 
-  mkdir -p ./eperlium/linux/arch/${ARCH}
-  cp -rf ./artifacts/Linux/backend/${ARCH}/* ./eperlium/linux/arch/${ARCH}/
+  mkdir -p ./blabla/linux/arch/${ARCH}
+  cp -rf ./artifacts/Linux/backend/${ARCH}/* ./blabla/linux/arch/${ARCH}/
 
 done
 
