@@ -169,7 +169,7 @@ jobs:
             -buildType ${{ matrix.build_type }} `
             -maintainerMode ${{ matrix.packaging_maintainer_mode }} `
             -enableCoverage ${{ matrix.build_type == 'Debug' }} `
-            -gitSha ${{ github.sha }} \
+            -gitSha ${{ github.sha }} `
             -buildDir ${{ env.BUILD_DIR }}
 
       - name: Build (macOS)
