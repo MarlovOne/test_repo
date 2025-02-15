@@ -238,9 +238,9 @@ jobs:
           PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
         run: |
           sudo apt-get update && sudo apt-get -y install libgtk-3-0
-          pkg-config --libs gtk+-3.0
           flutter doctor
-          pkg-config --list-all |grep gtk
+          pkg-config --libs gtk+-3.0 || true
+          pkg-config --list-all | grep gtk
           pkg-config --exists --print-errors 'gtk+-3.0'
           cd app
           flutter pub get
