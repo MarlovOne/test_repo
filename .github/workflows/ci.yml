@@ -242,8 +242,8 @@ jobs:
           flutter pub get
           flutter build linux \
             --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} \
-            --verbose \
-            --target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
+            --verbose
+#--target-platform ${{ matrix.architecture == 'arm64' && 'linux-arm64' || 'linux-x64' }}  
 
       - name: Build App (Windows)
         if: ${{ matrix.architecture == 'x86_64' && contains(matrix.os, 'windows') }}

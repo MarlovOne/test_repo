@@ -140,15 +140,16 @@ jobs:
       
       - name: Package Runner.apk into zip
         run: |
-          cd build/app/outputs/flutter-apk/
+          cd app/build/app/outputs/flutter-apk/
           TAG="${GITHUB_REF##*/}"
           ZIP_FILE="${{ env.PROJECT_NAME }}-android-${{ matrix.build_type }}-${TAG}.zip"
           zip -r "$ZIP_FILE" *.apk
           ls -lh "$ZIP_FILE"
 
       - name: Publish Tagged Release (App)
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GH_PAT }}
           files: |
-            build/app/outputs/flutter-apk/*-*${{ matrix.build_type }}*-*.*
+            app/build/app/outputs/flutter-apk/*-*${{ matrix.build_type }}*-*.*

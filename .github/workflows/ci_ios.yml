@@ -89,6 +89,7 @@ jobs:
             --no-codesign
 
       - name: Package Runner.app into zip
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         run: |
           cd app/build/ios/iphoneos
           TAG="${GITHUB_REF##*/}"
@@ -97,6 +98,7 @@ jobs:
           ls -lh "$ZIP_FILE"
 
       - name: Publish Tagged Release (App)
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GH_PAT }}
