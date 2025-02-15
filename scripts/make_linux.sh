@@ -105,7 +105,7 @@ for ARCH in "${ARCHS[@]}"; do
   # Set the toolchain file for cross-compilation
   CMAKE_TOOLCHAIN_FILE=""
   if [ "$ARCH" = "aarch64" ]; then
-    CMAKE_TOOLCHAIN_FILE="-DCMAKE_TOOLCHAIN_FILE=$(pwd)/test_repo/cmake/toolchain/linux-arm64.cmake"
+    CMAKE_TOOLCHAIN_FILE="-DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/toolchain/linux-arm64.cmake"
   fi
 
   # Build the project with additional Git SHA and coverage parameters

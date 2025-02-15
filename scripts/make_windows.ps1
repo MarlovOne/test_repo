@@ -5,7 +5,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("x86_64", "aarch64", "x64", "x64_arm64")]
+    [ValidateSet("x86_64", "aarch64", "x64", "x64_arm64", "arm64")]
     [string]$arch,
 
     [Parameter(Mandatory = $false)]
@@ -28,7 +28,7 @@ param(
 
 # Define architectures: if an architecture was provided, use it; otherwise, use both.
 if ($arch) {
-    if ($arch -eq "aarch64") {
+    if ($arch -eq "aarch64" -or $arch -eq "arm64") {
         $ARCHS = @("x64_arm64")
     }
     elseif ($arch -eq "x86_64") {
@@ -39,7 +39,7 @@ if ($arch) {
     }
 }
 else {
-    $ARCHS = @("x64")
+    $ARCHS = @("x64", "x64_arm64")
 }
 
 # Get the directory containing this script
