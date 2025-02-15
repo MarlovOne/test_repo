@@ -197,7 +197,7 @@ jobs:
         if: runner.os == 'Windows' && matrix.architecture == 'x86_64'
         working-directory: ${{ env.BUILD_DIR }}
         run: |
-          OpenCppCoverage.exe --export_type cobertura:coverage.xml --cover_children -- ctest -C ${{matrix.build_type}}
+          OpenCppCoverage.exe --export_type cobertura:coverage.xml --cover_children -- ctest -C Release
 
       - name: CPack
         if: matrix.build_type == 'Release'
