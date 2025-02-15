@@ -51,7 +51,7 @@ jobs:
             --build-type ${{matrix.build_type}} \
             --maintainer-mode ${{matrix.packaging_maintainer_mode}} \
             --git-sha ${{ github.sha }} \
-            --enable-code-coverage ${{ matrix.build_type == 'Debug' }} \
+            --enable-coverage ${{ matrix.build_type == 'Debug' }} \
             --build-dir ${{ env.BUILD_DIR }}
 
       - name: CPack
