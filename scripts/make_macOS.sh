@@ -118,7 +118,7 @@ xcodebuild \
     -output artifacts/macos/libsample_library.xcframework
 
 # Copy the artifact to the ffi plugin
-rm -rf ./eperlium/macos/libsample_library.xcframework
-cp -rf ./artifacts/macos/libsample_library.xcframework ./eperlium/macos/libsample_library.xcframework
+rm -rf ./blabla/macos/libsample_library.xcframework
+cp -rf ./artifacts/macos/libsample_library.xcframework ./blabla/macos/libsample_library.xcframework
 
 popd > /dev/null

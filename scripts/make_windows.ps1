@@ -2,10 +2,12 @@
 # Get opencv into the environment if it's installed: $env:OpenCV_DIR='C:\tools\opencv\build'
 # Run command: powershell -ExecutionPolicy Bypass -File .\make_windows.ps1
 
+$ErrorActionPreference = "Stop"
+
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("x86_64", "aarch64")]
+    [ValidateSet("x86_64", "aarch64", "x64", "arm64")]
     [string]$arch,
 
     [Parameter(Mandatory = $false)]

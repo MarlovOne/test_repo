@@ -19,7 +19,7 @@ mkdir -p ./artifacts/ios
 
 # Build the project
 cmake \
-    -S api \
+    -S test_repo \
     -B build/ios \
     -G Xcode \
     -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/ios.toolchain.cmake \
@@ -64,7 +64,7 @@ xcodebuild \
     -output artifacts/ios/libsample_library.xcframework
  
 # Copy the artifact to the ffi plugin
-rm -rf ./eperlium/ios/libsample_library.xcframework
-cp -rf ./artifacts/ios/libsample_library.xcframework ./eperlium/ios/libsample_library.xcframework
+rm -rf ./blabla/ios/libsample_library.xcframework
+cp -rf ./artifacts/ios/libsample_library.xcframework ./blabla/ios/libsample_library.xcframework
 
 popd > /dev/null
