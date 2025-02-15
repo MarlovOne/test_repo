@@ -120,3 +120,21 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           files: |
             ${{ env.BUILD_DIR }}/*-*${{ matrix.build_type }}*-*.*
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        if: ${{ matrix.arch == 'x86_64' }}
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+        run: |
+          cd blabla
+          flutter pub get
+          dart run ffigen --config ffigen.yaml
+
+      - name: Build App 
+        if: ${{ matrix.arch == 'x86_64' }}
+        run: |
+          cd app
+          flutter pub get
+          flutter build apk --release --verbose

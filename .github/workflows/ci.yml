@@ -219,3 +219,34 @@ jobs:
           flags: ${{ runner.os }}
           name: ${{ runner.os }}-coverage
           files: ${{ env.BUILD_DIR }}/coverage.xml
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+        run: |
+          cd blabla
+          flutter pub get
+          dart run ffigen --config ffigen.yaml
+
+      - name: Build App (Linux)
+        if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'ubuntu') }}
+        run: |
+          cd app
+          flutter pub get
+          flutter build linux --release --verbose
+      
+      - name: Build App (Windows)
+        if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'windows') }}
+        run: |
+          cd app
+          flutter pub get
+          flutter build windows --release --verbose
+
+      - name: Build App (macOS)
+        if: ${{ matrix.arch == 'x86_64' && contains(matrix.os, 'macos') }}
+        run: |
+          cd app
+          flutter pub get
+          flutter build macos --release --verbose

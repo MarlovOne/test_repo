@@ -67,3 +67,19 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           files: |
             ${{ env.BUILD_DIR }}/*-*${{ matrix.build_type }}*-*.*
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+        run: |
+          cd blabla
+          flutter pub get
+          dart run ffigen --config ffigen.yaml
+
+      - name: Build App
+        run: |
+          cd app
+          flutter pub get
+          flutter build ios --release --verbose --no-codesign
