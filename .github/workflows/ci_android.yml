@@ -104,19 +104,19 @@ jobs:
             --enable-coverage OFF \
             --build-dir ${{ env.BUILD_DIR }}
 
-      # - name: CPack
-      #   if: matrix.build_type == 'Release'
-      #   working-directory: ${{ env.BUILD_DIR }}
-      #   run: |
-      #       cpack -C ${{matrix.build_type}} -G ${{ contains(matrix.os, 'windows') && 'ZIP' || 'TBZ2' }}
+      - name: CPack
+        if: matrix.build_type == 'Release'
+        working-directory: ${{ env.BUILD_DIR }}/x86_64
+        run: |
+            cpack -C ${{matrix.build_type}} -G ${{ contains(matrix.os, 'windows') && 'ZIP' || 'TBZ2' }}
 
-      # - name: Publish Tagged Release
-      #   uses: softprops/action-gh-release@v2
-      #   if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
-      #   with:
-      #     token: ${{ secrets.GH_PAT }}
-      #     files: |
-      #       ${{ env.BUILD_DIR }}/*-*${{ matrix.build_type }}*-*.*
+      - name: Publish Tagged Release
+        uses: softprops/action-gh-release@v2
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
+        with:
+          token: ${{ secrets.GH_PAT }}
+          files: |
+            ${{ env.BUILD_DIR }}/x86_64/*-*${{ matrix.build_type }}*-*.*
 
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
