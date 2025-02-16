@@ -118,6 +118,7 @@ for ARCH in "${ARCHS[@]}"; do
     mkdir -p artifacts/android/${ARCH}
     cmake \
         --install "${BUILD_DIR}/${ARCH}" \
+        --config ${BUILD_TYPE} \
         --prefix "$(realpath ./artifacts/android/${ARCH})"
 
     # Copy the artifact to the ffi plugin
