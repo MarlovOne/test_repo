@@ -256,8 +256,7 @@ jobs:
           cd app
           flutter pub get
           flutter build windows --release --verbose
-          $ARCH="${{ matrix.architecture == 'arm64' && 'arm64' || 'x64' }}"
-          echo "APP_PATH=app/build/windows/${env:ARCH}/runner/${{ matrix.build_type }}" >> $env:GITHUB_ENV
+          echo "APP_PATH=app/build/windows/x64/runner/${{ matrix.build_type }}" >> $env:GITHUB_ENV
 
       - name: Build App (macOS)
         if: ${{ contains(matrix.os, 'macos') }}
