@@ -264,13 +264,14 @@ jobs:
           flutter build macos --${{ matrix.build_type == 'Release' && 'release' || 'debug' }} --verbose
           echo "APP_PATH=app/build/macos/Build/Products/${{ matrix.build_type }}/${{ env.PROJECT_NAME }}.app" >> $GITHUB_ENV
 
+      # Cross-build from Linux x64 host to Linux arm64 target is not currently supported.
       - name: Package app into zip
-        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' && !contains(matrix.os, 'windows') }}
+        if: ${{ matrix.is_tagged && matrix.build_type == 'Release' && matrix.architecture == 'x86_64' && !contains(matrix.os, 'windows') }}
         shell: bash
         run: |
           cd ${{ env.APP_PATH }}
           TAG="${GITHUB_REF##*/}"
-          ZIP_FILE="${{ env.PROJECT_NAME }}-${{ matrix.os }}-${a-${{ matrix.build_type }}-${TAG}.zip"
+          ZIP_FILE="${{ env.PROJECT_NAME }}-${{ matrix.os }}-${{ matrix.build_type }}-${TAG}.zip"
           zip -r "$ZIP_FILE" *
           ls -lh "$ZIP_FILE"
       
