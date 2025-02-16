@@ -251,7 +251,7 @@ jobs:
           cd app
           flutter pub get
           flutter build windows --release --verbose
-          echo "APP_PATH=app/build/windows" >> $GITHUB_ENV
+          echo "APP_PATH=app/build/windows" >> $env:GITHUB_ENV
 
       - name: Build App (macOS)
         if: ${{ contains(matrix.os, 'macos') }}
@@ -274,16 +274,12 @@ jobs:
       - name: Package app into zip (windows, PowerShell)
         if: ${{ contains(matrix.os, 'windows') }}
         shell: pwsh
-        env:
-          APP_PATH: ${{ env.APP_PATH }}
-          PROJECT_NAME: ${{ env.PROJECT_NAME }}
         run: |
           Write-Host "Changing to APP_PATH: $env:APP_PATH"
           Set-Location $env:APP_PATH
           $TAG = ($env:GITHUB_REF -split "/")[-1]
           $ZIP_FILE = "${env:PROJECT_NAME}-windows-${{ matrix.architecture }}-${{ matrix.build_type }}-$TAG.zip"
           Write-Host "Packaging into: $ZIP_FILE"
-          # Compress all contents of the current directory into the zip file
           Compress-Archive -Path .\* -DestinationPath $ZIP_FILE -Force
           Get-ChildItem $ZIP_FILE | Format-Table Name, Length
 
