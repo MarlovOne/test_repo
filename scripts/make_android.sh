@@ -97,6 +97,7 @@ for ARCH in "${ARCHS[@]}"; do
     
     # Build the project
     cmake \
+        -G "Ninja Multi-Config" \
         -S test_repo \
         -B "${BUILD_DIR}/${ARCH}" \
         -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \

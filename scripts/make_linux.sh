@@ -110,6 +110,7 @@ for ARCH in "${ARCHS[@]}"; do
 
   # Build the project with additional Git SHA and coverage parameters
   cmake \
+      -G "Ninja Multi-Config" \
       -S test_repo \
       -B "${BUILD_DIR}" \
       -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \

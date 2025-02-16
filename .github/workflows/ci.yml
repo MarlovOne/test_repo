@@ -1,7 +1,5 @@
 name: CI
 on:
-  # TODO(lmark) temporarily enable pull request
-  pull_request:
   push:
     tags:
       - '*'

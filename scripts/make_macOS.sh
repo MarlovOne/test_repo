@@ -78,14 +78,15 @@ rm -rf artifacts/macos
 
 # Configure the project with CMake
 cmake \
-   -S test_repo \
-   -B "$BUILD_DIR" \
-   -DBUILD_SHARED_LIBS=OFF \
-   -Dtest_repo_ENABLE_IPO=OFF \
-   -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
-   -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \
-   -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
-   -DGIT_SHA:STRING=${GIT_SHA}
+  -G Xcode \
+  -S test_repo \
+  -B "$BUILD_DIR" \
+  -DBUILD_SHARED_LIBS=OFF \
+  -Dtest_repo_ENABLE_IPO=OFF \
+  -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
+  -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \
+  -Dtest_repo_ENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE} \
+  -DGIT_SHA:STRING=${GIT_SHA}
 
 # Build the project
 cmake \
