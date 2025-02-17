@@ -128,8 +128,8 @@ for ARCH in "${ARCHS[@]}"; do
   # Install the project
   mkdir -p artifacts/Linux/backend/${ARCH}
   cmake \
-      --config ${BUILD_TYPE} \
       --install "${BUILD_DIR}" \
+      --config ${BUILD_TYPE} \
       --install-prefix $(realpath ./artifacts/Linux/backend/${ARCH})
 
   mkdir -p ./blabla/linux/arch/${ARCH}

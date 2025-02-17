@@ -45,6 +45,22 @@ jobs:
         with:
           envFile: '.github/constants.env'
 
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          # It is important not to install llvm on macos, but use the one that comes with the system
+          # Otherwise weird dyld errors will happen
+          compiler: ${{ !(contains(matrix.os, 'macos') && contains(matrix.compiler, 'llvm')) && matrix.compiler || '' }}
+          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+          cmake: true
+          ninja: true
+          vcpkg: false
+          ccache: true
+          clangtidy: ${{ env.LLVM_VERSION }}
+          cppcheck: true
+          gcovr: true
+          opencppcoverage: true
+
       - name: Configure CMake
         run: |
           ./scripts/make_iOS.sh \

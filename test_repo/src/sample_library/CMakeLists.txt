@@ -7,7 +7,7 @@ target_link_libraries(
   PRIVATE test_repo::test_repo_options
           test_repo::test_repo_warnings
           $<BUILD_INTERFACE:${OpenCV_LIBS}>
-          spdlog::spdlog)
+          $<BUILD_INTERFACE:spdlog_header_only>)
 
 target_include_directories(
   sample_library ${WARNING_GUARD}
