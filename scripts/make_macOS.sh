@@ -97,6 +97,7 @@ cmake \
 mkdir -p artifacts/macos
 cmake \
     --install "$BUILD_DIR" \
+    --config ${BUILD_TYPE} \
     --prefix $(realpath ./artifacts/macos)
 
 # TODO(lmark): I don't like the approach of merging the static libraries

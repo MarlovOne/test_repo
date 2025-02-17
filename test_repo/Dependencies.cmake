@@ -20,6 +20,15 @@ macro(test_repo_setup_dependencies)
   endif()
 
   if(NOT TARGET spdlog::spdlog)
+
+    # Install on macos and iOS since we're building static libraries there
+    set(SPDLOG_INSTALL OFF)
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
+       OR IOS
+       OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      set(SPDLOG_INSTALL ON)
+    endif()
+
     cpmaddpackage(
       NAME
       spdlog
@@ -32,7 +41,7 @@ macro(test_repo_setup_dependencies)
       "BUILD_SHARED_LIBS OFF"
       "SPDLOG_BUILD_PIC ON"
       "SPDLOG_ENABLE_PCH ON"
-      "SPDLOG_INSTALL ON")
+      "SPDLOG_INSTALL ${SPDLOG_INSTALL}")
   endif()
 
   # Include OpenCV
