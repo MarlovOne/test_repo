@@ -90,7 +90,6 @@ mkdir -p ./artifacts/ios
 cmake \
     -S test_repo \
     -B "$BUILD_DIR" \
-    -G Xcode \
     -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/ios.toolchain.cmake \
     -DPLATFORM=OS64 \
     -DDEPLOYMENT_TARGET=13.0 \

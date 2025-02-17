@@ -19,6 +19,20 @@ macro(test_repo_setup_dependencies)
     cpmaddpackage("gl:libeigen/eigen#3.4")
   endif()
 
+  if(NOT TARGET spdlog::spdlog)
+    cpmaddpackage(
+      NAME
+      spdlog
+      GIT_TAG
+      v1.15.1
+      GITHUB_REPOSITORY
+      gabime/spdlog
+      OPTIONS
+      "SPDLOG_BUILD_SHARED OFF"
+      "BUILD_SHARED_LIBS OFF"
+      "SPDLOG_BUILD_PIC ON")
+  endif()
+
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     cpmaddpackage("gh:MarlovOne/opencv-staticlib#linux-4.11")

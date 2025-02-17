@@ -1,11 +1,13 @@
-add_library(
-  sample_library
-  sample_library.cpp)
+add_library(sample_library sample_library.cpp)
 
 add_library(test_repo::sample_library ALIAS sample_library)
 
-target_link_libraries(sample_library PRIVATE test_repo::test_repo_options test_repo::test_repo_warnings
-                                             $<BUILD_INTERFACE:${OpenCV_LIBS}>)
+target_link_libraries(
+  sample_library
+  PRIVATE test_repo::test_repo_options
+          test_repo::test_repo_warnings
+          $<BUILD_INTERFACE:${OpenCV_LIBS}>
+          $<BUILD_INTERFACE:spdlog::spdlog>)
 
 target_include_directories(
   sample_library ${WARNING_GUARD}

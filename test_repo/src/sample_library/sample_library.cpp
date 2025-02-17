@@ -1,9 +1,11 @@
 #include <opencv2/opencv.hpp>
+#include <spdlog/spdlog.h>
 #include <test_repo/sample_library.hpp>
 
 int test_repo::factorial(int input) noexcept
 {
   int result = 1;
+  spdlog::info("Calculating factorial of {}", input);
 
   while (input > 0) {
     result *= input;
