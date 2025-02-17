@@ -31,7 +31,8 @@ macro(test_repo_setup_dependencies)
       "SPDLOG_BUILD_SHARED OFF"
       "BUILD_SHARED_LIBS OFF"
       "SPDLOG_BUILD_PIC ON"
-      "SPDLOG_ENABLE_PCH ON")
+      "SPDLOG_ENABLE_PCH ON"
+      "SPDLOG_INSTALL ON")
   endif()
 
   # Include OpenCV

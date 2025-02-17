@@ -130,7 +130,7 @@ for ARCH in "${ARCHS[@]}"; do
   cmake \
       --install "${BUILD_DIR}" \
       --config ${BUILD_TYPE} \
-      --install-prefix $(realpath ./artifacts/Linux/backend/${ARCH})
+      --prefix $(realpath ./artifacts/Linux/backend/${ARCH})
 
   mkdir -p ./blabla/linux/arch/${ARCH}
   cp -rf ./artifacts/Linux/backend/${ARCH}/* ./blabla/linux/arch/${ARCH}/
