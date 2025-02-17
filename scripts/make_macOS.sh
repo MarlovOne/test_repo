@@ -78,6 +78,7 @@ rm -rf artifacts/macos
 
 # Configure the project with CMake
 cmake \
+  -G "Ninja Multi-Config" \
   -S test_repo \
   -B "$BUILD_DIR" \
   -DBUILD_SHARED_LIBS=OFF \

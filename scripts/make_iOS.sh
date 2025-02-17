@@ -88,6 +88,7 @@ mkdir -p ./artifacts/ios
 
 # Configure the project with CMake using the Xcode generator
 cmake \
+    -G "Ninja Multi-Config" \
     -S test_repo \
     -B "$BUILD_DIR" \
     -DCMAKE_TOOLCHAIN_FILE=./cmake/toolchain/ios.toolchain.cmake \
