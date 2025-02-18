@@ -115,9 +115,9 @@ cmake \
     --config ${BUILD_TYPE}
 
 # Merge the static libraries
-macos_libs=$(find $(pwd)/artifacts/ios/lib -type f | paste -sd " " -)
-opencv_libs=$(find $(pwd)/_deps/opencv-staticlib-src/arm64-x64/lib -type f | paste -sd " " -)
-libtool -static -o artifacts/ios/lib/libnetxten.a  $macos_libs $opencv_libs
+libtool -static -o artifacts/ios/lib/libnetxten.a \
+  $(find "$(pwd)/artifacts/ios/lib" -type f -name "*.a") \
+  $(find "$(pwd)/_deps/opencv-staticlib-src/arm64/lib" -type f -name "*.a")
 
 # Create the xcframework
 xcodebuild \
