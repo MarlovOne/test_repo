@@ -117,7 +117,7 @@ cmake \
 # Merge the static libraries
 libtool -static -o artifacts/ios/lib/libtest_repo.a \
   $(find "$(pwd)/artifacts/ios/lib" -type f -name "*.a") \
-  $(find "$(pwd)/_deps/opencv-staticlib-src/arm64/lib" -type f -name "*.a")
+  $(find "$(pwd)/"$BUILD_DIR"/_deps/opencv-staticlib-src/arm64/lib" -type f -name "*.a")
 
 # Create the xcframework
 xcodebuild \
