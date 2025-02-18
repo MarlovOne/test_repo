@@ -96,6 +96,14 @@ endif()
 
 include(cmake/PackageProject.cmake)
 
+# When on macos/ios install additional targets because of framework
+set(ADDITIONAL_TARGETS "")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
+   OR IOS
+   OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  list(APPEND ADDITIONAL_TARGETS liquid)
+endif()
+
 # Add other targets that you want installed here
 test_repo_package_project(
   TARGETS
@@ -104,6 +112,7 @@ test_repo_package_project(
   sample_executable
   test_repo_options
   test_repo_warnings
+  ${ADDITIONAL_TARGETS}
   PUBLIC_INCLUDES
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
