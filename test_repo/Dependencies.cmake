@@ -78,12 +78,13 @@ macro(netxten_isolate_dependencies)
       NAME
       liquid-dsp
       GIT_TAG
-      master
+      v1.7.0
       GITHUB_REPOSITORY
       MarlovOne/liquid-dsp
       OPTIONS
       "BUILD_SHARED_LIBS OFF"
       "BUILD_AUTOTESTS OFF"
-      "BUILD_BENCHMARKS OFF")
+      "BUILD_BENCHMARKS OFF"
+      "ENABLE_SIMD OFF")
   endif()
 endmacro()
