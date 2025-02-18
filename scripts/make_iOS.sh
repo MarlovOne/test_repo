@@ -115,14 +115,14 @@ cmake \
     --config ${BUILD_TYPE}
 
 # Merge the static libraries
-libtool -static -o artifacts/ios/lib/libnetxten.a \
+libtool -static -o artifacts/ios/lib/libtest_repo.a \
   $(find "$(pwd)/artifacts/ios/lib" -type f -name "*.a") \
   $(find "$(pwd)/_deps/opencv-staticlib-src/arm64/lib" -type f -name "*.a")
 
 # Create the xcframework
 xcodebuild \
     -create-xcframework \
-    -library artifacts/ios/lib/libsample_library_combined.a \
+    -library artifacts/ios/lib/libtest_repo.a \
     -headers artifacts/ios/include \
     -output artifacts/ios/libsample_library.xcframework
  

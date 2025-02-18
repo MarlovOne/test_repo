@@ -104,14 +104,14 @@ cmake \
 # 1) Add this command as a post-build step in CMakeLists
 # 2) Figure out how to put a shared library in an Xcode framework
 # Merge the static libraries
-libtool -static -o artifacts/macos/lib/libnetxten.a \
+libtool -static -o artifacts/macos/lib/libtest_repo.a \
   $(find "$(pwd)/artifacts/macos/lib" -type f -name "*.a") \
   $(find "$(pwd)/_deps/opencv-staticlib-src/arm64-x64/lib" -type f -name "*.a")
 
 # Create the xcframework
 xcodebuild \
     -create-xcframework \
-    -library artifacts/macos/lib/libsample_library_combined.a \
+    -library artifacts/macos/lib/libtest_repo.a \
     -headers artifacts/macos/include \
     -output artifacts/macos/libsample_library.xcframework
 
