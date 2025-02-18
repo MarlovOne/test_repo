@@ -4,45 +4,8 @@ include(cmake/CPM.cmake)
 # CMAKE_CXX_FLAGS don't propagate out to other
 # targets
 macro(test_repo_setup_dependencies)
-  # For each dependency, see if it's
-  # already been provided to us by a parent project
-  if(NOT TARGET Catch2::Catch2WithMain)
-    cpmaddpackage("gh:catchorg/Catch2@3.3.2")
-  endif()
-
-  # TODO(lmark): This if a forked dependency, move it to Marcus after
-  if(NOT CPPYSTRUCT_SOURCE_DIR)
-    cpmaddpackage("gh:MarlovOne/cppystruct#master")
-  endif()
-
-  if(NOT EIGEN_FOUND)
-    cpmaddpackage("gl:libeigen/eigen#3.4")
-  endif()
-
-  if(NOT TARGET spdlog::spdlog)
-
-    # Install on macos and iOS since we're building static libraries there
-    set(SPDLOG_INSTALL OFF)
-    if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
-       OR IOS
-       OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-      set(SPDLOG_INSTALL ON)
-    endif()
-
-    cpmaddpackage(
-      NAME
-      spdlog
-      GIT_TAG
-      v1.15.1
-      GITHUB_REPOSITORY
-      gabime/spdlog
-      OPTIONS
-      "SPDLOG_BUILD_SHARED OFF"
-      "BUILD_SHARED_LIBS OFF"
-      "SPDLOG_BUILD_PIC ON"
-      "SPDLOG_ENABLE_PCH ON"
-      "SPDLOG_INSTALL ${SPDLOG_INSTALL}")
-  endif()
+  
+  netxten_isolate_dependencies()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -67,4 +30,60 @@ macro(test_repo_setup_dependencies)
 
   find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
+endmacro()
+
+macro(netxten_isolate_dependencies)
+
+  # For each dependency, see if it's
+  # already been provided to us by a parent project
+  if(NOT TARGET Catch2::Catch2WithMain)
+    cpmaddpackage("gh:catchorg/Catch2@3.3.2")
+  endif()
+
+  # TODO(lmark): This if a forked dependency, move it to Marcus after, also opencv-staticlib
+  if(NOT CPPYSTRUCT_SOURCE_DIR)
+    cpmaddpackage("gh:MarlovOne/cppystruct#master")
+  endif()
+
+  if(NOT EIGEN_FOUND)
+    cpmaddpackage("gl:libeigen/eigen#3.4")
+  endif()
+
+  if(NOT TARGET spdlog::spdlog)
+    # Install on macos and iOS since we're building static libraries there
+    set(SPDLOG_INSTALL OFF)
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
+       OR IOS
+       OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      set(SPDLOG_INSTALL ON)
+    endif()
+
+    cpmaddpackage(
+      NAME
+      spdlog
+      GIT_TAG
+      v1.15.1
+      GITHUB_REPOSITORY
+      gabime/spdlog
+      OPTIONS
+      "SPDLOG_BUILD_SHARED OFF"
+      "BUILD_SHARED_LIBS OFF"
+      "SPDLOG_BUILD_PIC ON"
+      "SPDLOG_ENABLE_PCH ON"
+      "SPDLOG_INSTALL ${SPDLOG_INSTALL}")
+  endif()
+
+  if(NOT TARGET liquid)
+    cpmaddpackage(
+      NAME
+      liquid-dsp
+      GIT_TAG
+      master
+      GITHUB_REPOSITORY
+      MarlovOne/liquid-dsp
+      OPTIONS
+      "BUILD_SHARED_LIBS OFF"
+      "BUILD_AUTOTESTS OFF"
+      "BUILD_BENCHMARKS OFF")
+  endif()
 endmacro()
