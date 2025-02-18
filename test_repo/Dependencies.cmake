@@ -4,8 +4,9 @@ include(cmake/CPM.cmake)
 # CMAKE_CXX_FLAGS don't propagate out to other
 # targets
 macro(test_repo_setup_dependencies)
-  
+
   netxten_isolate_dependencies()
+  add_liquid()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -32,7 +33,7 @@ macro(test_repo_setup_dependencies)
 
 endmacro()
 
-macro(netxten_isolate_dependencies)
+function(netxten_isolate_dependencies)
 
   # For each dependency, see if it's
   # already been provided to us by a parent project
@@ -73,6 +74,9 @@ macro(netxten_isolate_dependencies)
       "SPDLOG_INSTALL ${SPDLOG_INSTALL}")
   endif()
 
+endfunction()
+
+function(add_liquid)
   if(NOT TARGET liquid)
     cpmaddpackage(
       NAME
@@ -83,8 +87,8 @@ macro(netxten_isolate_dependencies)
       MarlovOne/liquid-dsp
       OPTIONS
       "BUILD_SHARED_LIBS OFF"
+      "BUILD_EXAMPLES OFF"
       "BUILD_AUTOTESTS OFF"
-      "BUILD_BENCHMARKS OFF"
-      "ENABLE_SIMD OFF")
+      "BUILD_BENCHMARKS OFF")
   endif()
-endmacro()
+endfunction()
