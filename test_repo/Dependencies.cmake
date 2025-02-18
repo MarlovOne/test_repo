@@ -89,6 +89,7 @@ function(add_liquid)
       "BUILD_SHARED_LIBS OFF"
       "BUILD_EXAMPLES OFF"
       "BUILD_AUTOTESTS OFF"
+      "ENABLE_SIMD OFF"
       "BUILD_BENCHMARKS OFF")
   endif()
 endfunction()
