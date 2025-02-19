@@ -101,7 +101,7 @@ set(ADDITIONAL_TARGETS "")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
    OR IOS
    OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  list(APPEND ADDITIONAL_TARGETS liquid)
+  list(APPEND ADDITIONAL_TARGETS liquid_interface)
 endif()
 
 # Add other targets that you want installed here
