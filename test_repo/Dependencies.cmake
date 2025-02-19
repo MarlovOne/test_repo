@@ -6,7 +6,7 @@ include(cmake/CPM.cmake)
 macro(test_repo_setup_dependencies)
 
   netxten_isolate_dependencies()
-  add_liquid()
+  add_liquid_dsp_dependency_isolated()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -76,8 +76,12 @@ function(netxten_isolate_dependencies)
 
 endfunction()
 
-function(add_liquid)
+function(add_liquid_dsp_dependency_isolated)
   if(NOT TARGET liquid)
+    set (DOWNLOAD_ONLY "FALSE")
+    if (WIN32)
+      set (DOWNLOAD_ONLY "TRUE")
+    endif()
     cpmaddpackage(
       NAME
       liquid-dsp
@@ -90,6 +94,22 @@ function(add_liquid)
       "BUILD_EXAMPLES OFF"
       "BUILD_AUTOTESTS OFF"
       "ENABLE_SIMD OFF"
-      "BUILD_BENCHMARKS OFF")
+      "BUILD_BENCHMARKS OFF"
+      DOWNLOAD_ONLY ${DOWNLOAD_ONLY})
+      
+      # Add liquid-dsp dependencies for Windows - use the precompiled library
+      if (WIN32) 
+        # Add interface library which collects liquid-dsp dependencies
+        if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x64")
+          message(WARNING "64 bit architecture detected")
+          set(ARCHITECTURE_NUMBER 64)
+        else()
+          set(ARCHITECTURE_NUMBER 32)
+        endif()
+        
+        add_library(liquid INTERFACE)
+        target_include_directories(liquid INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
+        target_link_libraries(liquid INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
+      endif()
   endif()
 endfunction()

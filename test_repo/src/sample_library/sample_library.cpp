@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
 #include <test_repo/sample_library.hpp>
+#include <liquid/liquid.h>
 
 int test_repo::factorial(int input) noexcept
 {
