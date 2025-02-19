@@ -97,6 +97,9 @@ function(add_liquid_dsp_dependency_isolated)
       "BUILD_BENCHMARKS OFF"
       DOWNLOAD_ONLY ${DOWNLOAD_ONLY})
       
+      add_library(liquid_interface INTERFACE)
+      add_library(liquid::liquid ALIAS liquid_interface)
+ 
       # Add liquid-dsp dependencies for Windows - use the precompiled library
       if (WIN32) 
         # Add interface library which collects liquid-dsp dependencies
@@ -107,9 +110,12 @@ function(add_liquid_dsp_dependency_isolated)
           set(ARCHITECTURE_NUMBER 32)
         endif()
         
-        add_library(liquid INTERFACE)
-        target_include_directories(liquid INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
-        target_link_libraries(liquid INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
+        target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
+        target_link_libraries(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
+      else()
+        # Add liquid-dsp dependencies for other platforms
+        target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include)
+        target_link_libraries(liquid_interface INTERFACE liquid)
       endif()
   endif()
 endfunction()

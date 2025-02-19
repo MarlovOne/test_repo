@@ -8,7 +8,7 @@ target_link_libraries(
           test_repo::test_repo_warnings
           $<BUILD_INTERFACE:${OpenCV_LIBS}>
           $<BUILD_INTERFACE:spdlog::spdlog>
-          $<BUILD_INTERFACE:liquid>)
+          $<BUILD_INTERFACE:liquid::liquid>)
 
 target_include_directories(
   sample_library ${WARNING_GUARD}
