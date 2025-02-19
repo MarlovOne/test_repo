@@ -110,11 +110,11 @@ function(add_liquid_dsp_dependency_isolated)
           set(ARCHITECTURE_NUMBER 32)
         endif()
         
-        target_include_directories(liquid_interface INTERFACE $<BUILD_INTERFACE:${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include>)
+        target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
         target_link_libraries(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
       else()
         # Add liquid-dsp dependencies for other platforms
-        target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include)
+        target_include_directories(liquid_interface INTERFACE $<BUILD_INTERFACE:${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
         target_link_libraries(liquid_interface INTERFACE liquid)
       endif()
   endif()
