@@ -74,6 +74,10 @@ function(netxten_isolate_dependencies)
       "SPDLOG_INSTALL ${SPDLOG_INSTALL}")
   endif()
 
+  if (NOT TARGET nlohman_json)
+    cpmaddpackage("gh:nlohman/json@3.11.3")
+  endif()
+
 endfunction()
 
 function(add_liquid_dsp_dependency_isolated)
