@@ -9,7 +9,7 @@ target_link_libraries(
           $<BUILD_INTERFACE:${OpenCV_LIBS}>
           $<BUILD_INTERFACE:spdlog::spdlog>
           $<BUILD_INTERFACE:liquid::liquid>
-          $<BUILD_INTERFACE:nlohman_json>)
+          $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>)
 
 target_include_directories(
   sample_library ${WARNING_GUARD}
