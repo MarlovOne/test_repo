@@ -16,7 +16,7 @@ install_opencv_macos() {
   cmake -G Xcode \
     -S opencv \
     -B ./build/iOS/opencv \
-    -DBUILD_LIST=core,imgproc \
+    -DBUILD_LIST=core,imgproc,features2d \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_SYSTEM_NAME=iOS \
     -DCMAKE_OSX_ARCHITECTURES="arm64" \
@@ -30,7 +30,7 @@ install_opencv_macos() {
     -DSWIFT_DISABLED=1 \
     -DBUILD_opencv_flann=OFF \
     -DBUILD_opencv_dnn=OFF \
-    -DBUILD_opencv_features2d=OFF \
+    -DBUILD_opencv_features2d=ON \
     -DBUILD_opencv_photo=OFF \
     -DBUILD_opencv_objdetect=OFF \
     -DBUILD_opencv_ml=OFF \
