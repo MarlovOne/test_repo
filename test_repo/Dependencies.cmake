@@ -29,7 +29,16 @@ macro(test_repo_setup_dependencies)
     message(FATAL_ERROR "Unsupported platform")
   endif()
 
-  find_package(OpenCV REQUIRED COMPONENTS core imgproc)
+  find_package(
+    OpenCV REQUIRED
+    COMPONENTS core
+               imgproc
+               features2d
+               flann
+               calib3d
+               videoio
+               video
+               highgui)
 
 endmacro()
 
