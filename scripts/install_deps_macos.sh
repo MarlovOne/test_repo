@@ -16,12 +16,13 @@ install_opencv_macos() {
   cmake -G Xcode \
     -S opencv \
     -B ./build/macOS/opencv \
-    -DBUILD_LIST=core,imgproc,features2d \
+    -DBUILD_LIST=core,imgproc,features2d,flann,calib3d \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
-    -DBUILD_opencv_flann=OFF \
-    -DBUILD_opencv_dnn=OFF \
+    -DBUILD_opencv_flann=ON \
+    -DBUILD_opencv_calib3d=ON \
     -DBUILD_opencv_features2d=ON \
+    -DBUILD_opencv_dnn=OFF \
     -DBUILD_opencv_photo=OFF \
     -DBUILD_opencv_objdetect=OFF \
     -DBUILD_opencv_ml=OFF \
