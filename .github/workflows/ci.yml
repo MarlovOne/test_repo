@@ -136,11 +136,11 @@ jobs:
           gcovr: true
           opencppcoverage: true
 
-      - name : Install ARM64 cross-compiler (Linux)
-        if: matrix.architecture == 'arm64' && matrix.os == 'ubuntu-latest'
+      - name : Install deps (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y g++-aarch64-linux-gnu
+          sudo apt-get install -y g++-aarch64-linux-gnu ffmpeg
       
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
