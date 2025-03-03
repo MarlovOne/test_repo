@@ -148,7 +148,8 @@ jobs:
             libtiff-dev \
             libopenjp2-7-dev \
             libopenexr-dev \
-            zlib1g-dev
+            zlib1g-dev \
+            libopenexr-dev
       
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
