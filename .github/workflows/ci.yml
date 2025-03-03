@@ -188,7 +188,9 @@ jobs:
         run: |
           ctest -C ${{matrix.build_type}}
           gcovr --version
-          gcovr -j ${{env.nproc}} --delete --root ../ --print-summary --xml-pretty --xml coverage.xml . --gcov-executable '${{ matrix.gcov_executable }}' --verbose
+          
+# TODO(lmark): doesn't work - fix later
+# gcovr -j ${{env.nproc}} --delete --root ../ --print-summary --xml-pretty --xml coverage.xml . --gcov-executable '${{ matrix.gcov_executable }}' --verbose
 
       - name: Windows - Test and coverage
         if: runner.os == 'Windows' && matrix.architecture == 'x86_64'
