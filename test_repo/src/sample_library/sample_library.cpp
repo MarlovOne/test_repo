@@ -1,8 +1,8 @@
+#include <liquid/liquid.h>
+#include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
 #include <test_repo/sample_library.hpp>
-#include <liquid/liquid.h>
-#include <nlohmann/json.hpp>
 
 int test_repo::factorial(int input) noexcept
 {

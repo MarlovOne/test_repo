@@ -113,7 +113,6 @@ endif()
 # Add other targets that you want installed here
 test_repo_package_project(
   TARGETS
-  intro
   sample_library
   sample_executable
   test_repo_options
