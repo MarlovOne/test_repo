@@ -13,6 +13,17 @@ install_opencv_macos() {
   rm -rf ./install/macOS/opencv
 
   # Set architecture-specific CMake flags
+  #TODO(lmark): Disable PNG support due to:
+  # #   Undefined symbols for architecture arm64:
+  # #   "_png_do_expand_palette_rgb8_neon", referenced from:
+  # #       _png_do_read_transformations in liblibpng.a[arm64][11](pngrtran.o)
+  # #   "_png_do_expand_palette_rgba8_neon", referenced from:
+  # #       _png_do_read_transformations in liblibpng.a[arm64][11](pngrtran.o)
+  # #   "_png_init_filter_functions_neon", referenced from:
+  # #       _png_read_filter_row in liblibpng.a[arm64][12](pngrutil.o)
+  # #   "_png_riffle_palette_neon", referenced from:
+  # #       _png_do_read_transformations in liblibpng.a[arm64][11](pngrtran.o)
+  # # ld: symbol(s) not found for architecture arm64
   cmake -G Xcode \
     -S opencv \
     -B ./build/macOS/opencv \

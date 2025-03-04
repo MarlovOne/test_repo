@@ -12,6 +12,16 @@ target_link_libraries(
           $<BUILD_INTERFACE:liquid::liquid>
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>)
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
+  message(STATUS "Linking frameworks for iOS")
+  target_link_libraries(
+    sample_library
+    PRIVATE "-framework AVFoundation"
+            "-framework UIKit"
+            "-framework CoreFoundation"
+            "-framework CoreMedia")
+endif()
+
 target_include_directories(
   sample_library ${WARNING_GUARD}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
