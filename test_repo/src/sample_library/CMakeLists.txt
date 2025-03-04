@@ -18,6 +18,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
     sample_library
     PRIVATE "-framework AVFoundation"
             "-framework UIKit"
+            "-framework Foundation" # Added to resolve missing symbols
             "-framework CoreFoundation"
             "-framework CoreMedia")
 endif()
