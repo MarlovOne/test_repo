@@ -83,7 +83,7 @@ function(netxten_isolate_dependencies)
       "SPDLOG_INSTALL ${SPDLOG_INSTALL}")
   endif()
 
-  if (NOT TARGET nlohman_json)
+  if(NOT TARGET nlohman_json)
     cpmaddpackage("gh:nlohmann/json@3.11.3")
   endif()
 
@@ -91,9 +91,9 @@ endfunction()
 
 function(add_liquid_dsp_dependency_isolated)
   if(NOT TARGET liquid)
-    set (DOWNLOAD_ONLY "FALSE")
-    if (WIN32)
-      set (DOWNLOAD_ONLY "TRUE")
+    set(DOWNLOAD_ONLY "FALSE")
+    if(WIN32)
+      set(DOWNLOAD_ONLY "TRUE")
     endif()
     cpmaddpackage(
       NAME
@@ -108,27 +108,31 @@ function(add_liquid_dsp_dependency_isolated)
       "BUILD_AUTOTESTS OFF"
       "ENABLE_SIMD OFF"
       "BUILD_BENCHMARKS OFF"
-      DOWNLOAD_ONLY ${DOWNLOAD_ONLY})
-      
-      add_library(liquid_interface INTERFACE)
-      add_library(liquid::liquid ALIAS liquid_interface)
- 
-      # Add liquid-dsp dependencies for Windows - use the precompiled library
-      if (WIN32) 
-        # Add interface library which collects liquid-dsp dependencies
-        if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x64")
-          message(WARNING "64 bit architecture detected")
-          set(ARCHITECTURE_NUMBER 64)
-        else()
-          set(ARCHITECTURE_NUMBER 32)
-        endif()
-        
-        target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
-        target_link_libraries(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
+      DOWNLOAD_ONLY
+      ${DOWNLOAD_ONLY})
+
+    add_library(liquid_interface INTERFACE)
+    add_library(liquid::liquid ALIAS liquid_interface)
+
+    # Add liquid-dsp dependencies for Windows - use the precompiled library
+    if(WIN32)
+      # Add interface library which collects liquid-dsp dependencies
+      if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x64")
+        message(WARNING "64 bit architecture detected")
+        set(ARCHITECTURE_NUMBER 64)
       else()
-        # Add liquid-dsp dependencies for other platforms
-        target_include_directories(liquid_interface INTERFACE $<BUILD_INTERFACE:${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
-        target_link_libraries(liquid_interface INTERFACE liquid)
+        set(ARCHITECTURE_NUMBER 32)
       endif()
+
+      target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
+      target_link_libraries(
+        liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
+    else()
+      # Add liquid-dsp dependencies for other platforms
+      target_include_directories(
+        liquid_interface INTERFACE $<BUILD_INTERFACE:${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include>
+                                   $<INSTALL_INTERFACE:include>)
+      target_link_libraries(liquid_interface INTERFACE liquid)
+    endif()
   endif()
 endfunction()

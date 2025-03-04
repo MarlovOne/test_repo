@@ -24,6 +24,7 @@ SAMPLE_LIBRARY_API std::string getProjectVersion();
 SAMPLE_LIBRARY_API void
   process_image(uint8_t *input_data, const int width, const int height, const int channels, uint8_t *output_data);
 
+SAMPLE_LIBRARY_API void test();
 }// namespace test_repo
 
 #endif

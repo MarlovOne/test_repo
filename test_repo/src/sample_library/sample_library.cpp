@@ -35,3 +35,5 @@ void test_repo::process_image(uint8_t *input_data,
   // Copy input to output
   input_mat.copyTo(output_mat);
 }
+
+void test_repo::test() { cv::VideoCapture cap(0); }
