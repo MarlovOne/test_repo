@@ -108,12 +108,17 @@ libtool -static -o artifacts/macos/lib/libtest_repo.a \
   $(find "$(pwd)/artifacts/macos/lib" -type f -name "*.a") \
   $(find "$(pwd)/"$BUILD_DIR"/_deps/opencv-staticlib-src/arm64-x64/lib" -type f -name "*.a")
 
+# Combine the headers
+COMBINED_HEADERS=artifacts/macos/combined_headers/
+mkdir -p $COMBINED_HEADERS
+cp -R artifacts/macos/include/* $COMBINED_HEADERS
+cp -R artifacts/macos/opencv4/* $COMBINED_HEADERS
+
 # Create the xcframework
 xcodebuild \
     -create-xcframework \
     -library artifacts/macos/lib/libtest_repo.a \
-    -headers artifacts/macos/include \
-    -headers artifacts/macos/opencv4 \
+    -headers $COMBINED_HEADERS \
     -output artifacts/macos/libsample_library.xcframework
 
 # Copy the artifact to the ffi plugin
