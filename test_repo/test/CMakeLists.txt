@@ -35,7 +35,9 @@ target_link_libraries(
   PRIVATE test_repo::test_repo_warnings
           test_repo::test_repo_options
           test_repo::sample_library
-          Catch2::Catch2WithMain)
+          Catch2::Catch2WithMain
+          ${OpenCV_LIBS})
+target_include_directories(netxten_tests PRIVATE ${CPM_PACKAGE_sciplot_SOURCE_DIR} ${OpenCV_INCLUDE_DIRS})
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
@@ -71,10 +73,10 @@ target_link_libraries(
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
-      TARGET constexpr_tests
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:constexpr_tests> $<TARGET_FILE_DIR:constexpr_tests>
-      COMMAND_EXPAND_LISTS)
+    TARGET constexpr_tests
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:constexpr_tests> $<TARGET_FILE_DIR:constexpr_tests>
+    COMMAND_EXPAND_LISTS)
 endif()
 
 catch_discover_tests(
@@ -103,10 +105,11 @@ target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIM
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
-      TARGET relaxed_constexpr_tests
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:relaxed_constexpr_tests> $<TARGET_FILE_DIR:relaxed_constexpr_tests>
-      COMMAND_EXPAND_LISTS)
+    TARGET relaxed_constexpr_tests
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:relaxed_constexpr_tests>
+            $<TARGET_FILE_DIR:relaxed_constexpr_tests>
+    COMMAND_EXPAND_LISTS)
 endif()
 
 catch_discover_tests(
