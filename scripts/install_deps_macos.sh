@@ -47,7 +47,8 @@ install_opencv_macos() {
     -DBUILD_DOCS=OFF \
     -DBUILD_OPENEXR=ON \
     -DBUILD_JPEG=ON \
-    -DBUILD_PNG=ON \
+    -DBUILD_PNG=OFF \
+    -DWITH_PNG=OFF \
     -DBUILD_ZLIB=ON \
     -DBUILD_TIFF=ON \
     -DBUILD_OPENJPEG=ON \
