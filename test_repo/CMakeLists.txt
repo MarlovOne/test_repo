@@ -119,7 +119,8 @@ test_repo_package_project(
   test_repo_warnings
   ${ADDITIONAL_TARGETS}
   PUBLIC_INCLUDES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  "${OpenCV_INCLUDE_DIRS}")
 
 # Detect architecture
 if(CMAKE_SYSTEM_PROCESSOR)

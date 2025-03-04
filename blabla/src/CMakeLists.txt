@@ -10,13 +10,11 @@ project(
 
 # Set location where test_repo is installed
 if(ANDROID)
-  set(test_repo_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI}/share/test_repo"
-  )
+  set(test_repo_root_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI}")
 elseif(LINUX)
-  set(test_repo_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/../linux/arch/${CMAKE_SYSTEM_PROCESSOR}/share/test_repo"
-  )
+  set(test_repo_root_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/../linux/arch/${CMAKE_SYSTEM_PROCESSOR}")
 elseif(WIN32)
   # Figure out which architecture we're building for on Windows
   if(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
@@ -25,19 +23,19 @@ elseif(WIN32)
     set(test_repo_ARCH "x64")
   endif()
 
-  set(test_repo_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/../windows/arch/${test_repo_ARCH}/share/test_repo"
-  )
+  set(test_repo_root_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/../windows/arch/${test_repo_ARCH}")
 else()
   message(FATAL_ERROR "Unsupported platform")
 endif()
 
+set(test_repo_DIR "${test_repo_root_DIR}/share/test_repo")
 find_package(test_repo CONFIG REQUIRED)
 add_library(blabla SHARED "blabla.cpp")
 target_link_libraries(blabla PRIVATE test_repo::sample_library)
 set_target_properties(blabla PROPERTIES PUBLIC_HEADER blabla.hpp OUTPUT_NAME
                                                                  "blabla")
-
+target_include_directories(blabla PRIVATE "${test_repo_root_DIR}/opencv4")
 target_compile_definitions(blabla PUBLIC DART_SHARED_LIB)
 
 # Install sample_library next to blabla

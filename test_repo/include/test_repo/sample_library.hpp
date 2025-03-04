@@ -2,6 +2,7 @@
 #define SAMPLE_LIBRARY_HPP
 
 #include <cstdint>
+#include <opencv2/opencv.hpp>
 #include <string>
 #include <test_repo/export_macros.hpp>
 
@@ -20,7 +21,8 @@ SAMPLE_LIBRARY_API std::string getProjectVersion();
   return input * factorial_constexpr(input - 1);
 }
 
-SAMPLE_LIBRARY_API void process_image(uint8_t *input_data, const int width, const int height, const int channels, uint8_t *output_data);
+SAMPLE_LIBRARY_API void
+  process_image(uint8_t *input_data, const int width, const int height, const int channels, uint8_t *output_data);
 
 }// namespace test_repo
 

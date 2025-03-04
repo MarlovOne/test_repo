@@ -14,10 +14,11 @@ target_link_libraries(
 
 target_include_directories(
   sample_library ${WARNING_GUARD}
-  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
          $<INSTALL_INTERFACE:include>
-  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
-          $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>)
+         $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
+  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>)
 
 set_target_properties(sample_library PROPERTIES VERSION ${PROJECT_VERSION} POSITION_INDEPENDENT_CODE ON)
 

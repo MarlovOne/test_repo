@@ -99,7 +99,7 @@ for ARCH in "${ARCHS[@]}"; do
     BUILD_DIR="build/Linux/backend/${ARCH}"
   fi
   
-  rm -rf $BUILD_DIR
+  # rm -rf $BUILD_DIR
   rm -rf blabla/linux/arch/${ARCH}/
 
   # Set the toolchain file for cross-compilation
