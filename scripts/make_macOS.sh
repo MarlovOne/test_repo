@@ -113,6 +113,7 @@ xcodebuild \
     -create-xcframework \
     -library artifacts/macos/lib/libtest_repo.a \
     -headers artifacts/macos/include \
+    -headers artifacts/macos/opencv4 \
     -output artifacts/macos/libsample_library.xcframework
 
 # Copy the artifact to the ffi plugin
