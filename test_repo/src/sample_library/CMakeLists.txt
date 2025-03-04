@@ -8,6 +8,7 @@ target_link_libraries(
           test_repo::test_repo_warnings
           $<BUILD_INTERFACE:${OpenCV_LIBS}>
           $<BUILD_INTERFACE:spdlog::spdlog>
+          $<BUILD_INTERFACE:Eigen3::Eigen>
           $<BUILD_INTERFACE:liquid::liquid>
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>)
 
