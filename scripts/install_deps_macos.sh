@@ -16,6 +16,7 @@ install_opencv_macos() {
   cmake -G Xcode \
     -S opencv \
     -B ./build/macOS/opencv \
+    -DCPU_DISPATCH="" \
     -DBUILD_LIST=core,imgproc,features2d,flann,calib3d,videoio,video,highgui \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
@@ -51,7 +52,6 @@ install_opencv_macos() {
     -DBUILD_PROTOBUFF=OFF \
     -DWITH_PROTOBUF=OFF \
     -DWITH_ADE=OFF \
-    -DENABLE_NEON=OFF \
     -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
 
   # Run CMake and build
