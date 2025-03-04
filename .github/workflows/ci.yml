@@ -166,7 +166,7 @@ jobs:
             -arch ${{ matrix.architecture }} `
             -buildType Release `
             -maintainerMode ${{ matrix.packaging_maintainer_mode }} `
-            -enableCoverage ${{ matrix.build_type == 'Debug' }} `
+            -enableCoverage OFF `
             -gitSha ${{ github.sha }} `
             -buildDir ${{ env.BUILD_DIR }}
 
@@ -196,7 +196,10 @@ jobs:
         if: runner.os == 'Windows' && matrix.architecture == 'x86_64'
         working-directory: ${{ env.BUILD_DIR }}
         run: |
-          OpenCppCoverage.exe --export_type cobertura:coverage.xml --cover_children -- ctest -C Release
+          ctest -C Release
+
+  # TODO(lmark): doesn't work - fix later
+  # OpenCppCoverage.exe --export_type cobertura:coverage.xml --cover_children -- ctest -C Release
 
       - name: CPack
         if: matrix.build_type == 'Release'
