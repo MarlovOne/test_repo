@@ -79,6 +79,7 @@ foreach ($ARCH in $ARCHS) {
         cmake -S test_repo -B $BuildDir `
             -Dtest_repo_PACKAGING_MAINTAINER_MODE=$maintainerMode `
             -G "Visual Studio 17 2022" `
+            -T ClangCL `
             -A ARM64 `
             -DBUILD_TESTING=OFF `
             -DCMAKE_SYSTEM_PROCESSOR=ARM64 `
@@ -92,6 +93,7 @@ foreach ($ARCH in $ARCHS) {
         cmake -S test_repo -B $BuildDir `
             -Dtest_repo_PACKAGING_MAINTAINER_MODE=$maintainerMode `
             -G "Visual Studio 17 2022" `
+            -T ClangCL `
             -DCMAKE_BUILD_TYPE=$buildType `
             -DBUILD_SHARED_LIBS=ON `
             -DGIT_SHA=$gitSha `
