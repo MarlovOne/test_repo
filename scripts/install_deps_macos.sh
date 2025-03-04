@@ -44,7 +44,6 @@ install_opencv_macos() {
     -DBUILD_OPENEXR=ON \
     -DBUILD_JPEG=ON \
     -DBUILD_PNG=ON \
-    -DPNG_ARM_NEON=OFF \
     -DBUILD_ZLIB=ON \
     -DBUILD_TIFF=ON \
     -DBUILD_OPENJPEG=ON \
@@ -52,6 +51,7 @@ install_opencv_macos() {
     -DBUILD_PROTOBUFF=OFF \
     -DWITH_PROTOBUF=OFF \
     -DWITH_ADE=OFF \
+    -DENABLE_NEON=OFF \
     -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
 
   # Run CMake and build
