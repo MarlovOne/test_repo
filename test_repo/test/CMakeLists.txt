@@ -37,7 +37,7 @@ target_link_libraries(
           test_repo::sample_library
           Catch2::Catch2WithMain
           ${OpenCV_LIBS})
-target_include_directories(netxten_tests PRIVATE ${CPM_PACKAGE_sciplot_SOURCE_DIR} ${OpenCV_INCLUDE_DIRS})
+target_include_directories(tests PRIVATE ${CPM_PACKAGE_sciplot_SOURCE_DIR} ${OpenCV_INCLUDE_DIRS})
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
