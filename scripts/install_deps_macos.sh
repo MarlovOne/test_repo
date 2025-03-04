@@ -19,6 +19,7 @@ install_opencv_macos() {
     -DCPU_BASELINE="" \
     -DCPU_DISPATCH="" \
     -DWITH_IPP=OFF \
+    -DBUILD_opencv_apps=OFF \
     -DBUILD_LIST=core,imgproc,features2d,flann,calib3d,videoio,video,highgui \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
