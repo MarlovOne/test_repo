@@ -166,7 +166,7 @@ jobs:
             -arch ${{ matrix.architecture }} `
             -buildType Release `
             -maintainerMode ${{ matrix.packaging_maintainer_mode }} `
-            -enableCoverage OFF `
+            -enableCoverage FALSE `
             -gitSha ${{ github.sha }} `
             -buildDir ${{ env.BUILD_DIR }}
 
@@ -176,7 +176,7 @@ jobs:
           ./scripts/make_macos.sh \
             --build-type ${{ matrix.build_type }} \
             --maintainer-mode ${{ matrix.packaging_maintainer_mode }} \
-            --enable-coverage OFF \
+            --enable-coverage FALSE \
             --git-sha ${{ github.sha }} \
             --build-dir ${{ env.BUILD_DIR }}
 
