@@ -80,9 +80,6 @@ rm -rf artifacts/macos
 cmake \
   -S test_repo \
   -B "$BUILD_DIR" \
-  -DCPU_BASELINE="" \
-  -DCPU_DISPATCH="" \
-  -DWITH_IPP=OFF \
   -DBUILD_SHARED_LIBS=OFF \
   -Dtest_repo_ENABLE_IPO=OFF \
   -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
