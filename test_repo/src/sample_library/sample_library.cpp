@@ -1,3 +1,4 @@
+#include <charls/charls.h>
 #include <liquid/liquid.h>
 #include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>

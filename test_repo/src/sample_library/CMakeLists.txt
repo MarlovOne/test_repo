@@ -10,7 +10,8 @@ target_link_libraries(
           $<BUILD_INTERFACE:spdlog::spdlog>
           $<BUILD_INTERFACE:Eigen3::Eigen>
           $<BUILD_INTERFACE:liquid::liquid>
-          $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>)
+          $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
+          $<BUILD_INTERFACE:charls>)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
   message(STATUS "Linking frameworks for iOS")

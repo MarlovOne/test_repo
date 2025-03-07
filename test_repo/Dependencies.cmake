@@ -87,6 +87,18 @@ function(netxten_isolate_dependencies)
     cpmaddpackage("gh:nlohmann/json@3.11.3")
   endif()
 
+  if(NOT TARGET charls)
+    cpmaddpackage(
+      NAME
+      charls
+      GIT_TAG
+      2.4.2
+      GITHUB_REPOSITORY
+      team-charls/charls
+      OPTIONS
+      "BUILD_SHARED_LIBS OFF"
+      "CMAKE_POSITION_INDEPENDENT_CODE ON")
+  endif()
 endfunction()
 
 function(add_liquid_dsp_dependency_isolated)
