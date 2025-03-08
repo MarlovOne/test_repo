@@ -97,7 +97,8 @@ function(netxten_isolate_dependencies)
       MarlovOne/charls
       OPTIONS
       "BUILD_SHARED_LIBS OFF"
-      "CMAKE_POSITION_INDEPENDENT_CODE ON")
+      "CMAKE_POSITION_INDEPENDENT_CODE ON"
+      "CHARLS_INSTALL OFF")
   endif()
 endfunction()
 
