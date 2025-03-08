@@ -92,14 +92,16 @@ function(netxten_isolate_dependencies)
       NAME
       charls
       GIT_TAG
-      2.4.3
+      2.4.2
       GITHUB_REPOSITORY
-      MarlovOne/charls
+      team-charls/charls
       OPTIONS
       "BUILD_SHARED_LIBS OFF"
       "CMAKE_POSITION_INDEPENDENT_CODE ON"
       "CHARLS_INSTALL OFF")
   endif()
+  set_target_properties(charls PROPERTIES PUBLIC_HEADER "")
+
 endfunction()
 
 function(add_liquid_dsp_dependency_isolated)
