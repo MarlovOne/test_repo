@@ -107,8 +107,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     liquid_interface
     liquid
     nlohmann_json
-    eigen
-    charls)
+    eigen)
 endif()
 
 # Add other targets that you want installed here
