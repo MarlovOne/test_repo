@@ -92,9 +92,9 @@ function(netxten_isolate_dependencies)
       NAME
       charls
       GIT_TAG
-      2.4.2
+      2.4.3
       GITHUB_REPOSITORY
-      team-charls/charls
+      MarlovOne/charls
       OPTIONS
       "BUILD_SHARED_LIBS OFF"
       "CMAKE_POSITION_INDEPENDENT_CODE ON")
