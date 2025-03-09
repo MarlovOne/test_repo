@@ -151,6 +151,12 @@ jobs:
             libswresample-dev \
             libavfilter-dev
       
+      - name : Install deps (Macos)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install \
+            ffmpeg
+
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
