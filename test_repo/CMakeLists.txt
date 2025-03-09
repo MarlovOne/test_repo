@@ -109,7 +109,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     nlohmann_json
     eigen
     charls
-    pugixml)
+    pugixml
+    pugixml-static)
 endif()
 
 # Add other targets that you want installed here
