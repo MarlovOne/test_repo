@@ -6,6 +6,10 @@
 #include <spdlog/spdlog.h>
 #include <test_repo/sample_library.hpp>
 
+extern "C" {
+#include <libavcodec/avcodec.h>
+}
+
 int test_repo::factorial(int input) noexcept
 {
   int result = 1;

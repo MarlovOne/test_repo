@@ -12,7 +12,8 @@ target_link_libraries(
           $<BUILD_INTERFACE:liquid::liquid>
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
           $<BUILD_INTERFACE:charls>
-          $<BUILD_INTERFACE:pugixml::pugixml>)
+          $<BUILD_INTERFACE:pugixml::pugixml>
+          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
   message(STATUS "Linking frameworks for iOS")
@@ -31,7 +32,11 @@ target_include_directories(
          $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
          $<INSTALL_INTERFACE:include>
          $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
-  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>)
+  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
+          $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>)
+
+# Include ffmpeg definitions
+target_compile_definitions(sample_library PRIVATE ${FFMPEG_DEFINITIONS})
 
 set_target_properties(sample_library PROPERTIES VERSION ${PROJECT_VERSION} POSITION_INDEPENDENT_CODE ON)
 

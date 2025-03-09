@@ -7,6 +7,7 @@ macro(test_repo_setup_dependencies)
 
   netxten_isolate_dependencies()
   add_liquid_dsp_dependency_isolated()
+  add_ffmpeg_dependency_isolated()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -41,6 +42,13 @@ macro(test_repo_setup_dependencies)
                highgui)
 
 endmacro()
+
+function(add_ffmpeg_dependency_isolated)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+  message(WARNING "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+  find_package(FFmpeg REQUIRED MODULE)
+
+endfunction()
 
 function(netxten_isolate_dependencies)
 
