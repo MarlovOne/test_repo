@@ -2,6 +2,7 @@
 #include <liquid/liquid.h>
 #include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>
+#include <pugixml.hpp>
 #include <spdlog/spdlog.h>
 #include <test_repo/sample_library.hpp>
 
@@ -37,4 +38,8 @@ void test_repo::process_image(uint8_t *input_data,
   input_mat.copyTo(output_mat);
 }
 
-void test_repo::test() { cv::VideoCapture cap(0); }
+void test_repo::test()
+{
+  cv::VideoCapture cap(0);
+  pugi::xml_document doc;
+}

@@ -102,6 +102,20 @@ function(netxten_isolate_dependencies)
   endif()
   set_target_properties(charls PROPERTIES PUBLIC_HEADER "")
 
+  if(NOT TARGET pugixml)
+    cpmaddpackage(
+      NAME
+      pugixml
+      GIT_TAG
+      v1.15
+      GITHUB_REPOSITORY
+      zeux/pugixml
+      OPTIONS
+      "BUILD_SHARED_LIBS OFF"
+      "PUGIXML_BUILD_TESTS OFF"
+      "PUGIXML_INSTALL OFF")
+  endif()
+
 endfunction()
 
 function(add_liquid_dsp_dependency_isolated)
