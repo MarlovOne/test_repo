@@ -44,6 +44,8 @@ macro(test_repo_setup_dependencies)
 endmacro()
 
 function(add_ffmpeg_dependency_isolated)
+  
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
   if (WIN32)
     # URL for the FFmpeg Windows shared build
     set(FFMPEG_URL "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip")
@@ -85,11 +87,48 @@ function(add_ffmpeg_dependency_isolated)
 
     set(PC_SWSCALE_INCLUDEDIR "${FFMPEG_ROOT}/include")
     set(PC_SWSCALE_LIBDIR "${FFMPEG_ROOT}/lib")
-  endif()
+    
+    find_package(FFmpeg REQUIRED MODULE)
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS) 
+    # URL for the FFmpeg iOS archive
+    set(FFMPEG_IOS_URL "https://sourceforge.net/projects/ffmpeg-ios/files/latest/download")
   
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
-  message(WARNING "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
-  find_package(FFmpeg REQUIRED MODULE)
+    # Define paths for the downloaded archive and extraction directory.
+    set(FFMPEG_IOS_ARCHIVE "${CMAKE_BINARY_DIR}/ffmpeg-ios-master.tar.bz2")
+    set(FFMPEG_IOS_EXTRACT_DIR "${CMAKE_BINARY_DIR}/ffmpeg-ios")
+  
+    message(STATUS "Downloading FFmpeg iOS from ${FFMPEG_IOS_URL}")
+    file(DOWNLOAD ${FFMPEG_IOS_URL} ${FFMPEG_IOS_ARCHIVE} SHOW_PROGRESS)
+  
+    message(STATUS "Extracting FFmpeg iOS to ${FFMPEG_IOS_EXTRACT_DIR}")
+    file(MAKE_DIRECTORY ${FFMPEG_IOS_EXTRACT_DIR})
+    file(ARCHIVE_EXTRACT INPUT ${FFMPEG_IOS_ARCHIVE} DESTINATION ${FFMPEG_IOS_EXTRACT_DIR})
+  
+    # Adjust these paths based on the actual archive structure.
+    # In this example, headers are expected in:
+    #   <extraction_dir>/FFMPEG-ios/include
+    # and libraries (or binaries) in:
+    #   <extraction_dir>/ffmpeg-ios/bin
+    set(FFMPEG_INCLUDE_DIRS "${FFMPEG_IOS_EXTRACT_DIR}/FFmpeg-iOS/include")
+    set(FFMPEG_LIBRARY_DIRS "${FFMPEG_IOS_EXTRACT_DIR}/FFmpeg-iOS/lib")
+  
+    # Tell CMake where to find the FFmpeg iOS headers and libraries.
+    include_directories(${FFMPEG_INCLUDE_DIRS})
+    link_directories(${FFMPEG_LIBRARY_DIRS})
+  
+    # Define a variable with the names of the libraries you wish to link.
+    # Adjust these names if the libraries have prefixes (like "lib") or extensions.
+    set(FFMPEG_LIBRARIES
+        avcodec
+        avformat
+        avutil
+        swscale
+        swresample
+        avfilter)
+  else()
+    find_package(FFmpeg REQUIRED MODULE)
+  endif()
+ 
 endfunction()
 
 function(netxten_isolate_dependencies)
