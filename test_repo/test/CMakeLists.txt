@@ -69,7 +69,8 @@ target_link_libraries(
   PRIVATE test_repo::test_repo_warnings
           test_repo::test_repo_options
           test_repo::sample_library
-          Catch2::Catch2WithMain)
+          Catch2::Catch2WithMain
+          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
@@ -100,7 +101,8 @@ target_link_libraries(
   PRIVATE test_repo::test_repo_warnings
           test_repo::test_repo_options
           test_repo::sample_library
-          Catch2::Catch2WithMain)
+          Catch2::Catch2WithMain
+          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
