@@ -4,7 +4,6 @@ add_library(test_repo::sample_library ALIAS sample_library)
 
 target_link_libraries(
   sample_library
-  PUBLIC ffmpeg_interface
   PRIVATE test_repo::test_repo_options
           test_repo::test_repo_warnings
           $<BUILD_INTERFACE:${OpenCV_LIBS}>
@@ -14,6 +13,12 @@ target_link_libraries(
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
           $<BUILD_INTERFACE:charls>
           $<BUILD_INTERFACE:pugixml::pugixml>)
+
+if (WIN32) 
+  target_link_libraries(sample_library PUBLIC ffmpeg_interface)
+else()
+  target_link_libraries(sample_library PRIVATE ffmpeg_interface)
+endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
   message(STATUS "Linking frameworks for iOS")
