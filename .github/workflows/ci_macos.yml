@@ -39,7 +39,7 @@ jobs:
 
       - name: Configure CMake
         run: |
-          brew install eigen
+          brew install eigen ffmpeg
           ./scripts/install_deps_macos.sh
       
       - name: Upload Built Library
