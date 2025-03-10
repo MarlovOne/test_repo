@@ -12,9 +12,10 @@ target_link_libraries(
           $<BUILD_INTERFACE:liquid::liquid>
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
           $<BUILD_INTERFACE:charls>
-          $<BUILD_INTERFACE:pugixml::pugixml>)
+          $<BUILD_INTERFACE:pugixml::pugixml>
+          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
-if (WIN32) 
+if(WIN32)
   target_link_libraries(sample_library PUBLIC ffmpeg_interface)
 else()
   target_link_libraries(sample_library PRIVATE ffmpeg_interface)
@@ -37,7 +38,8 @@ target_include_directories(
          $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
          $<INSTALL_INTERFACE:include>
          $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
-  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>)
+  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
+          $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>)
 
 # Include ffmpeg definitions
 target_compile_definitions(sample_library PRIVATE ${FFMPEG_DEFINITIONS})
@@ -59,21 +61,19 @@ if(WIN32 AND BUILD_SHARED_LIBS)
 
 endif()
 
-if (WIN32)
-  install(FILES $<TARGET_RUNTIME_DLLS:sample_library>
-          DESTINATION bin)
-  
+if(WIN32)
+  install(FILES $<TARGET_RUNTIME_DLLS:sample_library> DESTINATION bin)
+
   # Also install the FFmpeg import libraries (.lib files)
-  install(FILES
-    "${FFMPEG_LIBRARY_DIRS}/avcodec.lib"
-    "${FFMPEG_LIBRARY_DIRS}/avformat.lib"
-    "${FFMPEG_LIBRARY_DIRS}/avdevice.lib"
-    "${FFMPEG_LIBRARY_DIRS}/avfilter.lib"
-    "${FFMPEG_LIBRARY_DIRS}/avutil.lib"
-    "${FFMPEG_LIBRARY_DIRS}/postproc.lib"
-    "${FFMPEG_LIBRARY_DIRS}/swresample.lib"
-    "${FFMPEG_LIBRARY_DIRS}/swscale.lib"
-    DESTINATION lib
-  )
+  install(
+    FILES "${FFMPEG_LIBRARY_DIRS}/avcodec.lib"
+          "${FFMPEG_LIBRARY_DIRS}/avformat.lib"
+          "${FFMPEG_LIBRARY_DIRS}/avdevice.lib"
+          "${FFMPEG_LIBRARY_DIRS}/avfilter.lib"
+          "${FFMPEG_LIBRARY_DIRS}/avutil.lib"
+          "${FFMPEG_LIBRARY_DIRS}/postproc.lib"
+          "${FFMPEG_LIBRARY_DIRS}/swresample.lib"
+          "${FFMPEG_LIBRARY_DIRS}/swscale.lib"
+    DESTINATION lib)
 
 endif()
