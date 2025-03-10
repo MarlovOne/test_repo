@@ -44,10 +44,52 @@ macro(test_repo_setup_dependencies)
 endmacro()
 
 function(add_ffmpeg_dependency_isolated)
+  if (WIN32)
+    # URL for the FFmpeg Windows shared build
+    set(FFMPEG_URL "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip")
+    
+    # Define paths for the downloaded zip and extraction directory
+    set(FFMPEG_ZIP "${CMAKE_BINARY_DIR}/ffmpeg.zip")
+    set(FFMPEG_EXTRACT_DIR "${CMAKE_BINARY_DIR}/ffmpeg")
+    
+    # Download the FFmpeg zip file (show progress in the console)
+    message(STATUS "Downloading FFmpeg from ${FFMPEG_URL}")
+    file(DOWNLOAD ${FFMPEG_URL} ${FFMPEG_ZIP} SHOW_PROGRESS)
+    
+    # Create the extraction directory
+    file(MAKE_DIRECTORY ${FFMPEG_EXTRACT_DIR})
+    
+    # Extract the zip file into the extraction directory
+    message(STATUS "Extracting FFmpeg to ${FFMPEG_EXTRACT_DIR}")
+    file(ARCHIVE_EXTRACT INPUT ${FFMPEG_ZIP} DESTINATION ${FFMPEG_EXTRACT_DIR})
+    
+    # Adjust this variable to match the extracted folder name; often the archive extracts into a folder like:
+    # "ffmpeg-master-latest-win64-gpl-shared"
+    set(FFMPEG_ROOT "${FFMPEG_EXTRACT_DIR}/ffmpeg-master-latest-win64-gpl-shared")
+    
+    # Set the hint variables for each required component.
+    set(PC_AVCODEC_INCLUDEDIR "${FFMPEG_ROOT}/include")
+    set(PC_AVCODEC_LIBDIR "${FFMPEG_ROOT}/lib")
+
+    set(PC_AVFORMAT_INCLUDEDIR "${FFMPEG_ROOT}/include")
+    set(PC_AVFORMAT_LIBDIR "${FFMPEG_ROOT}/lib")
+
+    set(PC_AVUTIL_INCLUDEDIR "${FFMPEG_ROOT}/include")
+    set(PC_AVUTIL_LIBDIR "${FFMPEG_ROOT}/lib")
+    
+    set(PC_AVDEVICE_INCLUDEDIR "${FFMPEG_ROOT}/include")
+    set(PC_AVDEVICE_LIBDIR "${FFMPEG_ROOT}/lib")
+
+    set(PC_POSTPROCESS_INCLUDEDIR "${FFMPEG_ROOT}/include")
+    set(PC_POSTPROCESS_LIBDIR "${FFMPEG_ROOT}/lib")
+
+    set(PC_SWSCALE_INCLUDEDIR "${FFMPEG_ROOT}/include")
+    set(PC_SWSCALE_LIBDIR "${FFMPEG_ROOT}/lib")
+  endif()
+  
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
   message(WARNING "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
   find_package(FFmpeg REQUIRED MODULE)
-
 endfunction()
 
 function(netxten_isolate_dependencies)
