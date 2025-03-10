@@ -115,11 +115,6 @@ function(add_ffmpeg_dependency_isolated)
       DESTINATION
       ${FFMPEG_IOS_EXTRACT_DIR})
 
-    # Adjust these paths based on the actual archive structure.
-    # In this example, headers are expected in:
-    #   <extraction_dir>/FFMPEG-ios/include
-    # and libraries (or binaries) in:
-    #   <extraction_dir>/ffmpeg-ios/bin
     set(FFMPEG_INCLUDE_DIRS "${FFMPEG_IOS_EXTRACT_DIR}/FFmpeg-iOS/include")
     set(FFMPEG_LIBRARY_DIRS "${FFMPEG_IOS_EXTRACT_DIR}/FFmpeg-iOS/lib")
 
@@ -150,20 +145,27 @@ function(add_ffmpeg_dependency_isolated)
 
     # Define the path to the ABI-specific directory from the repository.
     set(FFMPEG_ANDROID_PATH "${ffmpeg-android-libs_SOURCE_DIR}/${ANDROID_ABI}")
+    message(STATUS "FFmpeg Android path: ${FFMPEG_ANDROID_PATH}")
+    # Set the include and library directories.
     set(FFMPEG_INCLUDE_DIRS "${FFMPEG_ANDROID_PATH}/include")
     set(FFMPEG_LIBRARY_DIRS "${FFMPEG_ANDROID_PATH}/lib")
-    include_directories(${FFMPEG_INCLUDE_DIRS})
-    link_directories(${FFMPEG_LIBRARY_DIRS})
-    message(WARNING ${FFMPEG_LIBRARY_DIRS})
-    message(WARNING ${FFMPEG_INCLUDE_DIRS})
-    set(FFMPEG_LIBRARIES
-        PRIVATE
-        "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
-        "${FFMPEG_LIBRARY_DIRS}/libavformat.so"
-        "${FFMPEG_LIBRARY_DIRS}/libavutil.so"
-        "${FFMPEG_LIBRARY_DIRS}/libswscale.so"
-        "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
-        "${FFMPEG_LIBRARY_DIRS}/libavfilter.so")
+
+    # Create an INTERFACE target for the FFmpeg Android libraries.
+    add_library(ffmpeg_android INTERFACE)
+
+    # Add the include directory so that FFmpeg headers are available.
+    target_include_directories(ffmpeg_android INTERFACE ${FFMPEG_INCLUDE_DIRS})
+
+    # Link the shared libraries by specifying their full paths.
+    target_link_libraries(
+      ffmpeg_android
+      INTERFACE "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
+                "${FFMPEG_LIBRARY_DIRS}/libavformat.so"
+                "${FFMPEG_LIBRARY_DIRS}/libavutil.so"
+                "${FFMPEG_LIBRARY_DIRS}/libswscale.so"
+                "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
+                "${FFMPEG_LIBRARY_DIRS}/libavfilter.so")
+
   else()
     find_package(FFmpeg REQUIRED MODULE)
   endif()
@@ -212,7 +214,13 @@ function(netxten_isolate_dependencies)
   endif()
 
   if(NOT TARGET nlohman_json)
-    cpmaddpackage("gh:nlohmann/json@3.11.3")
+    cpmaddpackage(
+      NAME
+      json
+      GIT_TAG
+      v3.11.3
+      GITHUB_REPOSITORY
+      nlohmann/json)
   endif()
 
   if(NOT TARGET charls)

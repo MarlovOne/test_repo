@@ -15,6 +15,11 @@ target_link_libraries(
           $<BUILD_INTERFACE:pugixml::pugixml>
           $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
+if(ANDROID)
+  message(STATUS "Linking ffmpeg for Android")
+  target_link_libraries(sample_library PRIVATE ffmpeg_android)
+endif()
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
   message(STATUS "Linking frameworks for iOS")
   target_link_libraries(
@@ -32,8 +37,7 @@ target_include_directories(
          $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
          $<INSTALL_INTERFACE:include>
          $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
-  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
-          $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>)
+  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>)
 
 # Include ffmpeg definitions
 target_compile_definitions(sample_library PRIVATE ${FFMPEG_DEFINITIONS})
