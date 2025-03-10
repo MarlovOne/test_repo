@@ -1,4 +1,5 @@
 #include <charls/charls.h>
+#include <iostream>
 #include <liquid/liquid.h>
 #include <nlohmann/json.hpp>
 #include <opencv2/opencv.hpp>
@@ -24,7 +25,13 @@ int test_repo::factorial(int input) noexcept
 }
 
 int test_repo::add(int a, int b) { return a + b; }
-std::string test_repo::getProjectVersion() { return "0.0.1"; }
+std::string test_repo::getProjectVersion()
+{
+  // Print the FFmpeg libavcodec version
+  unsigned version = avcodec_version();
+  std::cout << "FFmpeg avcodec version: " << version << std::endl;
+  return "0.0.1";
+}
 
 void test_repo::process_image(uint8_t *input_data,
   const int width,
