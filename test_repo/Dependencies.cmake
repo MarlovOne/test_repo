@@ -157,12 +157,13 @@ function(add_ffmpeg_dependency_isolated)
     message(WARNING ${FFMPEG_LIBRARY_DIRS})
     message(WARNING ${FFMPEG_INCLUDE_DIRS})
     set(FFMPEG_LIBRARIES
-        avcodec
-        avformat
-        avutil
-        swscale
-        swresample
-        avfilter)
+        PRIVATE
+        "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
+        "${FFMPEG_LIBRARY_DIRS}/libavformat.so"
+        "${FFMPEG_LIBRARY_DIRS}/libavutil.so"
+        "${FFMPEG_LIBRARY_DIRS}/libswscale.so"
+        "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
+        "${FFMPEG_LIBRARY_DIRS}/libavfilter.so")
   else()
     find_package(FFmpeg REQUIRED MODULE)
   endif()
