@@ -26,6 +26,8 @@ param(
     [string]$buildDir = ""  # Optional base build directory
 )
 
+$env:CPM_SOURCE_CACHE = "C:\git\cpm\cache"
+
 # Define architectures: if an architecture was provided, use it; otherwise, use both.
 if ($arch) {
     if ($arch -eq "aarch64" -or $arch -eq "arm64") {

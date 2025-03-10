@@ -4,6 +4,7 @@ add_library(test_repo::sample_library ALIAS sample_library)
 
 target_link_libraries(
   sample_library
+  PUBLIC ffmpeg_interface
   PRIVATE test_repo::test_repo_options
           test_repo::test_repo_warnings
           $<BUILD_INTERFACE:${OpenCV_LIBS}>
@@ -12,13 +13,7 @@ target_link_libraries(
           $<BUILD_INTERFACE:liquid::liquid>
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
           $<BUILD_INTERFACE:charls>
-          $<BUILD_INTERFACE:pugixml::pugixml>
-          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
-
-if(ANDROID)
-  message(STATUS "Linking ffmpeg for Android")
-  target_link_libraries(sample_library PRIVATE ffmpeg_android)
-endif()
+          $<BUILD_INTERFACE:pugixml::pugixml>)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
   message(STATUS "Linking frameworks for iOS")
@@ -48,4 +43,32 @@ if(WIN32 AND BUILD_SHARED_LIBS)
   # TODO(lmark): Replace this with autmatically generated export macros
   # TODO(lmark): hide visibility of all symbols except the ones we want to export
   target_compile_definitions(sample_library PRIVATE SAMPLE_LIBRARY_EXPORTS)
+endif()
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_custom_command(
+    TARGET sample_library
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample_library> $<TARGET_FILE_DIR:sample_library>
+    COMMAND_EXPAND_LISTS)
+
+endif()
+
+if (WIN32)
+  install(FILES $<TARGET_RUNTIME_DLLS:sample_library>
+          DESTINATION bin)
+  
+  # Also install the FFmpeg import libraries (.lib files)
+  install(FILES
+    "${FFMPEG_LIBRARY_DIRS}/avcodec.lib"
+    "${FFMPEG_LIBRARY_DIRS}/avformat.lib"
+    "${FFMPEG_LIBRARY_DIRS}/avdevice.lib"
+    "${FFMPEG_LIBRARY_DIRS}/avfilter.lib"
+    "${FFMPEG_LIBRARY_DIRS}/avutil.lib"
+    "${FFMPEG_LIBRARY_DIRS}/postproc.lib"
+    "${FFMPEG_LIBRARY_DIRS}/swresample.lib"
+    "${FFMPEG_LIBRARY_DIRS}/swscale.lib"
+    DESTINATION lib
+  )
+
 endif()

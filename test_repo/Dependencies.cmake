@@ -43,58 +43,76 @@ macro(test_repo_setup_dependencies)
 
 endmacro()
 
-function(add_ffmpeg_dependency_isolated)
+macro(add_ffmpeg_dependency_isolated)
 
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+  add_library(ffmpeg_interface INTERFACE)
   if(WIN32)
-    # URL for the FFmpeg Windows shared build
-    set(FFMPEG_URL
-        "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip")
+    cpmaddpackage(
+      NAME
+      ffmpeg-libs
+      GIT_TAG
+      windows
+      GITHUB_REPOSITORY
+      MarlovOne/ffmpeg-libs
+      DOWNLOAD_ONLY
+      TRUE)
 
-    # Define paths for the downloaded zip and extraction directory
-    set(FFMPEG_ZIP "${CMAKE_BINARY_DIR}/ffmpeg.zip")
-    set(FFMPEG_EXTRACT_DIR "${CMAKE_BINARY_DIR}/ffmpeg")
+    # Define the path to the ABI-specific directory from the repository.
+    set(FFMPEG_PATH "${ffmpeg-libs_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}")
+    message(STATUS "FFmpeg Windows path: ${FFMPEG_PATH}")
 
-    # Download the FFmpeg zip file (show progress in the console)
-    message(STATUS "Downloading FFmpeg from ${FFMPEG_URL}")
-    file(DOWNLOAD ${FFMPEG_URL} ${FFMPEG_ZIP} SHOW_PROGRESS)
+    # Set the include and library directories.
+    set(FFMPEG_INCLUDE_DIRS "${FFMPEG_PATH}/include")
+    set(FFMPEG_LIBRARY_DIRS "${FFMPEG_PATH}/lib")
 
-    # Create the extraction directory
-    file(MAKE_DIRECTORY ${FFMPEG_EXTRACT_DIR})
+    # Create an INTERFACE target for include directories (if desired).
+    target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
 
-    # Extract the zip file into the extraction directory
-    message(STATUS "Extracting FFmpeg to ${FFMPEG_EXTRACT_DIR}")
-    file(
-      ARCHIVE_EXTRACT
-      INPUT
-      ${FFMPEG_ZIP}
-      DESTINATION
-      ${FFMPEG_EXTRACT_DIR})
+    # Create imported targets for each FFmpeg DLL and its import library.
+    add_library(avcodec SHARED IMPORTED)
+    set_property(TARGET avcodec PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/avcodec-61.dll")
+    set_property(TARGET avcodec PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/avcodec.lib")
 
-    # Adjust this variable to match the extracted folder name; often the archive extracts into a folder like:
-    # "ffmpeg-master-latest-win64-gpl-shared"
-    set(FFMPEG_ROOT "${FFMPEG_EXTRACT_DIR}/ffmpeg-master-latest-win64-gpl-shared")
+    add_library(avformat SHARED IMPORTED)
+    set_property(TARGET avformat PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/avformat-61.dll")
+    set_property(TARGET avformat PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/avformat.lib")
 
-    # Set the hint variables for each required component.
-    set(PC_AVCODEC_INCLUDEDIR "${FFMPEG_ROOT}/include")
-    set(PC_AVCODEC_LIBDIR "${FFMPEG_ROOT}/lib")
+    add_library(avdevice SHARED IMPORTED)
+    set_property(TARGET avdevice PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/avdevice-61.dll")
+    set_property(TARGET avdevice PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/avdevice.lib")
 
-    set(PC_AVFORMAT_INCLUDEDIR "${FFMPEG_ROOT}/include")
-    set(PC_AVFORMAT_LIBDIR "${FFMPEG_ROOT}/lib")
+    add_library(avfilter SHARED IMPORTED)
+    set_property(TARGET avfilter PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/avfilter-10.dll")
+    set_property(TARGET avfilter PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/avfilter.lib")
 
-    set(PC_AVUTIL_INCLUDEDIR "${FFMPEG_ROOT}/include")
-    set(PC_AVUTIL_LIBDIR "${FFMPEG_ROOT}/lib")
+    add_library(avutil SHARED IMPORTED)
+    set_property(TARGET avutil PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/avutil-59.dll")
+    set_property(TARGET avutil PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/avutil.lib")
 
-    set(PC_AVDEVICE_INCLUDEDIR "${FFMPEG_ROOT}/include")
-    set(PC_AVDEVICE_LIBDIR "${FFMPEG_ROOT}/lib")
+    add_library(postproc SHARED IMPORTED)
+    set_property(TARGET postproc PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/postproc-58.dll")
+    set_property(TARGET postproc PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/postproc.lib")
 
-    set(PC_POSTPROCESS_INCLUDEDIR "${FFMPEG_ROOT}/include")
-    set(PC_POSTPROCESS_LIBDIR "${FFMPEG_ROOT}/lib")
+    add_library(swresample SHARED IMPORTED)
+    set_property(TARGET swresample PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/swresample-5.dll")
+    set_property(TARGET swresample PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/swresample.lib")
 
-    set(PC_SWSCALE_INCLUDEDIR "${FFMPEG_ROOT}/include")
-    set(PC_SWSCALE_LIBDIR "${FFMPEG_ROOT}/lib")
+    add_library(swscale SHARED IMPORTED)
+    set_property(TARGET swscale PROPERTY IMPORTED_LOCATION "${FFMPEG_PATH}/bin/swscale-8.dll")
+    set_property(TARGET swscale PROPERTY IMPORTED_IMPLIB "${FFMPEG_LIBRARY_DIRS}/swscale.lib")
 
-    find_package(FFmpeg REQUIRED MODULE)
+    target_link_libraries(
+      ffmpeg_interface
+      INTERFACE avcodec
+                avformat
+                avdevice
+                avfilter
+                avutil
+                postproc
+                swresample
+                swscale)
+
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
     # URL for the FFmpeg iOS archive
     set(FFMPEG_IOS_URL "https://sourceforge.net/projects/ffmpeg-ios/files/latest/download")
@@ -135,42 +153,36 @@ function(add_ffmpeg_dependency_isolated)
 
     cpmaddpackage(
       NAME
-      ffmpeg-android-libs
+      ffmpeg-libs
       GIT_TAG
-      main
+      android
       GITHUB_REPOSITORY
-      MarlovOne/ffmpeg-android-libs
+      MarlovOne/ffmpeg-libs
       DOWNLOAD_ONLY
       TRUE)
 
     # Define the path to the ABI-specific directory from the repository.
-    set(FFMPEG_ANDROID_PATH "${ffmpeg-android-libs_SOURCE_DIR}/${ANDROID_ABI}")
+    set(FFMPEG_ANDROID_PATH "${ffmpeg-libs_SOURCE_DIR}/${ANDROID_ABI}")
     message(STATUS "FFmpeg Android path: ${FFMPEG_ANDROID_PATH}")
     # Set the include and library directories.
     set(FFMPEG_INCLUDE_DIRS "${FFMPEG_ANDROID_PATH}/include")
     set(FFMPEG_LIBRARY_DIRS "${FFMPEG_ANDROID_PATH}/lib")
 
-    # Create an INTERFACE target for the FFmpeg Android libraries.
-    add_library(ffmpeg_android INTERFACE)
-
     # Add the include directory so that FFmpeg headers are available.
-    target_include_directories(ffmpeg_android INTERFACE ${FFMPEG_INCLUDE_DIRS})
-
-    # Link the shared libraries by specifying their full paths.
+    target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
     target_link_libraries(
-      ffmpeg_android
+      ffmpeg_interface
       INTERFACE "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
                 "${FFMPEG_LIBRARY_DIRS}/libavformat.so"
                 "${FFMPEG_LIBRARY_DIRS}/libavutil.so"
                 "${FFMPEG_LIBRARY_DIRS}/libswscale.so"
                 "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
                 "${FFMPEG_LIBRARY_DIRS}/libavfilter.so")
-
   else()
     find_package(FFmpeg REQUIRED MODULE)
   endif()
 
-endfunction()
+endmacro()
 
 function(netxten_isolate_dependencies)
 

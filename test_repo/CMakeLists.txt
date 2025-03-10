@@ -113,6 +113,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     pugixml-static)
 endif()
 
+if (TARGET ffmpeg_interface)
+  list(APPEND ADDITIONAL_TARGETS ffmpeg_interface)
+endif()
+
 # Add other targets that you want installed here
 test_repo_package_project(
   TARGETS
