@@ -118,10 +118,12 @@ cmake \
 
 ARTIFACTS_LIB_DIR="$(pwd)/artifacts/ios/lib"
 THIN_DIR="$(pwd)/artifacts/ios/thin/arm64"
+mkdir -p $THIN_DIR
+
 # Thin all libraries in artifacts/ios/lib for arm64
 for lib in $(find "${ARTIFACTS_LIB_DIR}" -type f -name "*.a"); do
   echo "Thinning ${lib} for arm64..."
-  lipo -thin arm64 "${lib}" -output "${THIN_DIR}/artifacts_ios_lib/$(basename "${lib}")"
+  lipo -thin arm64 "${lib}" -output "${THIN_DIR}/$(basename "${lib}")"
 done
 
 # Merge the static libraries
