@@ -110,10 +110,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     eigen
     charls
     pugixml
-    pugixml-static)
+    pugixml-static
+    ffmpeg_interface)
 endif()
 
-if (WIN32 AND TARGET ffmpeg_interface)
+# When on windows install additional targets because of ffmpeg
+if(WIN32 AND TARGET ffmpeg_interface)
   list(APPEND ADDITIONAL_TARGETS ffmpeg_interface)
 endif()
 
