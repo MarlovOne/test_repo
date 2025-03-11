@@ -116,19 +116,20 @@ cmake \
     --prefix $(realpath ./artifacts/ios) \
     --config ${BUILD_TYPE}
 
-ARTIFACTS_LIB_DIR="$(pwd)/artifacts/ios/lib"
-THIN_DIR="$(pwd)/artifacts/ios/thin/arm64"
-mkdir -p $THIN_DIR
+FFMPEG_LIB_DIR="$(pwd)/artifacts/ios/ffmpeg/lib"
+THIN_FFMPEG_LIB_DIR="$(pwd)/artifacts/ios/thin/arm64/ffmpeg/lib"
+mkdir -p $THIN_FFMPEG_LIB_DIR
 
 # Thin all libraries in artifacts/ios/lib for arm64
-for lib in $(find "${ARTIFACTS_LIB_DIR}" -type f -name "*.a"); do
+for lib in $(find "${FFMPEG_LIB_DIR}" -type f -name "*.a"); do
   echo "Thinning ${lib} for arm64..."
-  lipo -thin arm64 "${lib}" -output "${THIN_DIR}/$(basename "${lib}")"
+  lipo -thin arm64 "${lib}" -output "${THIN_FFMPEG_LIB_DIR}/$(basename "${lib}")"
 done
 
 # Merge the static libraries
 libtool -static -o artifacts/ios/lib/libtest_repo.a \
-  $(find "$THIN_DIR" -type f -name "*.a") \
+  $(find "$(pwd)/artifacts/ios/lib" -type f -name "*.a") \
+  $(find "$THIN_FFMPEG_LIB_DIR" -type f -name "*.a") \
   $(find "$(pwd)/"$BUILD_DIR"/_deps/opencv-staticlib-src/arm64/lib" -type f -name "*.a")
 
 # Combine the headers

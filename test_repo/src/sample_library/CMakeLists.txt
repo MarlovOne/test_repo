@@ -92,5 +92,5 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
           "${FFMPEG_LIBRARY_DIRS}/libavutil.a"
           "${FFMPEG_LIBRARY_DIRS}/libswresample.a"
           "${FFMPEG_LIBRARY_DIRS}/libswscale.a"
-    DESTINATION lib)
+    DESTINATION ffmpeg/lib)
 endif()
