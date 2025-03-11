@@ -29,7 +29,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
             "-framework UIKit"
             "-framework Foundation" # Added to resolve missing symbols
             "-framework CoreFoundation"
-            "-framework CoreMedia")
+            "-framework CoreMedia"
+            "-framework AudioToolbox"
+            "-framework VideoToolbox"
+            "-framework CoreVideo")
 endif()
 
 target_include_directories(
