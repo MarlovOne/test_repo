@@ -197,10 +197,8 @@ macro(test_repo_architecture_options)
 
   if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     message(WARNING "Setting default target architecture to x86_64;arm64 for Apple Silicon")
-    # set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
-    # set(TAGET_ARCHITECTURE "x86_64;arm64")
-    set(CMAKE_OSX_ARCHITECTURES "arm64")
-    set(TAGET_ARCHITECTURE "arm64")
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+    set(TAGET_ARCHITECTURE "x86_64;arm64")
   elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Linux Setup
     if(NOT DEFINED TARGET_ARCHITECTURE)

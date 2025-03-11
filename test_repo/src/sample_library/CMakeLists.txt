@@ -81,3 +81,16 @@ if(WIN32)
     DESTINATION lib)
 
 endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
+  # Install static libraries for iOS - FFMPEG
+  install(
+    FILES "${FFMPEG_LIBRARY_DIRS}/libavcodec.a"
+          "${FFMPEG_LIBRARY_DIRS}/libavdevice.a"
+          "${FFMPEG_LIBRARY_DIRS}/libavfilter.a"
+          "${FFMPEG_LIBRARY_DIRS}/libavformat.a"
+          "${FFMPEG_LIBRARY_DIRS}/libavutil.a"
+          "${FFMPEG_LIBRARY_DIRS}/libswresample.a"
+          "${FFMPEG_LIBRARY_DIRS}/libswscale.a"
+    DESTINATION lib)
+endif()
