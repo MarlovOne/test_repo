@@ -185,7 +185,7 @@ macro(add_ffmpeg_dependency_isolated)
     set(FFMPEG_LIBRARY_DIRS "${FFMPEG_ANDROID_PATH}/lib")
 
     # add the include directory so that ffmpeg headers are available.
-    target_include_directories(ffmpeg_interface interface ${ffmpeg_include_dirs})
+    target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
     target_link_libraries(
       ffmpeg_interface
       INTERFACE "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
