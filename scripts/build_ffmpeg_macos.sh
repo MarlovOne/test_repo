@@ -63,6 +63,8 @@ build_ffmpeg() {
   make install
 }
 
+echo "trigger"
+
 # Build for x86_64 using the macOS cross-compiler
 build_ffmpeg "x86_64" "$BUILD_DIR/x86_64" "o64-clang"
 
