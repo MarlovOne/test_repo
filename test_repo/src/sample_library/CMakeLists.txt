@@ -2,6 +2,9 @@ add_library(sample_library sample_library.cpp)
 
 add_library(test_repo::sample_library ALIAS sample_library)
 
+message(WARNING "SAMPLE_LIB FFMEG LIBRARIES ${FFMPEG_LIBRARIES}")
+message(WARNING "SAMPLE_LIB FFMEG include ${FFMPEG_INCLUDE_DIRS}")
+
 target_link_libraries(
   sample_library
   PRIVATE test_repo::test_repo_options
