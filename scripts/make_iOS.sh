@@ -66,6 +66,8 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
+export CPM_SOURCE_CACHE="$HOME/.cpm_cache"
+
 # Get the directory containing this script
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
