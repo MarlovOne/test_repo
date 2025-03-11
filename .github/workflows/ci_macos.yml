@@ -37,7 +37,11 @@ jobs:
         with:
           envFile: '.github/constants.env'
 
-      - name: Configure CMake
+      - name: Configure CMake (FFMPEG)
+        run: |
+          ./scripts/build_ffmpeg_macos.sh
+
+      - name: Configure CMake (OpenCV)
         run: |
           brew install eigen ffmpeg
           ./scripts/install_deps_macos.sh

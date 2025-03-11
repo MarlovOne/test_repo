@@ -195,7 +195,17 @@ macro(add_ffmpeg_dependency_isolated)
                 "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
                 "${FFMPEG_LIBRARY_DIRS}/libavfilter.so")
   else()
+
+    message(WARNING "Hoping to find ffmpeg on the system")
     find_package(FFmpeg REQUIRED MODULE)
+    if(FFMPEG_FOUND)
+      message(STATUS "FFmpeg found")
+      message(WARNING "FFMEG LIBRARIES ${FFMEG_LIBRARIES}")
+      message(WARNING "FFMEG include ${FFMPEG_INCLUDE_DIRS}")
+    else()
+      message(FATAL_ERROR "FFmpeg not found")
+    endif()
+
   endif()
 
 endmacro()
