@@ -129,8 +129,8 @@ macro(add_ffmpeg_dependency_isolated)
     set(FFMPEG_INCLUDE_DIRS "${ffmpeg-libs_SOURCE_DIR}/FFmpeg-iOS/include")
     set(FFMPEG_LIBRARY_DIRS "${ffmpeg-libs_SOURCE_DIR}/FFmpeg-iOS/lib")
 
-    # Add the include directory so that FFmpeg headers are available.
-    target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
+    # # Add the include directory so that FFmpeg headers are available.
+    # target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
 
     # Add static imported libraries.
     add_library(avcodec STATIC IMPORTED)
