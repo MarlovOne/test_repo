@@ -114,41 +114,57 @@ macro(add_ffmpeg_dependency_isolated)
                 swscale)
 
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
-    # URL for the FFmpeg iOS archive
-    set(FFMPEG_IOS_URL "https://sourceforge.net/projects/ffmpeg-ios/files/latest/download")
 
-    # Define paths for the downloaded archive and extraction directory.
-    set(FFMPEG_IOS_ARCHIVE "${CMAKE_BINARY_DIR}/ffmpeg-ios-master.tar.bz2")
-    set(FFMPEG_IOS_EXTRACT_DIR "${CMAKE_BINARY_DIR}/ffmpeg-ios")
+    cpmaddpackage(
+      NAME
+      ffmpeg-libs
+      GIT_TAG
+      ios
+      GITHUB_REPOSITORY
+      MarlovOne/ffmpeg-libs
+      DOWNLOAD_ONLY
+      TRUE)
 
-    message(STATUS "Downloading FFmpeg iOS from ${FFMPEG_IOS_URL}")
-    file(DOWNLOAD ${FFMPEG_IOS_URL} ${FFMPEG_IOS_ARCHIVE} SHOW_PROGRESS)
+    # Set include and library directories based on the downloaded repository.
+    set(FFMPEG_INCLUDE_DIRS "${ffmpeg-libs_SOURCE_DIR}/FFmpeg-iOS/include")
+    set(FFMPEG_LIBRARY_DIRS "${ffmpeg-libs_SOURCE_DIR}/FFmpeg-iOS/lib")
 
-    message(STATUS "Extracting FFmpeg iOS to ${FFMPEG_IOS_EXTRACT_DIR}")
-    file(MAKE_DIRECTORY ${FFMPEG_IOS_EXTRACT_DIR})
-    file(
-      ARCHIVE_EXTRACT
-      INPUT
-      ${FFMPEG_IOS_ARCHIVE}
-      DESTINATION
-      ${FFMPEG_IOS_EXTRACT_DIR})
+    # Add the include directory so that FFmpeg headers are available.
+    target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
 
-    set(FFMPEG_INCLUDE_DIRS "${FFMPEG_IOS_EXTRACT_DIR}/FFmpeg-iOS/include")
-    set(FFMPEG_LIBRARY_DIRS "${FFMPEG_IOS_EXTRACT_DIR}/FFmpeg-iOS/lib")
+    # Add static imported libraries.
+    add_library(avcodec STATIC IMPORTED)
+    set_property(TARGET avcodec PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libavcodec.a")
 
-    # Tell CMake where to find the FFmpeg iOS headers and libraries.
-    include_directories(${FFMPEG_INCLUDE_DIRS})
-    link_directories(${FFMPEG_LIBRARY_DIRS})
+    add_library(avdevice STATIC IMPORTED)
+    set_property(TARGET avdevice PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libavdevice.a")
 
-    # Define a variable with the names of the libraries you wish to link.
-    # Adjust these names if the libraries have prefixes (like "lib") or extensions.
-    set(FFMPEG_LIBRARIES
-        avcodec
-        avformat
-        avutil
-        swscale
-        swresample
-        avfilter)
+    add_library(avfilter STATIC IMPORTED)
+    set_property(TARGET avfilter PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libavfilter.a")
+
+    add_library(avformat STATIC IMPORTED)
+    set_property(TARGET avformat PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libavformat.a")
+
+    add_library(avutil STATIC IMPORTED)
+    set_property(TARGET avutil PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libavutil.a")
+
+    add_library(swresample STATIC IMPORTED)
+    set_property(TARGET swresample PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libswresample.a")
+
+    add_library(swscale STATIC IMPORTED)
+    set_property(TARGET swscale PROPERTY IMPORTED_LOCATION "${FFMPEG_LIBRARY_DIRS}/libswscale.a")
+
+    # Link the imported libraries to the interface target.
+    target_link_libraries(
+      ffmpeg_interface
+      INTERFACE avcodec
+                avdevice
+                avformat
+                avutil
+                swresample
+                swscale
+                avfilter)
+
   elseif(ANDROID)
 
     cpmaddpackage(
@@ -168,8 +184,8 @@ macro(add_ffmpeg_dependency_isolated)
     set(FFMPEG_INCLUDE_DIRS "${FFMPEG_ANDROID_PATH}/include")
     set(FFMPEG_LIBRARY_DIRS "${FFMPEG_ANDROID_PATH}/lib")
 
-    # Add the include directory so that FFmpeg headers are available.
-    target_include_directories(ffmpeg_interface INTERFACE ${FFMPEG_INCLUDE_DIRS})
+    # add the include directory so that ffmpeg headers are available.
+    target_include_directories(ffmpeg_interface interface ${ffmpeg_include_dirs})
     target_link_libraries(
       ffmpeg_interface
       INTERFACE "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
