@@ -147,12 +147,12 @@ if(NOT FFMPEG_LIBRARIES)
   # Check if the required components were found and add their stuff to the FFMPEG_* vars.
   foreach(_component ${FFmpeg_FIND_COMPONENTS})
     if(${_component}_FOUND)
-      # message(STATUS "Required component ${_component} present.")
+      message(STATUS "Required component ${_component} present.")
       set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} ${${_component}_LIBRARIES})
       set(FFMPEG_DEFINITIONS ${FFMPEG_DEFINITIONS} ${${_component}_DEFINITIONS})
       list(APPEND FFMPEG_INCLUDE_DIRS ${${_component}_INCLUDE_DIRS})
     else()
-      # message(STATUS "Required component ${_component} missing.")
+      message(STATUS "Required component ${_component} missing.")
     endif()
   endforeach()
 
@@ -165,12 +165,15 @@ if(NOT FFMPEG_LIBRARIES)
   set(FFMPEG_INCLUDE_DIRS
       ${FFMPEG_INCLUDE_DIRS}
       CACHE STRING "The FFmpeg include directories." FORCE)
+  message(STATUS "FFMPEG_INCLUDE_DIRS: ${FFMPEG_INCLUDE_DIRS}")
   set(FFMPEG_LIBRARIES
       ${FFMPEG_LIBRARIES}
       CACHE STRING "The FFmpeg libraries." FORCE)
+  message(STATUS "FFMPEG_LIBRARIES: ${FFMPEG_LIBRARIES}")
   set(FFMPEG_DEFINITIONS
       ${FFMPEG_DEFINITIONS}
       CACHE STRING "The FFmpeg cflags." FORCE)
+  message(STATUS "FFMPEG_DEFINITIONS: ${FFMPEG_DEFINITIONS}")
 
   mark_as_advanced(FFMPEG_INCLUDE_DIRS FFMPEG_LIBRARIES FFMPEG_DEFINITIONS)
 

@@ -12,7 +12,6 @@ check_command() {
 # Check essential commands
 check_command git
 check_command make
-check_command nproc
 check_command lipo
 
 # Check cross-compilers (adjust names if needed)
@@ -59,7 +58,7 @@ build_ffmpeg() {
     --cc="$cc"
 
   # Build and install
-  make -j"$(nproc)"
+  make
   make install
 }
 
