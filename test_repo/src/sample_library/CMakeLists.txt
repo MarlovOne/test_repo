@@ -32,7 +32,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
             "-framework CoreMedia"
             "-framework AudioToolbox"
             "-framework VideoToolbox"
-            "-framework CoreVideo")
+            "-framework CoreVideo"
+            "-liconv")
 endif()
 
 target_include_directories(
