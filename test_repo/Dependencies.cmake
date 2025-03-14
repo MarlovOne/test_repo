@@ -221,7 +221,7 @@ macro(add_ffmpeg_dependency_isolated)
                 ${FFMPEG_LIBRARY_DIRS}/libavutil.dylib
                 ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
                 ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib)
-
+    target_link_options(ffmpeg_interface INTERFACE "-Wl,-rpath,@loader_path/../lib")
   else()
     message(WARNING "Hoping to find ffmpeg on the system")
     find_package(FFmpeg REQUIRED MODULE)
