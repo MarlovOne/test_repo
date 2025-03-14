@@ -35,12 +35,14 @@ add_library(blabla SHARED "blabla.cpp")
 target_link_libraries(blabla PRIVATE test_repo::sample_library)
 set_target_properties(blabla PROPERTIES PUBLIC_HEADER blabla.hpp OUTPUT_NAME
                                                                  "blabla")
-target_include_directories(blabla PRIVATE "${test_repo_root_DIR}/opencv4")
+target_include_directories(blabla PRIVATE "${test_repo_root_DIR}/opencv4"
+                                          "${test_repo_root_DIR}")
 target_compile_definitions(blabla PUBLIC DART_SHARED_LIB)
 
 # Install sample_library next to blabla
 if(WIN32)
-  target_link_directories(blabla PRIVATE "${test_repo_root_DIR}/bin" "${test_repo_root_DIR}/lib")
+  target_link_directories(blabla PRIVATE "${test_repo_root_DIR}/bin"
+                          "${test_repo_root_DIR}/lib")
   add_custom_command(
     TARGET blabla
     POST_BUILD
@@ -49,42 +51,38 @@ if(WIN32)
   add_custom_command(
     TARGET blabla
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${test_repo_root_DIR}/bin" $<TARGET_FILE_DIR:blabla>)
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${test_repo_root_DIR}/bin"
+            $<TARGET_FILE_DIR:blabla>)
 
   # Define the FFmpeg dependency DLLs.
   set(FFMPEG_DLLS
-    "${test_repo_root_DIR}/bin/avcodec-61.dll"
-    "${test_repo_root_DIR}/bin/avformat-61.dll"
-    "${test_repo_root_DIR}/bin/avdevice-61.dll"
-    "${test_repo_root_DIR}/bin/avfilter-10.dll"
-    "${test_repo_root_DIR}/bin/avutil-59.dll"
-    "${test_repo_root_DIR}/bin/postproc-58.dll"
-    "${test_repo_root_DIR}/bin/swresample-5.dll"
-    "${test_repo_root_DIR}/bin/swscale-8.dll"
-  )
+      "${test_repo_root_DIR}/bin/avcodec-61.dll"
+      "${test_repo_root_DIR}/bin/avformat-61.dll"
+      "${test_repo_root_DIR}/bin/avdevice-61.dll"
+      "${test_repo_root_DIR}/bin/avfilter-10.dll"
+      "${test_repo_root_DIR}/bin/avutil-59.dll"
+      "${test_repo_root_DIR}/bin/postproc-58.dll"
+      "${test_repo_root_DIR}/bin/swresample-5.dll"
+      "${test_repo_root_DIR}/bin/swscale-8.dll")
 
   # Define the FFmpeg dependency .lib files.
   set(FFMPEG_LIBS
-    "${test_repo_root_DIR}/lib/avcodec.lib"
-    "${test_repo_root_DIR}/lib/avformat.lib"
-    "${test_repo_root_DIR}/lib/avdevice.lib"
-    "${test_repo_root_DIR}/lib/avfilter.lib"
-    "${test_repo_root_DIR}/lib/avutil.lib"
-    "${test_repo_root_DIR}/lib/postproc.lib"
-    "${test_repo_root_DIR}/lib/swresample.lib"
-    "${test_repo_root_DIR}/lib/swscale.lib"
-  )
+      "${test_repo_root_DIR}/lib/avcodec.lib"
+      "${test_repo_root_DIR}/lib/avformat.lib"
+      "${test_repo_root_DIR}/lib/avdevice.lib"
+      "${test_repo_root_DIR}/lib/avfilter.lib"
+      "${test_repo_root_DIR}/lib/avutil.lib"
+      "${test_repo_root_DIR}/lib/postproc.lib"
+      "${test_repo_root_DIR}/lib/swresample.lib"
+      "${test_repo_root_DIR}/lib/swscale.lib")
 
   # Copy FFmpeg DLLs.
   foreach(dll ${FFMPEG_DLLS})
     add_custom_command(
       TARGET blabla
       POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-              ${dll}
-              $<TARGET_FILE_DIR:blabla>
-    )
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll}
+              $<TARGET_FILE_DIR:blabla>)
   endforeach()
 
   # Copy FFmpeg .lib files.
@@ -92,10 +90,8 @@ if(WIN32)
     add_custom_command(
       TARGET blabla
       POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-              ${lib}
-              $<TARGET_FILE_DIR:blabla>
-    )
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${lib}
+              $<TARGET_FILE_DIR:blabla>)
   endforeach()
 endif()
 
