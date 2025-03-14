@@ -90,6 +90,7 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
   # Install static libraries for iOS - FFMPEG
+  # Note: install to a separate libraray - the currently used ios libraries containe multiple architectures and need to be manually stripped for arm64
   install(
     FILES "${FFMPEG_LIBRARY_DIRS}/libavcodec.a"
           "${FFMPEG_LIBRARY_DIRS}/libavdevice.a"
@@ -98,12 +99,11 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
           "${FFMPEG_LIBRARY_DIRS}/libavutil.a"
           "${FFMPEG_LIBRARY_DIRS}/libswresample.a"
           "${FFMPEG_LIBRARY_DIRS}/libswscale.a"
-    DESTINATION lib)
+    DESTINATION ffmpeg/lib)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
   # Install dynamic libraries for macOS - FFMPEG
-  # Note: install to a separate libraray - the currently used ios libraries containe multiple architectures and need to be manually stripped for arm64
   install(
     FILES ${FFMPEG_LIBRARY_DIRS}/libavcodec.dylib
           ${FFMPEG_LIBRARY_DIRS}/libavdevice.dylib
@@ -112,5 +112,5 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FFMPEG_LIBRARY_DIRS}/libavutil.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib
-    DESTINATION ffmpeg/lib)
+    DESTINATION lib)
 endif()
