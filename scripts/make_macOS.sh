@@ -123,6 +123,7 @@ xcodebuild \
     -output artifacts/macos/libsample_library.xcframework
 
 # Copy the artifact to the ffi plugin
+setopt nonomatch
 rm -rf ./blabla/macos/libsample_library.xcframework
 cp -rf ./artifacts/macos/libsample_library.xcframework ./blabla/macos/libsample_library.xcframework
 
