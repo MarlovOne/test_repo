@@ -129,7 +129,8 @@ test_repo_package_project(
   ${ADDITIONAL_TARGETS}
   PUBLIC_INCLUDES
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
-  "${OpenCV_INCLUDE_DIRS}")
+  "${OpenCV_INCLUDE_DIRS}"
+  "${Eigen3_SOURCE_DIR}/Eigen")
 
 # Detect architecture
 if(CMAKE_SYSTEM_PROCESSOR)
