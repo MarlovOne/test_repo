@@ -222,6 +222,17 @@ macro(add_ffmpeg_dependency_isolated)
                 ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
                 ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib)
     target_link_options(ffmpeg_interface INTERFACE "-Wl,-rpath,@loader_path/../lib")
+    add_custom_target(
+      fix_ffmpeg_install_names ALL
+      COMMAND install_name_tool -id "@rpath/libavcodec.dylib" "${FFMPEG_LIBRARY_DIRS}/libavcodec.dylib"
+      COMMAND install_name_tool -id "@rpath/libavformat.dylib" "${FFMPEG_LIBRARY_DIRS}/libavformat.dylib"
+      COMMAND install_name_tool -id "@rpath/libavfilter.dylib" "${FFMPEG_LIBRARY_DIRS}/libavfilter.dylib"
+      COMMAND install_name_tool -id "@rpath/libavdevice.dylib" "${FFMPEG_LIBRARY_DIRS}/libavdevice.dylib"
+      COMMAND install_name_tool -id "@rpath/libavutil.dylib" "${FFMPEG_LIBRARY_DIRS}/libavutil.dylib"
+      COMMAND install_name_tool -id "@rpath/libswresample.dylib" "${FFMPEG_LIBRARY_DIRS}/libswresample.dylib"
+      COMMAND install_name_tool -id "@rpath/libswscale.dylib" "${FFMPEG_LIBRARY_DIRS}/libswscale.dylib"
+      COMMENT "Fixing FFmpeg install names")
+
   else()
     message(WARNING "Hoping to find ffmpeg on the system")
     find_package(FFmpeg REQUIRED MODULE)
