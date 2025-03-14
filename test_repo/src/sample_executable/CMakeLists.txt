@@ -1,6 +1,7 @@
 add_executable(sample_executable main.cpp)
 
-target_link_libraries(sample_executable PRIVATE test_repo::test_repo_options test_repo::test_repo_warnings)
+target_link_libraries(sample_executable PRIVATE test_repo::test_repo_options test_repo::test_repo_warnings
+                                                $<BUILD_INTERFACE:Eigen3::Eigen>)
 
 target_link_system_libraries(sample_executable PUBLIC test_repo::sample_library)
 
