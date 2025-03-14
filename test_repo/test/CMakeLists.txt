@@ -40,6 +40,7 @@ target_link_libraries(
           Eigen3::Eigen
           ffmpeg_interface)
 target_include_directories(tests PRIVATE ${CPM_PACKAGE_sciplot_SOURCE_DIR} ${OpenCV_INCLUDE_DIRS})
+set_target_properties(tests PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
@@ -74,6 +75,7 @@ target_link_libraries(
           Catch2::Catch2WithMain
           Eigen3::Eigen
           ffmpeg_interface)
+set_target_properties(constexpr_tests PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
@@ -108,6 +110,7 @@ target_link_libraries(
           Eigen3::Eigen
           ffmpeg_interface)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
+set_target_properties(relaxed_constexpr_tests PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
