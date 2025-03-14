@@ -20,7 +20,7 @@ target_link_libraries(
 
 # If ffmpeg is a shared library (it is for windows and macos) then make it public to propagate to the parent projects
 if(WIN32
-   AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
+   OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
    AND NOT IOS)
   target_link_libraries(sample_library PUBLIC ffmpeg_interface)
 else()
