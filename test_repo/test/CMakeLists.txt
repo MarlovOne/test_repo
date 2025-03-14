@@ -37,6 +37,7 @@ target_link_libraries(
           test_repo::sample_library
           Catch2::Catch2WithMain
           ${OpenCV_LIBS}
+          Eigen3::Eigen
           ffmpeg_interface)
 target_include_directories(tests PRIVATE ${CPM_PACKAGE_sciplot_SOURCE_DIR} ${OpenCV_INCLUDE_DIRS})
 
@@ -71,6 +72,7 @@ target_link_libraries(
           test_repo::test_repo_options
           test_repo::sample_library
           Catch2::Catch2WithMain
+          Eigen3::Eigen
           ffmpeg_interface)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
@@ -103,6 +105,7 @@ target_link_libraries(
           test_repo::test_repo_options
           test_repo::sample_library
           Catch2::Catch2WithMain
+          Eigen3::Eigen
           ffmpeg_interface)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
 
