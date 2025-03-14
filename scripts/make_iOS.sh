@@ -135,8 +135,10 @@ libtool -static -o artifacts/ios/lib/libtest_repo.a \
 # Combine the headers
 COMBINED_HEADERS=artifacts/ios/combined_headers/
 mkdir -p $COMBINED_HEADERS
+mkdir -p $COMBINED_HEADERS/Eigen/
 cp -R artifacts/ios/include/* $COMBINED_HEADERS
 cp -R artifacts/ios/opencv4/* $COMBINED_HEADERS
+cp -R artifacts/ios/Eigen/* $COMBINED_HEADERS/Eigen/
 
 # Create the xcframework
 xcodebuild \

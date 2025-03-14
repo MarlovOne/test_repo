@@ -194,8 +194,35 @@ macro(add_ffmpeg_dependency_isolated)
                 "${FFMPEG_LIBRARY_DIRS}/libswscale.so"
                 "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
                 "${FFMPEG_LIBRARY_DIRS}/libavfilter.so")
-  else()
+  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
 
+    cpmaddpackage(
+      NAME
+      ffmpeg-libs
+      GIT_TAG
+      macos
+      GITHUB_REPOSITORY
+      MarlovOne/ffmpeg-libs
+      DOWNLOAD_ONLY
+      TRUE)
+
+    # Set the include and library directories.
+    set(FFMPEG_PATH "${ffmpeg-libs_SOURCE_DIR}")
+    set(FFMPEG_INCLUDE_DIRS "${FFMPEG_PATH}/include")
+    set(FFMPEG_LIBRARY_DIRS "${FFMPEG_PATH}/lib")
+
+    # Propagate the FFmpeg libraries.
+    target_link_libraries(
+      ffmpeg_interface
+      INTERFACE ${FFMPEG_LIBRARY_DIRS}/libavcodec.dylib
+                ${FFMPEG_LIBRARY_DIRS}/libavformat.dylib
+                ${FFMPEG_LIBRARY_DIRS}/libavfilter.dylib
+                ${FFMPEG_LIBRARY_DIRS}/libavdevice.dylib
+                ${FFMPEG_LIBRARY_DIRS}/libavutil.dylib
+                ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
+                ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib)
+
+  else()
     message(WARNING "Hoping to find ffmpeg on the system")
     find_package(FFmpeg REQUIRED MODULE)
     if(FFMPEG_FOUND)

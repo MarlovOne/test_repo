@@ -97,3 +97,15 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
           "${FFMPEG_LIBRARY_DIRS}/libswscale.a"
     DESTINATION ffmpeg/lib)
 endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
+  # Install dynamic libraries for macOS - FFMPEG
+  install(
+    FILES ${FFMPEG_LIBRARY_DIRS}/libavcodec.dylib
+          ${FFMPEG_LIBRARY_DIRS}/libavdevice.dylib
+          ${FFMPEG_LIBRARY_DIRS}/libavfilter.dylib
+          ${FFMPEG_LIBRARY_DIRS}/libavformat.dylib
+          ${FFMPEG_LIBRARY_DIRS}/libavutil.dylib
+          ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
+          ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib)
+endif()

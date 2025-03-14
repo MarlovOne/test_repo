@@ -1,6 +1,7 @@
 #ifndef SAMPLE_LIBRARY_HPP
 #define SAMPLE_LIBRARY_HPP
 
+#include <Eigen/Dense>
 #include <cstdint>
 #include <opencv2/opencv.hpp>
 #include <string>
