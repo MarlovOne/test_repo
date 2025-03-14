@@ -113,4 +113,5 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib
     DESTINATION lib)
+  target_link_options(ffmpeg_interface INTERFACE "-Wl,-rpath,@loader_path/../lib")
 endif()
