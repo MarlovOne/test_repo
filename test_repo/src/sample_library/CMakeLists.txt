@@ -107,5 +107,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FFMPEG_LIBRARY_DIRS}/libavformat.dylib
           ${FFMPEG_LIBRARY_DIRS}/libavutil.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
-          ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib)
+          ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib
+    DESTINATION ffmpeg/lib)
 endif()
