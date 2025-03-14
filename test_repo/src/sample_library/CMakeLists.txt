@@ -18,7 +18,10 @@ target_link_libraries(
           $<BUILD_INTERFACE:pugixml::pugixml>
           $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
-if(WIN32)
+# If ffmpeg is a shared library (it is for windows and macos) then make it public to propagate to the parent projects
+if(WIN32
+   AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
+   AND NOT IOS)
   target_link_libraries(sample_library PUBLIC ffmpeg_interface)
 else()
   target_link_libraries(sample_library PRIVATE ffmpeg_interface)
@@ -95,11 +98,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
           "${FFMPEG_LIBRARY_DIRS}/libavutil.a"
           "${FFMPEG_LIBRARY_DIRS}/libswresample.a"
           "${FFMPEG_LIBRARY_DIRS}/libswscale.a"
-    DESTINATION ffmpeg/lib)
+    DESTINATION lib)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
   # Install dynamic libraries for macOS - FFMPEG
+  # Note: install to a separate libraray - the currently used ios libraries containe multiple architectures and need to be manually stripped for arm64
   install(
     FILES ${FFMPEG_LIBRARY_DIRS}/libavcodec.dylib
           ${FFMPEG_LIBRARY_DIRS}/libavdevice.dylib
