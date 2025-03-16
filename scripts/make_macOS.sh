@@ -127,4 +127,8 @@ setopt nonomatch
 rm -rf ./blabla/macos/libsample_library.xcframework
 cp -rf ./artifacts/macos/libsample_library.xcframework ./blabla/macos/libsample_library.xcframework
 
+# Copy ffmpeg dylibs
+mkdir -p ./blabla/macos/dylibs
+cp -rf ./artifacts/macos/ffmpeg/lib/* ./blabla/macos/dylibs/
+
 popd > /dev/null

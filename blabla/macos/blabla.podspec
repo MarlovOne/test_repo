@@ -20,6 +20,15 @@ A new Flutter FFI plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.vendored_frameworks = 'libsample_library.xcframework'
+  s.vendored_libraries = [
+     'dylibs/libavcodec.dylib',
+     'dylibs/libavformat.dylib',
+     'dylibs/libavfilter.dylib',
+     'dylibs/libavdevice.dylib',
+     'dylibs/libavutil.dylib',
+     'dylibs/libswresample.dylib',
+     'dylibs/libswscale.dylib'
+   ]
 
   # If your plugin requires a privacy manifest, for example if it collects user
   # data, update the PrivacyInfo.xcprivacy file to describe your plugin's
