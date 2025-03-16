@@ -104,7 +104,7 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
   # Install dynamic libraries for macOS - FFMPEG
-  add_dependencies(sample_library fix_ffmpeg_install_names)
+  # add_dependencies(sample_library fix_ffmpeg_install_names)
   install(
     FILES ${FFMPEG_LIBRARY_DIRS}/libavcodec.dylib
           ${FFMPEG_LIBRARY_DIRS}/libavdevice.dylib
@@ -113,5 +113,5 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FFMPEG_LIBRARY_DIRS}/libavutil.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib
-    DESTINATION lib)
+    DESTINATION ffmpeg/lib)
 endif()
