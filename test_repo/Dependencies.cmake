@@ -334,9 +334,6 @@ function(add_liquid_dsp_dependency_isolated)
       DOWNLOAD_ONLY
       ${DOWNLOAD_ONLY})
 
-    add_library(liquid_interface INTERFACE)
-    add_library(liquid::liquid ALIAS liquid_interface)
-
     # Add liquid-dsp dependencies for Windows - use the precompiled library
     if(WIN32)
       # Add interface library which collects liquid-dsp dependencies
@@ -364,6 +361,7 @@ function(add_liquid_dsp_dependency_isolated)
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT bin)
     else()
+      add_library(liquid_interface INTERFACE)
       # Add liquid-dsp dependencies for other platforms
       target_include_directories(
         liquid_interface INTERFACE $<BUILD_INTERFACE:${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include>
@@ -371,4 +369,6 @@ function(add_liquid_dsp_dependency_isolated)
       target_link_libraries(liquid_interface INTERFACE liquid)
     endif()
   endif()
+  add_library(liquid::liquid ALIAS liquid_interface)
+
 endfunction()
