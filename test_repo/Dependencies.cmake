@@ -347,9 +347,22 @@ function(add_liquid_dsp_dependency_isolated)
         set(ARCHITECTURE_NUMBER 32)
       endif()
 
-      target_include_directories(liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include)
-      target_link_libraries(
-        liquid_interface INTERFACE ${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib)
+      # Create an imported shared library target
+      add_library(liquid_interface SHARED IMPORTED)
+      set_target_properties(
+        liquid_interface
+        PROPERTIES
+          IMPORTED_LOCATION
+          "${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.dll" # The DLL for runtime
+          IMPORTED_IMPLIB
+          "${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.lib" # The .lib import library for linking
+          INTERFACE_INCLUDE_DIRECTORIES "${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/include")
+
+      # Mark the dll for install
+      install(
+        FILES "${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/lib/msvc/${ARCHITECTURE_NUMBER}/libliquid.dll"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT bin)
     else()
       # Add liquid-dsp dependencies for other platforms
       target_include_directories(
