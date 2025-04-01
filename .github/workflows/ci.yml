@@ -8,19 +8,10 @@ on:
       - dev
 
 jobs:
-  Cancel:
-    name: Cancel previous runs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.8.0
-        with:
-          access_token: ${{ secrets.GH_PAT }}
 
   Test:
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build_type}} ${{matrix.architecture}} ${{matrix.packaging_maintainer_mode == 'ON' && '(maintainer mode)' || ''}}
     runs-on: ${{ matrix.os }}
-    needs:  Cancel
     strategy:
       fail-fast: false
 
