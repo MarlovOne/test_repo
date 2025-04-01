@@ -111,25 +111,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Setup SSH Keys (Windows)
-        # Specify PowerShell as the shell for this step
-        if: matrix.os == 'windows-latest'
-        shell: pwsh 
-        env:
-          # Map the GitHub secret to an environment variable PowerShell can easily access
-          SSH_PRIVATE_KEY_CONTENT: ${{ secrets.SSH_PRIVATE_KEY }} 
-        run: |
-          # Ensure the ssh-agent service is running (silently ignore if already started)
-          Start-Service ssh-agent -ErrorAction SilentlyContinue
-          
-          # Add the SSH key from the environment variable to the agent via stdin
-          # Use ErrorAction Stop to fail the step if adding the key fails
-          echo $env:SSH_PRIVATE_KEY_CONTENT | ssh-add - -ErrorAction Stop
-          
-          # Optional: List keys to verify (prints fingerprint to logs)
-          Write-Host "Verifying SSH key in agent:"
-          ssh-add -l
-
       - name: Project Name
         uses: cardinalby/export-env-action@v2
         with:
