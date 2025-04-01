@@ -178,13 +178,13 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
   # TODO MAYBE HERE ???
   install(
     FILES ${FLIR_SDK_LIBRARY_DIRS}/libatlas_c_sdk.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libavcodec.58.134.100.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libavdevice.58.13.100.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libavfilter.7.110.100.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libavformat.58.76.100.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libavutil.56.70.100.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libswresample.3.9.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavcodec.58.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavdevice.58.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavfilter.7.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavformat.58.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavutil.56.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libswresample.3.dylib
           ${FLIR_SDK_LIBRARY_DIRS}/liblive666.dylib
-          ${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.9.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.dylib
     DESTINATION flir-sdk/lib)
 endif()

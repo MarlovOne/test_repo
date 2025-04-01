@@ -29,14 +29,14 @@ A new Flutter FFI plugin project.
      'dylibs/libswresample.dylib',
      'dylibs/libswscale.dylib',
      'dylibs/libatlas_c_sdk.dylib',
-     'dylibs/libavcodec.58.134.100.dylib',
-     'dylibs/libavdevice.58.13.100.dylib',
-     'dylibs/libavfilter.7.110.100.dylib',
-     'dylibs/libavformat.58.76.100.dylib',
-     'dylibs/libavutil.56.70.100.dylib',
-     'dylibs/libswresample.3.9.100.dylib',
+     'dylibs/libavcodec.58.dylib',
+     'dylibs/libavdevice.58.dylib',
+     'dylibs/libavfilter.7.dylib',
+     'dylibs/libavformat.58.dylib',
+     'dylibs/libavutil.56.dylib',
+     'dylibs/libswresample.3.dylib',
      'dylibs/liblive666.dylib',
-     'dylibs/libswscale.5.9.100.dylib'
+     'dylibs/libswscale.5.dylib'
    ]
 
   # If your plugin requires a privacy manifest, for example if it collects user
