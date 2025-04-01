@@ -98,6 +98,49 @@ jobs:
 
       - name: Checkout Repository 
         uses: actions/checkout@v4
+      
+      - name: Set up SSH Agent
+        shell: pwsh # Use PowerShell
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Get the secret
+        run: |
+          # Start the SSH agent service
+          Start-Service ssh-agent
+
+          # Create a temporary directory for the key
+          $sshDir = "$env:USERPROFILE\.ssh"
+          New-Item -ItemType Directory -Force -Path $sshDir | Out-Null
+
+          # Write the private key to a temporary file
+          # Ensure your secret includes a newline at the end
+          $keyPath = "$sshDir\id_rsa_temp"
+          Set-Content -Path $keyPath -Value "${env:SSH_PRIVATE_KEY}"
+
+          # Set correct permissions (optional on Windows, but good practice)
+          # icacls $keyPath /inheritance:r
+          # icacls $keyPath /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R)"
+
+          # Add the key to the ssh-agent
+          ssh-add $keyPath
+
+          # Remove the temporary key file for security
+          Remove-Item -Path $keyPath -Force
+
+          # Optional: Add known hosts (e.g., github.com) to avoid prompts
+          # Create the known_hosts file if it doesn't exist
+          $knownHostsPath = "$sshDir\known_hosts"
+          if (-not (Test-Path $knownHostsPath)) {
+              New-Item -ItemType File -Force -Path $knownHostsPath | Out-Null
+          }
+          # Add GitHub's key (replace with your host if different)
+          ssh-keyscan github.com | Out-File -Append -Encoding ascii -FilePath $knownHostsPath
+
+      - name: Test SSH Connection (e.g., to GitHub)
+        shell: pwsh
+        run: |
+          ssh -T git@github.com
+          # If the above fails with "Permission denied", check agent status:
+          # ssh-add -l
 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
