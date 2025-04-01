@@ -104,8 +104,17 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Get the secret
         run: |
+          # Check current status (optional, for debugging)
+          Get-Service ssh-agent | Select-Object -Property Name, Status, StartType
+
+          # Ensure the service startup type is Manual (often necessary on GH runners)
+          Set-Service -Name ssh-agent -StartupType Manual
+
           # Start the SSH agent service
           Start-Service ssh-agent
+
+          # Verify it's running
+          Get-Service ssh-agent
 
           # Create a temporary directory for the key
           $sshDir = "$env:USERPROFILE\.ssh"
@@ -116,15 +125,20 @@ jobs:
           $keyPath = "$sshDir\id_rsa_temp"
           Set-Content -Path $keyPath -Value "${env:SSH_PRIVATE_KEY}"
 
-          # Set correct permissions (optional on Windows, but good practice)
-          # icacls $keyPath /inheritance:r
-          # icacls $keyPath /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R)"
-
           # Add the key to the ssh-agent
-          ssh-add $keyPath
-
-          # Remove the temporary key file for security
-          Remove-Item -Path $keyPath -Force
+          try {
+              ssh-add $keyPath
+          } catch {
+              Write-Error "Failed to add SSH key: $_"
+              # Optional: Check permissions if add fails
+              # icacls $keyPath
+              exit 1 # Fail the step
+          } finally {
+              # Remove the temporary key file for security, even if add failed
+              if (Test-Path $keyPath) {
+                  Remove-Item -Path $keyPath -Force
+              }
+          }
 
           # Optional: Add known hosts (e.g., github.com) to avoid prompts
           # Create the known_hosts file if it doesn't exist
