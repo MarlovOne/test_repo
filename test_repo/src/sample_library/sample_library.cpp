@@ -7,13 +7,20 @@
 #include <spdlog/spdlog.h>
 #include <test_repo/sample_library.hpp>
 
+#ifndef FLIR_SDK_FOUND
+#define FLIR_SDK_FOUND 1
+#endif
+
 extern "C" {
+#if FLIR_SDK_FOUND
 #include <acs/acs.h>
 #include <acs/camera.h>
 #include <acs/discovery.h>
 #include <acs/renderer.h>
 #include <acs/thermal_image.h>
 #include <acs/utility.h>
+#endif
+#include <libavcodec/avcodec.h>
 }
 
 int test_repo::factorial(int input) noexcept
@@ -58,5 +65,7 @@ void test_repo::test()
 {
   cv::VideoCapture cap(0);
   pugi::xml_document doc;
+#if FLIR_SDK_FOUND
   ACS_Discovery *discovery = ACS_Discovery_alloc();
+#endif
 }

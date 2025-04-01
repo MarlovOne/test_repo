@@ -18,6 +18,12 @@ target_link_libraries(
           $<BUILD_INTERFACE:pugixml::pugixml>
           $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
+if(FLIR_SDK_FOUND)
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=1)
+else()
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
+endif()
+
 # If ffmpeg is a shared library (it is for windows and macos) then make it public to propagate to the parent projects
 if(WIN32
    OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
