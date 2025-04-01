@@ -89,6 +89,9 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Push to parent directory of scripts folder
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
+# Setups the environment variables
+. ./scripts/setup_environment.sh
+
 # Remove previous build and artifacts
 rm -rf artifacts/Linux/backend
 

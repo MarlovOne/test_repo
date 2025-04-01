@@ -83,6 +83,9 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Push to parent directory of scripts folder
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
+# Setups the environment variables
+. ./scripts/setup_environment.sh
+
 # Use provided BUILD_DIR if available; otherwise, default to build/android/<arch>
 if [[ -z "${BUILD_DIR}" ]]; then
     BUILD_DIR="$PWD/build/android"

@@ -74,6 +74,9 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to parent directory of scripts folder
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
+# Set up the environment
+. ./scripts/setup_environment.sh
+
 # Remove previous build and artifacts
 rm -rf build/ios
 rm -rf artifacts/ios

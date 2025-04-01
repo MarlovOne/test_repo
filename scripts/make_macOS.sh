@@ -72,6 +72,9 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Push to parent directory of scripts folder
 pushd "${SCRIPT_DIR}/.." > /dev/null
 
+# Setup the environment
+. ./scripts/setup_environment.sh
+
 # Remove previous build and artifacts
 rm -rf "$BUILD_DIR"
 rm -rf artifacts/macos

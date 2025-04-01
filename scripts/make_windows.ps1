@@ -47,6 +47,9 @@ else {
 # Get the directory containing this script
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
+# Ensure the required environment variables are set.
+.\scripts\setup_environment.ps1
+
 # Navigate to the parent directory of the scripts folder
 Push-Location (Join-Path $SCRIPT_DIR "..")
 
