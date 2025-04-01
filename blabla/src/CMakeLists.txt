@@ -68,19 +68,19 @@ if(WIN32)
       "${test_repo_root_DIR}/bin/swscale-8.dll"
 
       # Add the flir-sdk shared libraries
-      "${netxten_root_DIR}/bin/atlas_c_sdk.dll"
-      "${netxten_root_DIR}/bin/live666.dll"
-      "${netxten_root_DIR}/bin/avcodec-58.dll"
-      "${netxten_root_DIR}/bin/avdevice-58.dll"
-      "${netxten_root_DIR}/bin/avfilter-7.dll"
-      "${netxten_root_DIR}/bin/avformat-58.dll"
-      "${netxten_root_DIR}/bin/avutil-56.dll"
-      "${netxten_root_DIR}/bin/swscale-5.dll"
-      "${netxten_root_DIR}/bin/swresample-3.dll"
-      "${netxten_root_DIR}/bin/swscale-5.dll"
+      "${test_repo_root_DIR}/bin/atlas_c_sdk.dll"
+      "${test_repo_root_DIR}/bin/live666.dll"
+      "${test_repo_root_DIR}/bin/avcodec-58.dll"
+      "${test_repo_root_DIR}/bin/avdevice-58.dll"
+      "${test_repo_root_DIR}/bin/avfilter-7.dll"
+      "${test_repo_root_DIR}/bin/avformat-58.dll"
+      "${test_repo_root_DIR}/bin/avutil-56.dll"
+      "${test_repo_root_DIR}/bin/swscale-5.dll"
+      "${test_repo_root_DIR}/bin/swresample-3.dll"
+      "${test_repo_root_DIR}/bin/swscale-5.dll"
       
       # Add liquid libraries
-      "${netxten_root_DIR}/bin/libliquid.dll")
+      "${test_repo_root_DIR}/bin/libliquid.dll")
 
 
   # Define the FFmpeg dependency .lib files.
@@ -101,15 +101,15 @@ if(ANDROID)
   target_link_options(blabla PRIVATE "-Wl,-z,max-page-size=16384")
 
   set(CUSTOM_INSTALL_LIBS
-      "${netxten_root_DIR}/lib/libavcodec.so"
-      "${netxten_root_DIR}/lib/libavdevice.so"
-      "${netxten_root_DIR}/lib/libavfilter.so"
-      "${netxten_root_DIR}/lib/libavformat.so"
-      "${netxten_root_DIR}/lib/libavutil.so"
-      "${netxten_root_DIR}/lib/libpostproc.so"
-      "${netxten_root_DIR}/lib/libswscale.so"
-      "${netxten_root_DIR}/lib/libswresample.so"
-      "${netxten_root_DIR}/lib/libc++_shared.so")
+      "${test_repo_root_DIR}/lib/libavcodec.so"
+      "${test_repo_root_DIR}/lib/libavdevice.so"
+      "${test_repo_root_DIR}/lib/libavfilter.so"
+      "${test_repo_root_DIR}/lib/libavformat.so"
+      "${test_repo_root_DIR}/lib/libavutil.so"
+      "${test_repo_root_DIR}/lib/libpostproc.so"
+      "${test_repo_root_DIR}/lib/libswscale.so"
+      "${test_repo_root_DIR}/lib/libswresample.so"
+      "${test_repo_root_DIR}/lib/libc++_shared.so")
 endif()
 
 # Copy DLLs.
