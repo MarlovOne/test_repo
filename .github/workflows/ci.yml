@@ -106,14 +106,10 @@ jobs:
           build_type: ${{ matrix.build_type }}
           packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
       
-      # Use ssh key in private repository
-      # https://www.webfactory.de/blog/use-ssh-key-for-private-repositories-in-github-actions
-      - name: Setup SSH Keys and known_hosts
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+      - name: Setup SSH Keys using webfactory/ssh-agent
+        uses: webfactory/ssh-agent@v0.9.0 # Use the latest version
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Project Name
         uses: cardinalby/export-env-action@v2
@@ -159,8 +155,6 @@ jobs:
 
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           ./scripts/make_linux.sh \
             --arch ${{ matrix.architecture }} \
