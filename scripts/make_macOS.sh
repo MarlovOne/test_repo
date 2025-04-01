@@ -133,5 +133,6 @@ cp -rf ./artifacts/macos/libsample_library.xcframework ./blabla/macos/libsample_
 # Copy ffmpeg dylibs
 mkdir -p ./blabla/macos/dylibs
 cp -rf ./artifacts/macos/ffmpeg/lib/* ./blabla/macos/dylibs/
+cp -rf ./artifacts/macos/flir-sdk/lib/* ./blabla/macos/dylibs/
 
 popd > /dev/null
