@@ -29,10 +29,10 @@ if(${FLIR_SDK_FOUND})
      OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
      AND NOT IOS)
     message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
-    target_link_libraries(netxten_library PUBLIC flir_sdk)
+    target_link_libraries(sample_library PUBLIC flir_sdk)
   else()
     message(STATUS "Linking flir_sdk as PRIVATE")
-    target_link_libraries(netxten_library PRIVATE flir_sdk)
+    target_link_libraries(sample_library PRIVATE flir_sdk)
   endif()
 endif()
 
@@ -94,7 +94,7 @@ endif()
 if(WIN32)
     
   add_custom_command(
-    TARGET netxten_library
+    TARGET sample_library
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample_library> $<TARGET_FILE_DIR:sample_library>
     COMMAND_EXPAND_LISTS)
