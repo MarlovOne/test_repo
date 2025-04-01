@@ -98,59 +98,7 @@ jobs:
 
       - name: Checkout Repository 
         uses: actions/checkout@v4
-      
-      - name: Set up SSH Agent
-        shell: pwsh # Use PowerShell
-        if:
-          matrix.os == 'windows-latest'
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Get the secret
-        run: |
-          # Check current status (optional, for debugging)
-          Get-Service ssh-agent | Select-Object -Property Name, Status, StartType
-
-          # Ensure the service startup type is Manual (often necessary on GH runners)
-          Set-Service -Name ssh-agent -StartupType Manual
-
-          # Start the SSH agent service
-          Start-Service ssh-agent
-
-          # Verify it's running
-          Get-Service ssh-agent
-
-          # Create a temporary directory for the key
-          $sshDir = "$env:USERPROFILE\.ssh"
-          New-Item -ItemType Directory -Force -Path $sshDir | Out-Null
-
-          # Write the private key to a temporary file
-          # Ensure your secret includes a newline at the end
-          $keyPath = "$sshDir\id_rsa_temp"
-          Set-Content -Path $keyPath -Value "${env:SSH_PRIVATE_KEY}"
-
-          # Add the key to the ssh-agent
-          try {
-              ssh-add $keyPath
-          } catch {
-              Write-Error "Failed to add SSH key: $_"
-              # Optional: Check permissions if add fails
-              # icacls $keyPath
-              exit 1 # Fail the step
-          } finally {
-              # Remove the temporary key file for security, even if add failed
-              if (Test-Path $keyPath) {
-                  Remove-Item -Path $keyPath -Force
-              }
-          }
-
-          # Optional: Add known hosts (e.g., github.com) to avoid prompts
-          # Create the known_hosts file if it doesn't exist
-          $knownHostsPath = "$sshDir\known_hosts"
-          if (-not (Test-Path $knownHostsPath)) {
-              New-Item -ItemType File -Force -Path $knownHostsPath | Out-Null
-          }
-          # Add GitHub's key (replace with your host if different)
-          ssh-keyscan github.com | Out-File -Append -Encoding ascii -FilePath $knownHostsPath
-
+ 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
@@ -159,9 +107,7 @@ jobs:
           packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
       
       - name: Setup SSH Keys using webfactory/ssh-agent
-        uses: webfactory/ssh-agent@v0.7.0 # Use the latest version
-        if:
-          matrix.os != 'windows-latest'
+        uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
