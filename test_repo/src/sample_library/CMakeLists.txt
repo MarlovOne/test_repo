@@ -18,16 +18,29 @@ target_link_libraries(
           $<BUILD_INTERFACE:pugixml::pugixml>
           $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
 
-if(FLIR_SDK_FOUND)
+if(${FLIR_SDK_FOUND})
   target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=1)
 else()
   target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
 endif()
 
+if(${FLIR_SDK_FOUND})
+  if(WIN32
+     OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
+     AND NOT IOS)
+    message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
+    target_link_libraries(netxten_library PUBLIC flir_sdk)
+  else()
+    message(STATUS "Linking flir_sdk as PRIVATE")
+    target_link_libraries(netxten_library PRIVATE flir_sdk)
+  endif()
+endif()
+
 # If ffmpeg is a shared library (it is for windows and macos) then make it public to propagate to the parent projects
 if(WIN32
    OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
-   AND NOT IOS)
+   AND NOT IOS
+   OR ANDROID)
   target_link_libraries(sample_library PUBLIC ffmpeg_interface)
 else()
   target_link_libraries(sample_library PRIVATE ffmpeg_interface)
@@ -58,18 +71,6 @@ target_include_directories(
           $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>
           $<BUILD_INTERFACE:${FLIR_SDK_INCLUDE_DIRS}>)
 
-if(${FLIR_SDK_FOUND})
-  if(WIN32
-     OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
-     AND NOT IOS)
-    message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
-    target_link_libraries(netxten_library PUBLIC flir_sdk)
-  else()
-    message(STATUS "Linking flir_sdk as PRIVATE")
-    target_link_libraries(netxten_library PRIVATE flir_sdk)
-  endif()
-endif()
-
 # Include ffmpeg definitions
 target_compile_definitions(sample_library PRIVATE ${FFMPEG_DEFINITIONS})
 
@@ -91,6 +92,13 @@ if(WIN32 AND BUILD_SHARED_LIBS)
 endif()
 
 if(WIN32)
+    
+  add_custom_command(
+    TARGET netxten_library
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample_library> $<TARGET_FILE_DIR:sample_library>
+    COMMAND_EXPAND_LISTS)
+ 
   install(FILES $<TARGET_RUNTIME_DLLS:sample_library> DESTINATION bin)
 
   # Also install the FFmpeg import libraries (.lib files)
@@ -104,6 +112,39 @@ if(WIN32)
           "${FFMPEG_LIBRARY_DIRS}/swresample.lib"
           "${FFMPEG_LIBRARY_DIRS}/swscale.lib"
     DESTINATION lib)
+  
+  # install the flir-sdk shared libraries (.dll files)
+  install(
+    FILES "${FLIR_SDK_DIR}/bin/atlas_c_sdk.dll"
+          "${FLIR_SDK_DIR}/bin/live666.dll"
+          "${FLIR_SDK_DIR}/bin/avcodec-58.dll"
+          "${FLIR_SDK_DIR}/bin/avdevice-58.dll"
+          "${FLIR_SDK_DIR}/bin/avfilter-7.dll"
+          "${FLIR_SDK_DIR}/bin/avformat-58.dll"
+          "${FLIR_SDK_DIR}/bin/avutil-56.dll"
+          "${FLIR_SDK_DIR}/bin/swscale-5.dll"
+          "${FLIR_SDK_DIR}/bin/swresample-3.dll"
+          "${FLIR_SDK_DIR}/bin/swscale-5.dll"
+    DESTINATION bin)
+
+endif()
+
+if(ANDROID)
+  # Install the FFmpeg shared libraries (.so files)
+  install(
+    FILES "${FFMPEG_LIBRARY_DIRS}/libavcodec.so"
+          "${FFMPEG_LIBRARY_DIRS}/libavdevice.so"
+          "${FFMPEG_LIBRARY_DIRS}/libavfilter.so"
+          "${FFMPEG_LIBRARY_DIRS}/libavformat.so"
+          "${FFMPEG_LIBRARY_DIRS}/libavutil.so"
+          "${FFMPEG_LIBRARY_DIRS}/libpostproc.so"
+          "${FFMPEG_LIBRARY_DIRS}/libswscale.so"
+          "${FFMPEG_LIBRARY_DIRS}/libswresample.so"
+    DESTINATION lib)
+
+  # Need to install libc++_shared.so for Android
+  set(ANDROID_STL c++_shared)
+  include(${CMAKE_SOURCE_DIR}/cmake/modules/ndk-stl-config.cmake)
 
 endif()
 
@@ -133,4 +174,17 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib
     DESTINATION ffmpeg/lib)
+  
+  # TODO MAYBE HERE ???
+  install(
+    FILES ${FLIR_SDK_LIBRARY_DIRS}/libatlas_c_sdk.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavcodec.58.134.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavdevice.58.13.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavfilter.7.110.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavformat.58.76.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libavutil.56.70.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libswresample.3.9.100.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/liblive666.dylib
+          ${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.9.100.dylib
+    DESTINATION flir-sdk/lib)
 endif()

@@ -41,6 +41,8 @@ target_compile_definitions(blabla PUBLIC DART_SHARED_LIB)
 
 # Install sample_library next to blabla
 if(WIN32)
+  # Add compile definition for spdlog
+  target_compile_options(eperlium PRIVATE /utf-8)
   target_link_directories(blabla PRIVATE "${test_repo_root_DIR}/bin"
                           "${test_repo_root_DIR}/lib")
   add_custom_command(
@@ -55,7 +57,7 @@ if(WIN32)
             $<TARGET_FILE_DIR:blabla>)
 
   # Define the FFmpeg dependency DLLs.
-  set(FFMPEG_DLLS
+  set(CUSTOM_INSTALL_DLLS
       "${test_repo_root_DIR}/bin/avcodec-61.dll"
       "${test_repo_root_DIR}/bin/avformat-61.dll"
       "${test_repo_root_DIR}/bin/avdevice-61.dll"
@@ -63,10 +65,26 @@ if(WIN32)
       "${test_repo_root_DIR}/bin/avutil-59.dll"
       "${test_repo_root_DIR}/bin/postproc-58.dll"
       "${test_repo_root_DIR}/bin/swresample-5.dll"
-      "${test_repo_root_DIR}/bin/swscale-8.dll")
+      "${test_repo_root_DIR}/bin/swscale-8.dll"
+
+      # Add the flir-sdk shared libraries
+      "${netxten_root_DIR}/bin/atlas_c_sdk.dll"
+      "${netxten_root_DIR}/bin/live666.dll"
+      "${netxten_root_DIR}/bin/avcodec-58.dll"
+      "${netxten_root_DIR}/bin/avdevice-58.dll"
+      "${netxten_root_DIR}/bin/avfilter-7.dll"
+      "${netxten_root_DIR}/bin/avformat-58.dll"
+      "${netxten_root_DIR}/bin/avutil-56.dll"
+      "${netxten_root_DIR}/bin/swscale-5.dll"
+      "${netxten_root_DIR}/bin/swresample-3.dll"
+      "${netxten_root_DIR}/bin/swscale-5.dll"
+      
+      # Add liquid libraries
+      "${netxten_root_DIR}/bin/libliquid.dll")
+
 
   # Define the FFmpeg dependency .lib files.
-  set(FFMPEG_LIBS
+  set(CUSTOM_INSTALL_LIBS
       "${test_repo_root_DIR}/lib/avcodec.lib"
       "${test_repo_root_DIR}/lib/avformat.lib"
       "${test_repo_root_DIR}/lib/avdevice.lib"
@@ -76,26 +94,38 @@ if(WIN32)
       "${test_repo_root_DIR}/lib/swresample.lib"
       "${test_repo_root_DIR}/lib/swscale.lib")
 
-  # Copy FFmpeg DLLs.
-  foreach(dll ${FFMPEG_DLLS})
-    add_custom_command(
-      TARGET blabla
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll}
-              $<TARGET_FILE_DIR:blabla>)
-  endforeach()
-
-  # Copy FFmpeg .lib files.
-  foreach(lib ${FFMPEG_LIBS})
-    add_custom_command(
-      TARGET blabla
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${lib}
-              $<TARGET_FILE_DIR:blabla>)
-  endforeach()
 endif()
 
 if(ANDROID)
   # Support Android 15 16k page size
   target_link_options(blabla PRIVATE "-Wl,-z,max-page-size=16384")
+
+  set(CUSTOM_INSTALL_LIBS
+      "${netxten_root_DIR}/lib/libavcodec.so"
+      "${netxten_root_DIR}/lib/libavdevice.so"
+      "${netxten_root_DIR}/lib/libavfilter.so"
+      "${netxten_root_DIR}/lib/libavformat.so"
+      "${netxten_root_DIR}/lib/libavutil.so"
+      "${netxten_root_DIR}/lib/libpostproc.so"
+      "${netxten_root_DIR}/lib/libswscale.so"
+      "${netxten_root_DIR}/lib/libswresample.so"
+      "${netxten_root_DIR}/lib/libc++_shared.so")
 endif()
+
+# Copy DLLs.
+foreach(dll ${CUSTOM_INSTALL_DLLS})
+  add_custom_command(
+    TARGET blabla
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll}
+            $<TARGET_FILE_DIR:blabla>)
+endforeach()
+
+# Copy .lib files.
+foreach(lib ${CUSTOM_INSTALL_LIBS})
+  add_custom_command(
+    TARGET blabla
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${lib}
+            $<TARGET_FILE_DIR:blabla>)
+endforeach()
