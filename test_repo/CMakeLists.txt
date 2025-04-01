@@ -111,12 +111,13 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     charls
     pugixml
     pugixml-static
-    ffmpeg_interface)
+    ffmpeg_interface
+    flir_sdk)
 endif()
 
 # When on windows install additional targets because of ffmpeg
-if(WIN32 AND TARGET ffmpeg_interface)
-  list(APPEND ADDITIONAL_TARGETS ffmpeg_interface)
+if(WIN32)
+  list(APPEND ADDITIONAL_TARGETS ffmpeg_interface flir_sdk)
 endif()
 
 # Add other targets that you want installed here

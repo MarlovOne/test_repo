@@ -49,7 +49,20 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>
          $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
   PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
-          $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>)
+          $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>
+          $<BUILD_INTERFACE:${FLIR_SDK_INCLUDE_DIRS}>)
+
+if(${FLIR_SDK_FOUND})
+  if(WIN32
+     OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
+     AND NOT IOS)
+    message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
+    target_link_libraries(netxten_library PUBLIC flir_sdk)
+  else()
+    message(STATUS "Linking flir_sdk as PRIVATE")
+    target_link_libraries(netxten_library PRIVATE flir_sdk)
+  endif()
+endif()
 
 # Include ffmpeg definitions
 target_compile_definitions(sample_library PRIVATE ${FFMPEG_DEFINITIONS})

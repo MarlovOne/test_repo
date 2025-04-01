@@ -8,6 +8,7 @@ macro(test_repo_setup_dependencies)
   netxten_isolate_dependencies()
   add_liquid_dsp_dependency_isolated()
   add_ffmpeg_dependency_isolated()
+  add_flir_sdk_dependency()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -372,3 +373,107 @@ function(add_liquid_dsp_dependency_isolated)
   add_library(liquid::liquid ALIAS liquid_interface)
 
 endfunction()
+
+macro(add_flir_sdk_dependency)
+
+  add_library(flir_sdk INTERFACE)
+  add_library(flir::flir_sdk ALIAS flir_sdk)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    cpmaddpackage(
+      NAME
+      flir-sdk
+      GIT_TAG
+      linux-2.6.0
+      GITHUB_REPOSITORY
+      MarlovOne/flir-sdk
+      DOWNLOAD_ONLY
+      TRUE)
+
+    set(FLIR_SDK_FOUND TRUE)
+    set(FLIR_SDK_DIR "${flir-sdk_SOURCE_DIR}/${CMAKE_SYSTEM_PROCESSOR}")
+    set(FLIR_SDK_LIBRARY_DIRS "${FLIR_SDK_DIR}/lib")
+    set(FLIR_SDK_INCLUDE_DIRS "${FLIR_SDK_DIR}/include")
+    target_include_directories(flir_sdk INTERFACE ${FLIR_SDK_INCLUDE_DIRS})
+    target_link_libraries(
+      flir_sdk
+      INTERFACE ${FLIR_SDK_LIBRARY_DIRS}/libatlas_c_sdk.so
+                ${FLIR_SDK_LIBRARY_DIRS}/liblive666.so
+                ${FLIR_SDK_LIBRARY_DIRS}/libavformat.so.58
+                ${FLIR_SDK_LIBRARY_DIRS}/libavcodec.so.58
+                ${FLIR_SDK_LIBRARY_DIRS}/libswscale.so.5
+                ${FLIR_SDK_LIBRARY_DIRS}/libavutil.so.56
+                ${FLIR_SDK_LIBRARY_DIRS}/libswresample.so.3)
+
+  elseif(ANDROID)
+    set(FLIR_SDK_FOUND FALSE)
+  elseif(WIN32)
+    cpmaddpackage(
+      NAME
+      flir-sdk
+      GIT_TAG
+      windows-2.6.0
+      GITHUB_REPOSITORY
+      MarlovOne/flir-sdk
+      DOWNLOAD_ONLY
+      TRUE)
+    set(FLIR_SDK_FOUND TRUE)
+    set(FLIR_SDK_DIR "${flir-sdk_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}")
+    set(FLIR_SDK_LIBRARY_DIRS "${FLIR_SDK_LIBRARY_DIRS}")
+    set(FLIR_SDK_INCLUDE_DIRS "${FLIR_SDK_DIR}/include")
+    target_include_directories(flir_sdk INTERFACE ${FLIR_SDK_INCLUDE_DIRS})
+
+    # Create an imported target for the FLIR SDK library
+    add_library(atlas_c_sdk SHARED IMPORTED)
+    set_property(
+      TARGET atlas_c_sdk
+      PROPERTY IMPORTED_LOCATION
+               "${FLIR_SDK_DIR}/bin/atlas_c_sdk.dll"
+               "${FLIR_SDK_DIR}/bin/live666.dll"
+               "${FLIR_SDK_DIR}/bin/avcodec-58.dll"
+               "${FLIR_SDK_DIR}/bin/avdevice-58.dll"
+               "${FLIR_SDK_DIR}/bin/avfilter-7.dll"
+               "${FLIR_SDK_DIR}/bin/avformat-58.dll"
+               "${FLIR_SDK_DIR}/bin/avutil-56.dll"
+               "${FLIR_SDK_DIR}/bin/swscale-5.dll"
+               "${FLIR_SDK_DIR}/bin/swresample-3.dll"
+               "${FLIR_SDK_DIR}/bin/swscale-5.dll")
+    set_property(TARGET atlas_c_sdk PROPERTY IMPORTED_IMPLIB "${FLIR_SDK_LIBRARY_DIRS}/atlas_c_sdk.lib")
+    target_link_libraries(flir_sdk INTERFACE atlas_c_sdk)
+
+  elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
+    cpmaddpackage(
+      NAME
+      flir-sdk
+      GIT_TAG
+      macos-2.6.0
+      GITHUB_REPOSITORY
+      MarlovOne/flir-sdk
+      DOWNLOAD_ONLY
+      TRUE)
+
+    set(FLIR_SDK_FOUND TRUE)
+    set(FLIR_SDK_DIR "${flir-sdk_SOURCE_DIR}/universal")
+    set(FLIR_SDK_LIBRARY_DIRS "${FLIR_SDK_DIR}/lib")
+    set(FLIR_SDK_INCLUDE_DIRS "${FLIR_SDK_DIR}/include")
+    # target_include_directories(flir_sdk INTERFACE ${FLIR_SDK_INCLUDE_DIRS})
+
+    target_link_libraries(
+      flir_sdk
+      INTERFACE "${FLIR_SDK_LIBRARY_DIRS}/libatlas_c_sdk.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavcodec.58.134.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavdevice.58.13.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavfilter.7.110.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavformat.58.76.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavutil.56.70.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libswresample.3.9.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/liblive666.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.9.100.dylib")
+    target_link_options(flir_sdk INTERFACE "-Wl,-rpath,${FLIR_SDK_LIBRARY_DIRS}")
+
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
+    set(FLIR_SDK_FOUND FALSE)
+  else()
+    message(FATAL_ERROR "Unsupported platform")
+  endif()
+
+endmacro()

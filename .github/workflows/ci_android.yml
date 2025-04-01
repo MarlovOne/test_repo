@@ -71,6 +71,15 @@ jobs:
         with:
           envFile: '.github/constants.env'
 
+      # Use ssh key in private repository
+      # https://www.webfactory.de/blog/use-ssh-key-for-private-repositories-in-github-actions
+      - name: Setup SSH Keys and known_hosts
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -95,6 +104,7 @@ jobs:
       - name: Configure CMake
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           ./scripts/install_deps_android.sh
           ./scripts/make_android.sh \
