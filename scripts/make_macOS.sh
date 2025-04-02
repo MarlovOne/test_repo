@@ -143,11 +143,11 @@ if [ ! -x "$FIX_SCRIPT_PATH" ]; then
     exit 1
 fi
 
-echo "Running dylib fixing script on $DYLIB_ARTIFACT_PATH..."
-# Execute the Zsh script, passing the artifact directory path
-# Use 'zsh' explicitly if '.' might not be in PATH or script isn't executable by default shell
-zsh "$FIX_SCRIPT_PATH" "$DYLIB_ARTIFACT_PATH" || { echo "ERROR: Dylib fixing script failed."; exit 1; }
-echo "Dylib fixing script finished successfully."
+# echo "Running dylib fixing script on $DYLIB_ARTIFACT_PATH..."
+# # Execute the Zsh script, passing the artifact directory path
+# # Use 'zsh' explicitly if '.' might not be in PATH or script isn't executable by default shell
+# zsh "$FIX_SCRIPT_PATH" "$DYLIB_ARTIFACT_PATH" || { echo "ERROR: Dylib fixing script failed."; exit 1; }
+# echo "Dylib fixing script finished successfully."
 
 # --- Rest of your script ---
 echo "Continuing with macOS artifact preparation..."

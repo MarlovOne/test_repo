@@ -95,7 +95,7 @@ if(WIN32)
       "${test_repo_root_DIR}/lib/swscale.lib"
       
       # Add the flir-sdk shared libraries
-      "${test_repo_ROOT_DIR}/lib/atlas_c_sdk.lib")
+      "${test_repo_root_DIR}/lib/atlas_c_sdk.lib")
 
 endif()
 
