@@ -90,56 +90,69 @@ echo "--- Dependency scan complete. Found ${#original_deps[@]} unique dependenci
 echo "\n=== Step 2: Fixing Library Linkage ==="
 echo "\n--- Applying fixes (ID, Dependencies, RPATH)..."
 
-for lib in "$ARTIFACT_LIB_DIR"/*.dylib; do
-  if [[ ! -f "$lib" ]]; then continue; fi
-  local lib_basename=$(basename "$lib")
-  echo "\nProcessing File: $lib_basename"
+# --- Define library paths ---
+# Use variables for easier reading, though paths are hardcoded functionally
+LIB_AVDEVICE="$ARTIFACT_LIB_DIR/libavdevice.58.dylib"
+LIB_AVFILTER="$ARTIFACT_LIB_DIR/libavfilter.7.dylib"
+LIB_AVFORMAT="$ARTIFACT_LIB_DIR/libavformat.58.dylib"
+LIB_SWRESAMPLE="$ARTIFACT_LIB_DIR/libswresample.3.dylib"
+LIB_SWSCALE="$ARTIFACT_LIB_DIR/libswscale.5.dylib"
+# Libs assumed to be mostly okay but needing RPATH:
+LIB_ATLAS="$ARTIFACT_LIB_DIR/libatlas_c_sdk.dylib"
+LIB_AVCODEC="$ARTIFACT_LIB_DIR/libavcodec.58.dylib"
+LIB_AVUTIL="$ARTIFACT_LIB_DIR/libavutil.56.dylib"
+LIB_LIVE666="$ARTIFACT_LIB_DIR/liblive666.dylib"
 
-  # 1. Fix the library's own Install Name (ID) to be @rpath relative
-  #    This handles cases where the ID itself might be just a filename.
-  echo "  Setting ID -> @rpath/$lib_basename"
-  install_name_tool -id "@rpath/$lib_basename" "$lib"
+# --- Fix libavdevice.58.dylib ---
+echo "\nProcessing $LIB_AVDEVICE..."
+install_name_tool -id "@rpath/libavdevice.58.dylib" "$LIB_AVDEVICE"
+install_name_tool -change "libavfilter.7.dylib" "@rpath/libavfilter.7.dylib" "$LIB_AVDEVICE"
+install_name_tool -change "libswscale.5.dylib" "@rpath/libswscale.5.dylib" "$LIB_AVDEVICE"
+install_name_tool -change "libavformat.58.dylib" "@rpath/libavformat.58.dylib" "$LIB_AVDEVICE"
+install_name_tool -change "libavcodec.58.dylib" "@rpath/libavcodec.58.dylib" "$LIB_AVDEVICE"
+install_name_tool -change "libswresample.3.dylib" "@rpath/libswresample.3.dylib" "$LIB_AVDEVICE"
+install_name_tool -change "libavutil.56.dylib" "@rpath/libavutil.56.dylib" "$LIB_AVDEVICE"
 
-  # 2. Fix dependencies pointing to other bundled libraries
-  #    Includes handling for filename-only dependencies.
-  echo "  Fixing Dependencies..."
-  # Use process substitution to read otool output line by line
-  while IFS= read -r line; do
-      # Extract the path (first word on the line)
-      local current_dep_path=${${(s: :)line}[1]} # Zsh way to get first field
-      local dep_basename=$(basename "$current_dep_path")
+# --- Fix libavfilter.7.dylib ---
+echo "\nProcessing $LIB_AVFILTER..."
+install_name_tool -id "@rpath/libavfilter.7.dylib" "$LIB_AVFILTER"
+install_name_tool -change "libswscale.5.dylib" "@rpath/libswscale.5.dylib" "$LIB_AVFILTER"
+install_name_tool -change "libavformat.58.dylib" "@rpath/libavformat.58.dylib" "$LIB_AVFILTER"
+install_name_tool -change "libavcodec.58.dylib" "@rpath/libavcodec.58.dylib" "$LIB_AVFILTER"
+install_name_tool -change "libswresample.3.dylib" "@rpath/libswresample.3.dylib" "$LIB_AVFILTER"
+install_name_tool -change "libavutil.56.dylib" "@rpath/libavutil.56.dylib" "$LIB_AVFILTER"
 
-      # --- Identify paths to fix ---
-      # Conditions for changing a dependency path:
-      # A) It's NOT absolute (doesn't start with '/')
-      # B) It's NOT already using @rpath or @loader_path
-      # C) A file with the same name EXISTS in our artifact directory
-      # D) It's not a self-reference (basename matches parent lib's basename)
-      if [[ "$current_dep_path" != /* \
-            && "$current_dep_path" != @rpath* \
-            && "$current_dep_path" != @loader_path* \
-            && -f "$ARTIFACT_LIB_DIR/$dep_basename" \
-            && "$lib_basename" != "$dep_basename" ]]; then
+# --- Fix libavformat.58.dylib ---
+echo "\nProcessing $LIB_AVFORMAT..."
+install_name_tool -id "@rpath/libavformat.58.dylib" "$LIB_AVFORMAT"
+install_name_tool -change "libavcodec.58.dylib" "@rpath/libavcodec.58.dylib" "$LIB_AVFORMAT"
+install_name_tool -change "libswresample.3.dylib" "@rpath/libswresample.3.dylib" "$LIB_AVFORMAT"
+install_name_tool -change "libavutil.56.dylib" "@rpath/libavutil.56.dylib" "$LIB_AVFORMAT"
 
-          local target_path="@rpath/$dep_basename"
-          echo "    Changing Dep: '$current_dep_path' -> '$target_path'"
-          # Use the matched current path (e.g., "libavcodec.58.dylib") as the <old> path
-          # install_name_tool will find and replace references matching this string.
-          install_name_tool -change "$current_dep_path" "$target_path" "$lib"
+# --- Fix libswresample.3.dylib ---
+# Based on logs, ID might be okay, but dependency needs fixing. Adding ID change for safety.
+echo "\nProcessing $LIB_SWRESAMPLE..."
+install_name_tool -id "@rpath/libswresample.3.dylib" "$LIB_SWRESAMPLE"
+install_name_tool -change "libavutil.56.dylib" "@rpath/libavutil.56.dylib" "$LIB_SWRESAMPLE"
 
-      # Optional: Log paths that are skipped (e.g., system libs, already fixed)
-      else
-        if [[ -f "$ARTIFACT_LIB_DIR/$dep_basename" && "$lib_basename" != "$dep_basename" ]]; then
-           # It's a bundled file but already has a prefix or is absolute - likely already fixed or external
-           echo "    Skipping Dep: '$current_dep_path' (Already has prefix or is absolute)"
-        fi
-      fi
-  done < <(otool -L "$lib" | tail -n +2) # Skip the first line (self ID)
+# --- Fix libswscale.5.dylib ---
+echo "\nProcessing $LIB_SWSCALE..."
+install_name_tool -id "@rpath/libswscale.5.dylib" "$LIB_SWSCALE"
+install_name_tool -change "libavutil.56.dylib" "@rpath/libavutil.56.dylib" "$LIB_SWSCALE"
 
-  echo "-------------------------------------"
-done
-echo "=== Linkage Fixing Complete ==="
+# # --- Add RPATH to ALL bundled libraries ---
+# # This ensures that all libraries (even those that already had correct IDs/deps)
+# # can resolve the @rpath references by looking in their own directory.
+# echo "\nAdding RPATH @loader_path/. to all libraries..."
+# for lib in "$ARTIFACT_LIB_DIR"/*.dylib; do
+#   if [[ -f "$lib" ]]; then
+#     echo "  Adding RPATH to $(basename "$lib")"
+#     # Add unconditionally; duplicates are usually ignored or harmless. Remove check for simplicity.
+#     install_name_tool -add_rpath "@loader_path/." "$lib" || echo "Warning: Failed to add RPATH to $(basename "$lib") (might already exist or other issue)"
+#   fi
+# done
 
+echo "\nHardcoded dylib fixing complete."
 
 # --- Step 3: Verifying Fixed Linkage ---
 # Log the state of libraries AFTER modifications.
