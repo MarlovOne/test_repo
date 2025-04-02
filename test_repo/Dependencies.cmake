@@ -418,7 +418,7 @@ macro(add_flir_sdk_dependency)
       TRUE)
     set(FLIR_SDK_FOUND TRUE)
     set(FLIR_SDK_DIR "${flir-sdk_SOURCE_DIR}/${CMAKE_VS_PLATFORM_NAME}")
-    set(FLIR_SDK_LIBRARY_DIRS "${FLIR_SDK_LIBRARY_DIRS}")
+    set(FLIR_SDK_LIBRARY_DIRS "${FLIR_SDK_DIR}/lib")
     set(FLIR_SDK_INCLUDE_DIRS "${FLIR_SDK_DIR}/include")
     target_include_directories(flir_sdk INTERFACE ${FLIR_SDK_INCLUDE_DIRS})
 

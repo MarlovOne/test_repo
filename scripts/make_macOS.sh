@@ -130,9 +130,33 @@ setopt nonomatch
 rm -rf ./blabla/macos/libsample_library.xcframework
 cp -rf ./artifacts/macos/libsample_library.xcframework ./blabla/macos/libsample_library.xcframework
 
+# --- Fix Dylib Linkage ---
+# Define path to the artifact directory created by CMake install
+DYLIB_ARTIFACT_PATH="./artifacts/macos/flir-sdk/lib" # Adjust subpath if needed
+
+# Define path to the fixing script
+FIX_SCRIPT_PATH="./scripts/fix_macos_dylibs.zsh" # Adjust path to where you saved the script
+
+# Check if the script exists and is executable
+if [ ! -x "$FIX_SCRIPT_PATH" ]; then
+    echo "ERROR: Dylib fix script not found or not executable at $FIX_SCRIPT_PATH"
+    exit 1
+fi
+
+echo "Running dylib fixing script on $DYLIB_ARTIFACT_PATH..."
+# Execute the Zsh script, passing the artifact directory path
+# Use 'zsh' explicitly if '.' might not be in PATH or script isn't executable by default shell
+zsh "$FIX_SCRIPT_PATH" "$DYLIB_ARTIFACT_PATH" || { echo "ERROR: Dylib fixing script failed."; exit 1; }
+echo "Dylib fixing script finished successfully."
+
+# --- Rest of your script ---
+echo "Continuing with macOS artifact preparation..."
+
 # Copy ffmpeg dylibs
 mkdir -p ./blabla/macos/dylibs
 cp -rf ./artifacts/macos/ffmpeg/lib/* ./blabla/macos/dylibs/
 cp -rf ./artifacts/macos/flir-sdk/lib/* ./blabla/macos/dylibs/
 
+echo "make_macos.sh completed."
 popd > /dev/null
+exit 0
