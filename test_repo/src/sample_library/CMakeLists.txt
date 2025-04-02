@@ -127,6 +127,11 @@ if(WIN32)
           "${FLIR_SDK_DIR}/bin/swscale-5.dll"
     DESTINATION bin)
 
+  install(
+    FILES "${FLIR_SDK_DIR}/lib/atlas_c_sdk.lib"
+    DESTINATION lib
+  )
+
 endif()
 
 if(ANDROID)

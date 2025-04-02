@@ -92,7 +92,10 @@ if(WIN32)
       "${test_repo_root_DIR}/lib/avutil.lib"
       "${test_repo_root_DIR}/lib/postproc.lib"
       "${test_repo_root_DIR}/lib/swresample.lib"
-      "${test_repo_root_DIR}/lib/swscale.lib")
+      "${test_repo_root_DIR}/lib/swscale.lib"
+      
+      # Add the flir-sdk shared libraries
+      "${test_repo_ROOT_DIR}/lib/atlas_c_sdk.lib")
 
 endif()
 
