@@ -162,7 +162,7 @@ for lib in "$ARTIFACT_LIB_DIR"/*.dylib; do
     local lib_basename=$(basename "$lib")
     echo "\n--- Verifying: $lib_basename ---"
     otool -L "$lib" || echo "Warning: otool -L failed on $lib_basename"
-    otool -l "$lib" | grep LC_RPATH -A 3 # Show RPATH entries specifically
+    # otool -l "$lib" | grep LC_RPATH -A 3 # Show RPATH entries specifically
     echo "-------------------------------------"
   fi
 done
