@@ -284,32 +284,6 @@ jobs:
           echo "APP_PATH=app/build/macos/Build/Products/${{ matrix.build_type }}/${{ env.PROJECT_NAME }}.app" >> $GITHUB_ENV
           export APP_PATH=app/build/macos/Build/Products/${{ matrix.build_type }}/${{ env.PROJECT_NAME }}.app
 
-          # --- Define path to the actual executable ---
-          EXECUTABLE_PATH="$APP_PATH/Contents/MacOS/${{ env.PROJECT_NAME }}"
-          echo "Executable Path: $EXECUTABLE_PATH"
-
-          # --- Attempt to run directly (NOT using 'open') ---
-          if [ -f "$EXECUTABLE_PATH" ]; then
-            echo "Executable found. Attempting to run directly..."
-            echo "######################################################################"
-            echo "### WARNING: Direct execution will likely FAIL or CRASH in headless CI ###"
-            echo "### if the app requires a GUI. This only checks if it can launch.    ###"
-            echo "######################################################################"
-
-            chmod +x "$EXECUTABLE_PATH" # Ensure executable permission
-
-            # Execute the binary directly
-            # Add '|| true' to prevent CI job failure if the app crashes (expected for GUI apps)
-            "$EXECUTABLE_PATH" || true
-
-            echo "######################################################################"
-            echo "### App execution attempted. Check output above for errors/crash.  ###"
-            echo "######################################################################"
-          else
-            echo "ERROR: Built executable not found at $EXECUTABLE_PATH"
-            exit 1
-          fi
-
       - name: Package app into zip
         if: ${{ matrix.is_tagged && matrix.build_type == 'Release' && matrix.architecture == 'x86_64' && !contains(matrix.os, 'windows') }}
         shell: bash
