@@ -86,55 +86,56 @@ for lib in "$ARTIFACT_LIB_DIR"/*.dylib; do
 done
 echo "--- Dependency scan complete. Found ${#original_deps[@]} unique dependencies to potentially fix. ---"
 
-
+# --- Step 2: Fixing Library Linkage ---
+echo "\n=== Step 2: Fixing Library Linkage ==="
 echo "\n--- Applying fixes (ID, Dependencies, RPATH)..."
-# Now iterate again to apply the changes using the stored original paths
+
 for lib in "$ARTIFACT_LIB_DIR"/*.dylib; do
   if [[ ! -f "$lib" ]]; then continue; fi
   local lib_basename=$(basename "$lib")
   echo "\nProcessing File: $lib_basename"
 
   # 1. Fix the library's own Install Name (ID) to be @rpath relative
+  #    This handles cases where the ID itself might be just a filename.
   echo "  Setting ID -> @rpath/$lib_basename"
   install_name_tool -id "@rpath/$lib_basename" "$lib"
 
-  # 2. Fix dependencies pointing to *other* bundled libraries
-  # Rerun otool to get current list as dependencies might change during the loop
+  # 2. Fix dependencies pointing to other bundled libraries
+  #    Includes handling for filename-only dependencies.
+  echo "  Fixing Dependencies..."
+  # Use process substitution to read otool output line by line
   while IFS= read -r line; do
-      local current_dep_path=${${(s: :)line}[1]}
+      # Extract the path (first word on the line)
+      local current_dep_path=${${(s: :)line}[1]} # Zsh way to get first field
       local dep_basename=$(basename "$current_dep_path")
 
-      # Check if this basename exists in our stored original paths map
-      # Zsh check for key existence: ${(k)original_deps[(i)$dep_basename]} <= ${#original_deps}
-      if [[ -v original_deps[$dep_basename] ]]; then
-          local original_path_to_change=${original_deps[$dep_basename]}
+      # --- Identify paths to fix ---
+      # Conditions for changing a dependency path:
+      # A) It's NOT absolute (doesn't start with '/')
+      # B) It's NOT already using @rpath or @loader_path
+      # C) A file with the same name EXISTS in our artifact directory
+      # D) It's not a self-reference (basename matches parent lib's basename)
+      if [[ "$current_dep_path" != /* \
+            && "$current_dep_path" != @rpath* \
+            && "$current_dep_path" != @loader_path* \
+            && -f "$ARTIFACT_LIB_DIR/$dep_basename" \
+            && "$lib_basename" != "$dep_basename" ]]; then
+
           local target_path="@rpath/$dep_basename"
+          echo "    Changing Dep: '$current_dep_path' -> '$target_path'"
+          # Use the matched current path (e.g., "libavcodec.58.dylib") as the <old> path
+          # install_name_tool will find and replace references matching this string.
+          install_name_tool -change "$current_dep_path" "$target_path" "$lib"
 
-          # IMPORTANT: Only run -change if the current path *exactly matches* the stored original path
-          # Avoids errors if a path was already changed by fixing another library that depends on this one.
-          if [[ "$current_dep_path" == "$original_path_to_change" ]]; then
-              echo "  Changing Dep: '$original_path_to_change' -> '$target_path'"
-              install_name_tool -change "$original_path_to_change" "$target_path" "$lib"
-          elif [[ "$current_dep_path" == "$target_path" ]]; then
-              # Already fixed, likely due to another lib's fix propagating. This is fine.
-              echo "  Dep OK: '$current_dep_path' (already fixed)"
-          else
-              # Path doesn't match original OR target - could be a system lib or unexpected state.
-              # Log this for investigation if needed, but don't try to change it based on current logic.
-              # echo "  Skipping Dep: '$current_dep_path' (doesn't match original '$original_path_to_change')"
-              : # No-op, dependency doesn't match what we expected to change
-          fi
+      # Optional: Log paths that are skipped (e.g., system libs, already fixed)
+      else
+        if [[ -f "$ARTIFACT_LIB_DIR/$dep_basename" && "$lib_basename" != "$dep_basename" ]]; then
+           # It's a bundled file but already has a prefix or is absolute - likely already fixed or external
+           echo "    Skipping Dep: '$current_dep_path' (Already has prefix or is absolute)"
+        fi
       fi
-  done < <(otool -L "$lib" | tail -n +2)
+  done < <(otool -L "$lib" | tail -n +2) # Skip the first line (self ID)
 
-  # 3. Add RPATH for inter-library searching (@loader_path/. means "look in my own directory")
-  # Check if this specific RPATH already exists to prevent duplicates
-  if ! otool -l "$lib" | grep -A 2 LC_RPATH | grep -q -F "@loader_path/."; then
-     echo "  Adding RPATH -> @loader_path/."
-     install_name_tool -add_rpath "@loader_path/." "$lib"
-  else
-     echo "  RPATH OK: '@loader_path/.' already exists."
-  fi
   echo "-------------------------------------"
 done
 echo "=== Linkage Fixing Complete ==="
