@@ -42,7 +42,7 @@ target_compile_definitions(blabla PUBLIC DART_SHARED_LIB)
 # Install sample_library next to blabla
 if(WIN32)
   # Add compile definition for spdlog
-  target_compile_options(eperlium PRIVATE /utf-8)
+  target_compile_options(blabla PRIVATE /utf-8)
   target_link_directories(blabla PRIVATE "${test_repo_root_DIR}/bin"
                           "${test_repo_root_DIR}/lib")
   add_custom_command(
