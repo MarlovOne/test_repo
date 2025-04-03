@@ -29,7 +29,7 @@ add_test(NAME cli.has_help COMMAND intro --help)
 add_test(NAME cli.version_matches COMMAND intro --version)
 set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}")
 
-add_executable(tests tests.cpp)
+add_executable(tests test_frame_grabbers.cpp)
 target_link_libraries(
   tests
   PRIVATE test_repo::test_repo_warnings
@@ -38,9 +38,11 @@ target_link_libraries(
           Catch2::Catch2WithMain
           ${OpenCV_LIBS}
           Eigen3::Eigen
+          spdlog::spdlog
           ffmpeg_interface)
 target_include_directories(tests PRIVATE ${CPM_PACKAGE_sciplot_SOURCE_DIR} ${OpenCV_INCLUDE_DIRS})
 set_target_properties(tests PROPERTIES INSTALL_RPATH "@loader_path/../lib")
+file(COPY ${PROJECT_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(

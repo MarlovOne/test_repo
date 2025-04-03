@@ -1,4 +1,9 @@
-add_library(sample_library sample_library.cpp)
+add_library(
+  sample_library
+  sample_library.cpp
+  frame_grabber_base.cpp
+  ts_grabber.cpp
+  ts_frame_extractor.cpp)
 
 add_library(test_repo::sample_library ALIAS sample_library)
 
@@ -67,7 +72,8 @@ target_include_directories(
          $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
          $<INSTALL_INTERFACE:include>
          $<BUILD_INTERFACE:${OpenCV_INCLUDE_DIRS}>
-  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include" $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
+  PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include"
+          $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
           $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>
           $<BUILD_INTERFACE:${FLIR_SDK_INCLUDE_DIRS}>)
 
@@ -92,13 +98,13 @@ if(WIN32 AND BUILD_SHARED_LIBS)
 endif()
 
 if(WIN32)
-    
+
   add_custom_command(
     TARGET sample_library
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample_library> $<TARGET_FILE_DIR:sample_library>
     COMMAND_EXPAND_LISTS)
- 
+
   install(FILES $<TARGET_RUNTIME_DLLS:sample_library> DESTINATION bin)
 
   # Also install the FFmpeg import libraries (.lib files)
@@ -112,7 +118,7 @@ if(WIN32)
           "${FFMPEG_LIBRARY_DIRS}/swresample.lib"
           "${FFMPEG_LIBRARY_DIRS}/swscale.lib"
     DESTINATION lib)
-  
+
   # install the flir-sdk shared libraries (.dll files)
   install(
     FILES "${FLIR_SDK_DIR}/bin/atlas_c_sdk.dll"
@@ -127,10 +133,7 @@ if(WIN32)
           "${FLIR_SDK_DIR}/bin/swscale-5.dll"
     DESTINATION bin)
 
-  install(
-    FILES "${FLIR_SDK_DIR}/lib/atlas_c_sdk.lib"
-    DESTINATION lib
-  )
+  install(FILES "${FLIR_SDK_DIR}/lib/atlas_c_sdk.lib" DESTINATION lib)
 
 endif()
 
@@ -179,7 +182,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FFMPEG_LIBRARY_DIRS}/libswresample.dylib
           ${FFMPEG_LIBRARY_DIRS}/libswscale.dylib
     DESTINATION ffmpeg/lib)
-  
+
   # TODO MAYBE HERE ???
   install(
     FILES ${FLIR_SDK_LIBRARY_DIRS}/libatlas_c_sdk.dylib
