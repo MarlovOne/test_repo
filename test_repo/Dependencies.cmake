@@ -460,14 +460,14 @@ macro(add_flir_sdk_dependency)
     target_link_libraries(
       flir_sdk
       INTERFACE "${FLIR_SDK_LIBRARY_DIRS}/libatlas_c_sdk.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libavcodec.58.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libavdevice.58.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libavfilter.7.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libavformat.58.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libavutil.56.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libswresample.3.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavcodec.58.134.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavdevice.58.13.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavfilter.7.110.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavformat.58.76.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libavutil.56.70.100.dylib"
+                "${FLIR_SDK_LIBRARY_DIRS}/libswresample.3.9.100.dylib"
                 "${FLIR_SDK_LIBRARY_DIRS}/liblive666.dylib"
-                "${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.dylib")
+                "${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.9.100.dylib")
     target_link_options(flir_sdk INTERFACE "-Wl,-rpath,${FLIR_SDK_LIBRARY_DIRS}")
 
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
