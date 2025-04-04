@@ -472,6 +472,7 @@ macro(add_flir_sdk_dependency)
 
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
     set(FLIR_SDK_FOUND TRUE)
+    set(FLIR_SDK_IOS_FOUND TRUE)
 
     cpmaddpackage(
       NAME

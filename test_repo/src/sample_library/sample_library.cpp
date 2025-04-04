@@ -12,7 +12,7 @@
 #endif
 
 extern "C" {
-#if FLIR_SDK_FOUND
+#if FLIR_SDK_FOUND AND NOT FLIR_SDK_IOS_FOUND
 #include <acs/acs.h>
 #include <acs/camera.h>
 #include <acs/discovery.h>
@@ -65,7 +65,7 @@ void test_repo::test()
 {
   cv::VideoCapture cap(0);
   pugi::xml_document doc;
-#if FLIR_SDK_FOUND
+#if FLIR_SDK_FOUND AND NOT FLIR_SDK_IOS_FOUND
   ACS_Discovery *discovery = ACS_Discovery_alloc();
 #endif
 }
