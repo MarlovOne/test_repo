@@ -30,9 +30,7 @@ else()
 endif()
 
 if(${FLIR_SDK_FOUND})
-  if(WIN32
-     OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
-     AND NOT IOS)
+  if(WIN32 OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
     target_link_libraries(sample_library PUBLIC flir_sdk)
   else()
