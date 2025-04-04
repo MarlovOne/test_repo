@@ -497,42 +497,21 @@ macro(add_flir_sdk_dependency)
     set(LIBSWSCALE_FRAMEWORK ${FLIR_SDK_DIR}/libswscale.5.dylib.xcframework)
     set(LIBLIVE666_FRAMEWORK ${FLIR_SDK_DIR}/liblive666.dylib.xcframework)
 
-    if(EXISTS "${METERLINK_FRAMEWORK}" AND EXISTS "${THERMALSDK_FRAMEWORK}")
-      set(METERLINK_EXPECTED_HEADER_PATH "${METERLINK_FRAMEWORK}/ios-arm64/MeterLink.framework/Headers")
-      set(THERMALSDK_EXPECTED_HEADER_PATH "${THERMALSDK_FRAMEWORK}/ios-arm64/ThermalSDK.framework/Headers")
-      if(EXISTS "${METERLINK_EXPECTED_HEADER_PATH}")
-        target_include_directories(flir_sdk INTERFACE "${METERLINK_EXPECTED_HEADER_PATH}")
-        message(STATUS "Adding MeterLink include directory: ${METERLINK_EXPECTED_HEADER_PATH}")
-      else()
-        message(
-          WARNING
-            "Could not find expected MeterLink Headers at: ${METERLINK_EXPECTED_HEADER_PATH}. Check the XCFramework structure."
-        )
-      endif()
-
-      if(EXISTS "${THERMALSDK_EXPECTED_HEADER_PATH}")
-        target_include_directories(flir_sdk INTERFACE "${THERMALSDK_EXPECTED_HEADER_PATH}")
-        message(STATUS "Adding ThermalSDK include directory: ${THERMALSDK_EXPECTED_HEADER_PATH}")
-      else()
-        message(
-          WARNING
-            "Could not find expected ThermalSDK Headers at: ${THERMALSDK_EXPECTED_HEADER_PATH}. Check the XCFramework structure."
-        )
-      endif()
-
-      target_link_libraries(
-        flir_sdk
-        INTERFACE "${METERLINK_FRAMEWORK}"
-                  "${THERMALSDK_FRAMEWORK}"
-                  "${LIBAVCODEC_FRAMEWORK}"
-                  "${LIBAVDEVICE_FRAMEWORK}"
-                  "${LIBAVFILTER_FRAMEWORK}"
-                  "${LIBAVFORMAT_FRAMEWORK}"
-                  "${LIBAVUTIL_FRAMEWORK}"
-                  "${LIBSWRESAMPLE_FRAMEWORK}"
-                  "${LIBSWSCALE_FRAMEWORK}"
-                  "${LIBLIVE666_FRAMEWORK}")
-    endif()
+    set(METERLINK_EXPECTED_HEADER_PATH "${METERLINK_FRAMEWORK}/ios-arm64/MeterLink.framework/Headers")
+    set(THERMALSDK_EXPECTED_HEADER_PATH "${THERMALSDK_FRAMEWORK}/ios-arm64/ThermalSDK.framework/Headers")
+    set(FLIR_SDK_INCLUDE_DIRS "${METERLINK_EXPECTED_HEADER_PATH}" "${THERMALSDK_EXPECTED_HEADER_PATH}")
+    target_link_libraries(
+      flir_sdk
+      INTERFACE "${METERLINK_FRAMEWORK}"
+                "${THERMALSDK_FRAMEWORK}"
+                "${LIBAVCODEC_FRAMEWORK}"
+                "${LIBAVDEVICE_FRAMEWORK}"
+                "${LIBAVFILTER_FRAMEWORK}"
+                "${LIBAVFORMAT_FRAMEWORK}"
+                "${LIBAVUTIL_FRAMEWORK}"
+                "${LIBSWRESAMPLE_FRAMEWORK}"
+                "${LIBSWSCALE_FRAMEWORK}"
+                "${LIBLIVE666_FRAMEWORK}")
 
   else()
     message(FATAL_ERROR "Unsupported platform")
