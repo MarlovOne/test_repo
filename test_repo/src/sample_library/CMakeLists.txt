@@ -45,6 +45,11 @@ if(${FLIR_SDK_FOUND})
   endif()
 endif()
 
+if(${SLA_SDK_FOUND})
+  message(STATUS "Linking sla_sdk")
+  target_link_libraries(sample_library PRIVATE sla_sdk)
+endif()
+
 # If ffmpeg is a shared library (it is for windows and macos) then make it public to propagate to the parent projects
 if(WIN32
    OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"

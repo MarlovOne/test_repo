@@ -9,6 +9,7 @@ macro(test_repo_setup_dependencies)
   add_liquid_dsp_dependency_isolated()
   add_ffmpeg_dependency_isolated()
   add_flir_sdk_dependency()
+  add_sla_sdk_dependency()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -517,5 +518,13 @@ macro(add_flir_sdk_dependency)
   else()
     message(FATAL_ERROR "Unsupported platform")
   endif()
+
+endmacro()
+
+macro(add_sla_sdk_dependency)
+
+  cpmaddpackage("gh:MarlovOne/sla-sdk@3.08.04")
+  set(SLA_SDK_FOUND TRUE)
+  message(STATUS "SLA SDK found at ${sla-sdk_SOURCE_DIR}")
 
 endmacro()

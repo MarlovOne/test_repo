@@ -23,6 +23,8 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 }
 
+#include <SLAHalOs.h>
+
 int test_repo::factorial(int input) noexcept
 {
   int result = 1;
@@ -68,4 +70,5 @@ void test_repo::test()
 #if FLIR_SDK_FOUND && !FLIR_SDK_IOS_FOUND
   ACS_Discovery *discovery = ACS_Discovery_alloc();
 #endif
+  SLATrace("Hello world!");
 }
