@@ -115,12 +115,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     flir_sdk)
 
   if(${SLA_SDK_FOUND})
-    list(
-      APPEND
-      ADDITIONAL_TARGETS
-      sla_sdk
-      sla_libpng
-      sla_zlib)
+    list(APPEND ADDITIONAL_TARGETS sla_sdk)
   endif()
 endif()
 
