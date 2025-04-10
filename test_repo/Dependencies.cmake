@@ -316,15 +316,18 @@ endfunction()
 
 function(add_liquid_dsp_dependency_isolated)
   if(NOT TARGET liquid)
+
+    # If we're on Windows, we need to just download the precompiled library
     set(DOWNLOAD_ONLY "FALSE")
     if(WIN32)
       set(DOWNLOAD_ONLY "TRUE")
     endif()
+
     cpmaddpackage(
       NAME
       liquid-dsp
       GIT_TAG
-      v1.7.0
+      v1.8.0
       GITHUB_REPOSITORY
       MarlovOne/liquid-dsp
       OPTIONS
@@ -333,14 +336,14 @@ function(add_liquid_dsp_dependency_isolated)
       "BUILD_AUTOTESTS OFF"
       "ENABLE_SIMD OFF"
       "BUILD_BENCHMARKS OFF"
+      "CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD}"
       DOWNLOAD_ONLY
       ${DOWNLOAD_ONLY})
 
     # Add liquid-dsp dependencies for Windows - use the precompiled library
     if(WIN32)
       # Add interface library which collects liquid-dsp dependencies
-      if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x64")
-        message(WARNING "64 bit architecture detected")
+      if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
         set(ARCHITECTURE_NUMBER 64)
       else()
         set(ARCHITECTURE_NUMBER 32)
@@ -363,16 +366,16 @@ function(add_liquid_dsp_dependency_isolated)
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT bin)
     else()
-      add_library(liquid_interface INTERFACE)
       # Add liquid-dsp dependencies for other platforms
+      add_library(liquid_interface INTERFACE)
       target_include_directories(
         liquid_interface INTERFACE $<BUILD_INTERFACE:${CPM_PACKAGE_liquid-dsp_SOURCE_DIR}/include>
                                    $<INSTALL_INTERFACE:include>)
       target_link_libraries(liquid_interface INTERFACE liquid)
     endif()
-  endif()
-  add_library(liquid::liquid ALIAS liquid_interface)
 
+    add_library(liquid::liquid ALIAS liquid_interface)
+  endif()
 endfunction()
 
 macro(add_flir_sdk_dependency)
@@ -406,7 +409,62 @@ macro(add_flir_sdk_dependency)
                 ${FLIR_SDK_LIBRARY_DIRS}/libswresample.so.3)
 
   elseif(ANDROID)
+    # Initialize FLIR_SDK_FOUND status to FALSE by default
     set(FLIR_SDK_FOUND FALSE)
+
+    # Check if building for Android and if the ABI is supported (i.e., NOT x86)
+    message(STATUS "Target Android ABI: ${ANDROID_ABI}")
+    if(NOT
+       ANDROID_ABI
+       STREQUAL
+       "x86")
+      # ABI is not x86, assume SDK is supported for this check
+      set(FLIR_SDK_FOUND TRUE)
+      message(STATUS "FLIR SDK potentially supported for ABI ${ANDROID_ABI}. Setting FLIR_SDK_FOUND to TRUE.")
+    else()
+      # ABI is x86, which is not supported by the prebuilt libs
+      message(WARNING "FLIR SDK is *not* supported for x86 ABI. Setting FLIR_SDK_FOUND to FALSE.")
+      # FLIR_SDK_FOUND remains FALSE (from initialization)
+    endif()
+
+    if(${FLIR_SDK_FOUND})
+      cpmaddpackage(
+        NAME
+        flir-sdk
+        GIT_TAG
+        android-2.6.0
+        GITHUB_REPOSITORY
+        MarlovOne/flir-sdk
+        DOWNLOAD_ONLY
+        TRUE)
+
+      set(FLIR_SDK_LIBRARY_DIRS "${flir-sdk_SOURCE_DIR}/atlas-c-native/jni/${ANDROID_ABI}")
+      set(FLIR_SDK_INCLUDE_DIRS "${flir-sdk_SOURCE_DIR}/atlas-c-native/include")
+      target_include_directories(flir_sdk INTERFACE ${FLIR_SDK_INCLUDE_DIRS})
+
+      set(atlas_libs
+          "${FLIR_SDK_LIBRARY_DIRS}/libatlas_native.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/liblive666.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libavformat.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libavfilter.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libavdevice.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libavcodec.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libc++_shared.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libswscale.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libavutil.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libswresample.so")
+
+      if(${ANDROID_ABI} STREQUAL "arm64-v8a")
+        list(
+          APPEND
+          atlas_libs
+          "${FLIR_SDK_LIBRARY_DIRS}/libflir_camera_splitter_native_client.so"
+          "${FLIR_SDK_LIBRARY_DIRS}/libmdtransport_client.so")
+      endif()
+
+      target_link_libraries(flir_sdk INTERFACE ${atlas_libs})
+    endif()
+
   elseif(WIN32)
     cpmaddpackage(
       NAME
