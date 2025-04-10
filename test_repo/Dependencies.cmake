@@ -445,7 +445,7 @@ macro(add_flir_sdk_dependency)
       NAME
       flir-sdk
       GIT_TAG
-      macos-2.6.0-reduced
+      macos-2.6.0
       GITHUB_REPOSITORY
       MarlovOne/flir-sdk
       DOWNLOAD_ONLY
@@ -471,7 +471,49 @@ macro(add_flir_sdk_dependency)
     target_link_options(flir_sdk INTERFACE "-Wl,-rpath,${FLIR_SDK_LIBRARY_DIRS}")
 
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
-    set(FLIR_SDK_FOUND FALSE)
+    set(FLIR_SDK_FOUND TRUE)
+    set(FLIR_SDK_IOS_FOUND TRUE)
+
+    cpmaddpackage(
+      NAME
+      flir-sdk
+      GIT_TAG
+      ios-2.6.0
+      GITHUB_REPOSITORY
+      MarlovOne/flir-sdk
+      DOWNLOAD_ONLY
+      TRUE)
+
+    set(FLIR_SDK_DIR ${flir-sdk_SOURCE_DIR})
+
+    # Add paths to frameworks
+    set(METERLINK_FRAMEWORK ${FLIR_SDK_DIR}/MeterLink.xcframework)
+    set(THERMALSDK_FRAMEWORK ${FLIR_SDK_DIR}/ThermalSDK.xcframework)
+    set(LIBAVCODEC_FRAMEWORK ${FLIR_SDK_DIR}/libavcodec.58.dylib.xcframework)
+    set(LIBAVDEVICE_FRAMEWORK ${FLIR_SDK_DIR}/libavdevice.58.dylib.xcframework)
+    set(LIBAVFILTER_FRAMEWORK ${FLIR_SDK_DIR}/libavfilter.7.dylib.xcframework)
+    set(LIBAVFORMAT_FRAMEWORK ${FLIR_SDK_DIR}/libavformat.58.dylib.xcframework)
+    set(LIBAVUTIL_FRAMEWORK ${FLIR_SDK_DIR}/libavutil.56.dylib.xcframework)
+    set(LIBSWRESAMPLE_FRAMEWORK ${FLIR_SDK_DIR}/libswresample.3.dylib.xcframework)
+    set(LIBSWSCALE_FRAMEWORK ${FLIR_SDK_DIR}/libswscale.5.dylib.xcframework)
+    set(LIBLIVE666_FRAMEWORK ${FLIR_SDK_DIR}/liblive666.dylib.xcframework)
+
+    set(METERLINK_EXPECTED_HEADER_PATH "${METERLINK_FRAMEWORK}/ios-arm64/MeterLink.framework/Headers")
+    set(THERMALSDK_EXPECTED_HEADER_PATH "${THERMALSDK_FRAMEWORK}/ios-arm64/ThermalSDK.framework/Headers")
+    set(FLIR_SDK_INCLUDE_DIRS "${METERLINK_EXPECTED_HEADER_PATH}" "${THERMALSDK_EXPECTED_HEADER_PATH}")
+    target_link_libraries(
+      flir_sdk
+      INTERFACE "${METERLINK_FRAMEWORK}"
+                "${THERMALSDK_FRAMEWORK}"
+                "${LIBAVCODEC_FRAMEWORK}"
+                "${LIBAVDEVICE_FRAMEWORK}"
+                "${LIBAVFILTER_FRAMEWORK}"
+                "${LIBAVFORMAT_FRAMEWORK}"
+                "${LIBAVUTIL_FRAMEWORK}"
+                "${LIBSWRESAMPLE_FRAMEWORK}"
+                "${LIBSWSCALE_FRAMEWORK}"
+                "${LIBLIVE666_FRAMEWORK}")
+
   else()
     message(FATAL_ERROR "Unsupported platform")
   endif()

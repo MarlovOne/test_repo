@@ -29,10 +29,14 @@ else()
   target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
 endif()
 
+if(${FLIR_SDK_IOS_FOUND})
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=1)
+else()
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=0)
+endif()
+
 if(${FLIR_SDK_FOUND})
-  if(WIN32
-     OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin"
-     AND NOT IOS)
+  if(WIN32 OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
     target_link_libraries(sample_library PUBLIC flir_sdk)
   else()
