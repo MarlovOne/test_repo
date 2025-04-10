@@ -145,7 +145,8 @@ jobs:
             libavutil-dev \
             libswscale-dev \
             libswresample-dev \
-            libavfilter-dev
+            libavfilter-dev \
+            build-essential
       
       - name : Install deps (Macos)
         if: matrix.os == 'macos-latest'
