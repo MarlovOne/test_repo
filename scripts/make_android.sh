@@ -105,7 +105,7 @@ for ARCH in "${ARCHS[@]}"; do
         -B "${BUILD_DIR}/${ARCH}" \
         -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \
         -DANDROID_ABI="${ARCH}" \
-        -DANDROID_PLATFORM=21 \
+        -DANDROID_PLATFORM=28 \
         -Dtest_repo_PACKAGING_MAINTAINER_MODE:BOOL=${MAINTAINER_MODE} \
         -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
         -DBUILD_SHARED_LIBS=ON \
