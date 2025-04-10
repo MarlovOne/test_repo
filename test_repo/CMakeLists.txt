@@ -119,7 +119,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
       APPEND
       ADDITIONAL_TARGETS
       sla_sdk
-      sla_libpng)
+      sla_libpng
+      sla_zlib)
   endif()
 endif()
 
