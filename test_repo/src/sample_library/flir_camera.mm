@@ -1,7 +1,7 @@
 // flir_camera.mm
 #import <Foundation/Foundation.h>
 #import <ThermalSDK/ThermalSDK.h>
-#include "flir_camera.hpp"
+#include <test_repo/flir_camera.hpp>
 #include <mutex>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
