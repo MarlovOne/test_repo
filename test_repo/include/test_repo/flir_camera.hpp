@@ -1,9 +1,9 @@
 #ifndef NEXTEN_CAMERA_FLIR_CAMERA_HPP
 #define NEXTEN_CAMERA_FLIR_CAMERA_HPP
 
+#include "frame.hpp"
 #include <functional>
 #include <memory>
-#include <netxten/types/frame.hpp>
 #include <opencv2/opencv.hpp>
 #include <optional>
 #include <string>
