@@ -1,20 +1,20 @@
 #ifndef NEXTEN_CAMERA_FLIR_CAMERA_HPP
 #define NEXTEN_CAMERA_FLIR_CAMERA_HPP
 
-#include <string>
-#include <memory>
 #include <functional>
-#include <optional>
-#include <netxten/netxten_library_export.hpp>
+#include <memory>
 #include <netxten/types/frame.hpp>
 #include <opencv2/opencv.hpp>
+#include <optional>
+#include <string>
+#include <test_repo/export_macros.hpp>
 
 namespace netxten::camera {
 /**
  * @brief Encapsulates FLIR camera discovery, connection, configuration, and image capture
  * functionality.
  */
-class NETXTEN_LIBRARY_EXPORT FlirCamera
+class SAMPLE_LIBRARY_API FlirCamera
 {
 public:
   using Ptr = std::unique_ptr<FlirCamera>;
@@ -30,12 +30,12 @@ public:
   ~FlirCamera();
 
   // Delete copy and assignment operators.
-  FlirCamera(const FlirCamera&)            = delete;
-  FlirCamera& operator=(const FlirCamera&) = delete;
+  FlirCamera(const FlirCamera &) = delete;
+  FlirCamera &operator=(const FlirCamera &) = delete;
 
   // Delete move constructor and move assignment operator.
-  FlirCamera(FlirCamera&& other)            = delete;
-  FlirCamera& operator=(FlirCamera&& other) = delete;
+  FlirCamera(FlirCamera &&other) = delete;
+  FlirCamera &operator=(FlirCamera &&other) = delete;
 
   /**
    * @brief Parameters used for connecting to a FLIR camera.
@@ -43,14 +43,14 @@ public:
   struct ConnectionParameters
   {
     std::string ip = "";///< Camera IP address (empty string triggers discovery).
-    int         communication_interface = 8;///< Communication interface identifier (e.g.,
+    int communication_interface = 8;///< Communication interface identifier (e.g.,
                                     ///< ACS_CommunicationInterface_emulator).
     bool colorized_streaming = false;///< Enables colorized thermal streaming if true.
 
     // Authentication parameters
-    bool        authenticate_with_camera = false;///< Enables authentication with camera.
-    std::string certificate_path         = "./";///< Path to the certificate file.
-    std::string certificate_name         = "sample-app-cert";///< Name of the certificate.
+    bool authenticate_with_camera = false;///< Enables authentication with camera.
+    std::string certificate_path = "./";///< Path to the certificate file.
+    std::string certificate_name = "sample-app-cert";///< Name of the certificate.
     std::string common_name = "network_sample_app";///< Common name for the certificate.
   };
 
@@ -59,17 +59,17 @@ public:
    */
   struct StreamParameters
   {
-    int    width  = 640;///< Width of the streamed image in pixels.
-    int    height = 480;///< Height of the streamed image in pixels.
-    int    stride = 0;///< Number of bytes between the start of consecutive image rows.
-    int    bytes_per_pixel = 2;///< Number of bytes per pixel.
-    int    color_space     = 0;///< Color space identifier (e.g., RGB, grayscale).
+    int width = 640;///< Width of the streamed image in pixels.
+    int height = 480;///< Height of the streamed image in pixels.
+    int stride = 0;///< Number of bytes between the start of consecutive image rows.
+    int bytes_per_pixel = 2;///< Number of bytes per pixel.
+    int color_space = 0;///< Color space identifier (e.g., RGB, grayscale).
     double frame_rate = 30.0;///< Frame rate of the streamed image in frames per second.
   };
 
   enum CommunicationInterface {
-    usb      = 0x01,///< USB port. T1K, EXX, T6XX, T4XX
-    network  = 0x2,///< Network adapter. A300, A310, AX8
+    usb = 0x01,///< USB port. T1K, EXX, T6XX, T4XX
+    network = 0x2,///< Network adapter. A300, A310, AX8
     emulator = 0x8,///< Emulating device interface
   };
 
@@ -80,7 +80,7 @@ public:
    * initiated.
    * @return True if connection was successful, false otherwise.
    */
-  [[nodiscard]] bool connect(const ConnectionParameters& params);
+  [[nodiscard]] bool connect(const ConnectionParameters &params);
 
   /**
    * @brief Disconnect from the FLIR camera and release resources.
@@ -98,14 +98,14 @@ public:
    * @return A pointer to the captured snapshot data. Caller must call freeSnapshot() to
    * release resources.
    */
-  [[nodiscard]] void* captureSnapshot();
+  [[nodiscard]] void *captureSnapshot();
 
   /**
    * @brief Frees resources associated with a snapshot.
    *
    * @param snapshot Pointer to the snapshot data to free.
    */
-  static void freeSnapshot(void* snapshot);
+  static void freeSnapshot(void *snapshot);
 
   /**
    * @brief Print basic camera information retrieved from a snapshot.
@@ -191,8 +191,7 @@ protected:
   class FlirCameraImpl;
   using Impl = FlirCameraImpl;
 
-  std::unique_ptr<FlirCameraImpl>
-    m_impl;///< Implementation pointer for internal camera management.
+  std::unique_ptr<FlirCameraImpl> m_impl;///< Implementation pointer for internal camera management.
 
 private:
   /**
@@ -202,14 +201,11 @@ private:
    */
   static void check_acs(bool throw_on_error = false);
 
-  ConnectionParameters            m_conn_params = {};///< Current connection parameters.
-  std::optional<StreamParameters> m_stream_params =
-    std::nullopt;///< Optional stream configuration parameters.
-  unsigned long m_callbacks_received =
-    0;///< Counter for received streaming callbacks (frames).
-  bool                   m_streaming = false;///< Indicates whether streaming is active.
-  std::optional<cv::Mat> m_previous_frame =
-    std::nullopt;///< Stores the previous frame for comparison.
+  ConnectionParameters m_conn_params = {};///< Current connection parameters.
+  std::optional<StreamParameters> m_stream_params = std::nullopt;///< Optional stream configuration parameters.
+  unsigned long m_callbacks_received = 0;///< Counter for received streaming callbacks (frames).
+  bool m_streaming = false;///< Indicates whether streaming is active.
+  std::optional<cv::Mat> m_previous_frame = std::nullopt;///< Stores the previous frame for comparison.
 };
 }// namespace netxten::camera
 
