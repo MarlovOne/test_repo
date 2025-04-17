@@ -1,7 +1,3 @@
-add_library(sample_library ${COMMON_SOURCES})
-
-add_library(test_repo::sample_library ALIAS sample_library)
-
 # First, set up conditional source files based on platform
 set(COMMON_SOURCES
     sample_library.cpp
@@ -16,6 +12,10 @@ endif()
 if(${FLIR_SDK_FOUND})
   set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.cpp")
 endif()
+
+add_library(sample_library ${COMMON_SOURCES})
+
+add_library(test_repo::sample_library ALIAS sample_library)
 
 message(WARNING "SAMPLE_LIB FFMEG LIBRARIES ${FFMPEG_LIBRARIES}")
 message(WARNING "SAMPLE_LIB FFMEG include ${FFMPEG_INCLUDE_DIRS}")
