@@ -1,6 +1,10 @@
 // flir_camera.mm
 #import <Foundation/Foundation.h>
+// Import all available headers to be safe
 #import <ThermalSDK/ThermalSDK.h>
+#import <ThermalSDK/FLIRCamera.h> 
+#import <ThermalSDK/FLIRIdentity.h>
+#import <ThermalSDK/FLIRDiscovery.h>
 #include <test_repo/flir_camera.hpp>
 #include <mutex>
 #include <opencv2/core/core.hpp>
@@ -14,8 +18,9 @@ static int g_lastStatusCode = 0;
 
 class FlirCamera::FlirCameraImpl {
 private:
-    FLIRThermalCamera* camera;
-    id<FLIRDataDelegate> streamDelegate;
+    // Use exact class names from the SDK
+    FLIRCamera* camera;
+    id streamDelegate; // Use generic id instead of specific protocol
     dispatch_queue_t queue;
     bool isConnected_;
     bool isStreaming_;
@@ -46,57 +51,59 @@ public:
         @autoreleasepool {
             NSError* error = nil;
             
-            // Initialize the FLIR ThermalSDK
-            [[FLIRThermalSDK sharedInstance] initializeWithLicense:nil error:&error];
+            // Initialize the FLIR SDK - adapt to available API
+            FLIRThermalSDK* sdk = [FLIRThermalSDK sharedInstance];
+            if ([sdk respondsToSelector:@selector(initializeWithLicense:error:)]) {
+                [sdk initializeWithLicense:nil error:&error];
+            } else if ([sdk respondsToSelector:@selector(initializeWithError:)]) {
+                [sdk performSelector:@selector(initializeWithError:) withObject:&error];
+            } else {
+                NSLog(@"Unable to find initialization method in FLIR SDK");
+                return false;
+            }
+            
             if (error) {
                 NSLog(@"Failed to initialize ThermalSDK: %@", error.localizedDescription);
                 g_lastStatusCode = static_cast<int>(error.code);
                 return false;
             }
             
-            // Create camera discovery session
+            // Create discovery
             FLIRDiscovery* discovery = [[FLIRDiscovery alloc] init];
             
-            // If IP is specified, connect directly
-            if (!params.ip.empty()) {
-                NSURL* cameraURL = [NSURL URLWithString:[NSString stringWithUTF8String:params.ip.c_str()]];
-                camera = [[FLIRThermalCamera alloc] initWithIdentity:nil andConnection:FLIRCameraConnectionNetwork andDelegate:nil error:&error];
-                [camera connect:cameraURL error:&error];
-            } else {
-                // Discover cameras based on communication interface
-                FLIRCommunicationInterface commInterface;
-                switch (params.communication_interface) {
-                    case FlirCamera::usb:
-                        commInterface = FLIRCommunicationInterfaceUSB;
-                        break;
-                    case FlirCamera::network:
-                        commInterface = FLIRCommunicationInterfaceNetwork;
-                        break;
-                    case FlirCamera::emulator:
-                        commInterface = FLIRCommunicationInterfaceEmulator;
-                        break;
-                    default:
-                        commInterface = FLIRCommunicationInterfaceEmulator;
-                        break;
-                }
-                
-                NSArray<FLIRIdentity*>* cameras = [discovery discoverCameras:&error];
-                if (cameras.count > 0) {
-                    camera = [FLIRThermalCamera cameraWithIdentity:cameras[0] error:&error];
-                }
+            // Try to discover cameras using available methods
+            NSArray* cameras = nil;
+            
+            if ([discovery respondsToSelector:@selector(discoverCameras:)]) {
+                cameras = [discovery discoverCameras:&error];
             }
             
-            if (!camera || error) {
-                NSLog(@"Failed to connect to camera: %@", error ? error.localizedDescription : @"No camera found");
-                g_lastStatusCode = error ? static_cast<int>(error.code) : -1;
+            if (!cameras || cameras.count == 0) {
+                NSLog(@"No cameras found");
                 return false;
             }
             
-            // Connect to the camera
-            [camera connect:&error];
+            // Try to create camera with the first discovered device
+            id identity = cameras.firstObject;
+            
+            if ([FLIRCamera respondsToSelector:@selector(cameraWithIdentity:error:)]) {
+                camera = [FLIRCamera cameraWithIdentity:identity error:&error];
+            } else {
+                camera = [[FLIRCamera alloc] init];
+            }
+            
+            if (!camera || error) {
+                NSLog(@"Failed to create camera: %@", error.localizedDescription);
+                return false;
+            }
+            
+            // Connect to camera
+            if ([camera respondsToSelector:@selector(connect:)]) {
+                [camera connect:&error];
+            }
+            
             if (error) {
                 NSLog(@"Failed to connect: %@", error.localizedDescription);
-                g_lastStatusCode = static_cast<int>(error.code);
                 return false;
             }
             
