@@ -1,9 +1,37 @@
-add_library(
-  sample_library
-  sample_library.cpp
-  frame_grabber_base.cpp
-  ts_grabber.cpp
-  ts_frame_extractor.cpp)
+# First, set up conditional source files based on platform
+set(COMMON_SOURCES
+    sample_library.cpp
+    frame_grabber_base.cpp
+    ts_grabber.cpp
+    ts_frame_extractor.cpp)
+
+if(${FLIR_SDK_IOS_FOUND})
+  set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.mm")
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=1)
+
+  # Set the file type for Objective-C++
+  set_source_files_properties(flir_camera.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
+
+  # Enable Objective-C ARC (Automatic Reference Counting)
+  target_compile_options(sample_library PRIVATE "-fobjc-arc")
+
+  # Enable Objective-C exceptions
+  target_compile_options(sample_library PRIVATE "-fobjc-exceptions")
+
+  # Enable C++ exceptions
+  target_compile_options(sample_library PRIVATE "-fexceptions")
+else()
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=0)
+endif()
+
+if(${FLIR_SDK_FOUND})
+  set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.cpp")
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=1)
+else()
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
+endif()
+
+add_library(sample_library ${COMMON_SOURCES})
 
 add_library(test_repo::sample_library ALIAS sample_library)
 
@@ -22,18 +50,6 @@ target_link_libraries(
           $<BUILD_INTERFACE:charls>
           $<BUILD_INTERFACE:pugixml::pugixml>
           $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
-
-if(${FLIR_SDK_FOUND})
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=1)
-else()
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
-endif()
-
-if(${FLIR_SDK_IOS_FOUND})
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=1)
-else()
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=0)
-endif()
 
 if(${FLIR_SDK_FOUND})
   if(WIN32 OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
