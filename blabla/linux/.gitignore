@@ -2,3 +2,5 @@
 **/lib/
 **/share/
 **/include/
+**/Eigen/
+**/opencv4
