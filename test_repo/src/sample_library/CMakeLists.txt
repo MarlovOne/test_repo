@@ -5,11 +5,9 @@ set(COMMON_SOURCES
     ts_grabber.cpp
     ts_frame_extractor.cpp)
 
-if(${FLIR_SDK_IOS_FOUND})
+if(FLIR_SDK_IOS_FOUND)
   set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.mm")
-endif()
-
-if(${FLIR_SDK_FOUND})
+elseif(FLIR_SDK_FOUND)
   set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.cpp")
 endif()
 
