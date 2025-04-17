@@ -11,28 +11,10 @@ set(COMMON_SOURCES
 
 if(${FLIR_SDK_IOS_FOUND})
   set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.mm")
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=1)
-
-  # Set the file type for Objective-C++
-  set_source_files_properties(flir_camera.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
-
-  # Enable Objective-C ARC (Automatic Reference Counting)
-  target_compile_options(sample_library PRIVATE "-fobjc-arc")
-
-  # Enable Objective-C exceptions
-  target_compile_options(sample_library PRIVATE "-fobjc-exceptions")
-
-  # Enable C++ exceptions
-  target_compile_options(sample_library PRIVATE "-fexceptions")
-else()
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=0)
 endif()
 
 if(${FLIR_SDK_FOUND})
   set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.cpp")
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=1)
-else()
-  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
 endif()
 
 message(WARNING "SAMPLE_LIB FFMEG LIBRARIES ${FFMPEG_LIBRARIES}")
@@ -50,6 +32,30 @@ target_link_libraries(
           $<BUILD_INTERFACE:charls>
           $<BUILD_INTERFACE:pugixml::pugixml>
           $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
+
+if(${FLIR_SDK_IOS_FOUND})
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=1)
+
+  # Set the file type for Objective-C++
+  set_source_files_properties(sample_library PROPERTIES COMPILE_FLAGS "-x objective-c++")
+
+  # Enable Objective-C ARC (Automatic Reference Counting)
+  target_compile_options(sample_library PRIVATE "-fobjc-arc")
+
+  # Enable Objective-C exceptions
+  target_compile_options(sample_library PRIVATE "-fobjc-exceptions")
+
+  # Enable C++ exceptions
+  target_compile_options(sample_library PRIVATE "-fexceptions")
+else()
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=0)
+endif()
+
+if(${FLIR_SDK_FOUND})
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=1)
+else()
+  target_compile_definitions(sample_library PUBLIC FLIR_SDK_FOUND=0)
+endif()
 
 if(${FLIR_SDK_FOUND})
   if(WIN32 OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
