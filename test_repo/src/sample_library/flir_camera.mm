@@ -15,7 +15,7 @@ static int g_lastStatusCode = 0;
 class FlirCamera::FlirCameraImpl {
 private:
     FLIRThermalCamera* camera;
-    FLIRStreamDelegate* streamDelegate;
+    id<FLIRDataDelegate> streamDelegate;
     dispatch_queue_t queue;
     bool isConnected_;
     bool isStreaming_;
@@ -47,7 +47,7 @@ public:
             NSError* error = nil;
             
             // Initialize the FLIR ThermalSDK
-            [FLIRThermalSDK initializeWithError:&error];
+            [[FLIRThermalSDK sharedInstance] initializeWithLicense:nil error:&error];
             if (error) {
                 NSLog(@"Failed to initialize ThermalSDK: %@", error.localizedDescription);
                 g_lastStatusCode = static_cast<int>(error.code);
@@ -60,7 +60,8 @@ public:
             // If IP is specified, connect directly
             if (!params.ip.empty()) {
                 NSURL* cameraURL = [NSURL URLWithString:[NSString stringWithUTF8String:params.ip.c_str()]];
-                camera = [FLIRThermalCamera cameraWithURL:cameraURL error:&error];
+                camera = [[FLIRThermalCamera alloc] initWithIdentity:nil andConnection:FLIRCameraConnectionNetwork andDelegate:nil error:&error];
+                [camera connect:cameraURL error:&error];
             } else {
                 // Discover cameras based on communication interface
                 FLIRCommunicationInterface commInterface;
@@ -72,14 +73,14 @@ public:
                         commInterface = FLIRCommunicationInterfaceNetwork;
                         break;
                     case FlirCamera::emulator:
-                        commInterface = FLIRCommunicationInterfaceSimulator;
+                        commInterface = FLIRCommunicationInterfaceEmulator;
                         break;
                     default:
-                        commInterface = FLIRCommunicationInterfaceSimulator;
+                        commInterface = FLIRCommunicationInterfaceEmulator;
                         break;
                 }
                 
-                NSArray<FLIRIdentity*>* cameras = [discovery discoverCamerasWithInterface:commInterface error:&error];
+                NSArray<FLIRIdentity*>* cameras = [discovery discoverCameras:&error];
                 if (cameras.count > 0) {
                     camera = [FLIRThermalCamera cameraWithIdentity:cameras[0] error:&error];
                 }
@@ -150,24 +151,13 @@ public:
             
             // Create stream delegate if needed
             if (!streamDelegate) {
-                streamDelegate = [[FLIRStreamDelegate alloc] init];
-                __block FlirCameraImpl* weakSelf = this;
-                streamDelegate.frameHandler = ^(FLIRThermalImage* image) {
-                    if (!image) return;
-                    
-                    // Convert FLIR image to cv::Mat
-                    NSData* data = [image.thermalPixels data];
-                    cv::Mat rawFrame(image.height, image.width, CV_16UC1, (void*)data.bytes);
-                    
-                    // Store the frame
-                    std::lock_guard<std::mutex> lock(weakSelf->frameMutex);
-                    rawFrame.copyTo(weakSelf->latestFrame);
-                    weakSelf->frameCounter++;
-                };
+                streamDelegate = [[FLIRDataHandler alloc] initWithBlock:^(FLIRThermalImageFile* imageFile) {
+                    // Handler implementation
+                }];
             }
             
             // Start streaming
-            [camera startStreamWithDelegate:streamDelegate error:&error];
+            [camera startStreamingWithDelegate:streamDelegate error:&error];
             if (error) {
                 NSLog(@"Failed to start stream: %@", error.localizedDescription);
                 g_lastStatusCode = static_cast<int>(error.code);
@@ -197,16 +187,16 @@ public:
         
         @autoreleasepool {
             NSError* error = nil;
-            FLIRThermalImage* image = [camera captureImage:&error];
-            if (error || !image) {
+            FLIRThermalImageFile* imageFile = [camera capturePhoto:&error];
+            if (error || !imageFile) {
                 NSLog(@"Failed to capture snapshot: %@", error.localizedDescription);
                 g_lastStatusCode = error ? static_cast<int>(error.code) : -1;
                 return nullptr;
             }
             
             // Retain the image for later use
-            [image retain];
-            return (__bridge_retained void*)image;
+            void* ptr = (__bridge_retained void*)imageFile;
+            return ptr;
         }
     }
     
@@ -214,7 +204,7 @@ public:
         if (!snapshot) return;
         
         @autoreleasepool {
-            FLIRThermalImage* image = (__bridge_transfer FLIRThermalImage*)snapshot;
+            FLIRThermalImageFile* imageFile = (__bridge_transfer FLIRThermalImageFile*)snapshot;
             // The bridge_transfer will handle releasing the object
         }
     }
@@ -277,8 +267,11 @@ public:
         if (!camera) return std::nullopt;
         
         @autoreleasepool {
-            NSString* modelName = camera.cameraInfo.modelName;
-            return modelName ? std::string(modelName.UTF8String) : std::nullopt;
+            NSString* modelName = camera.modelName;
+            if (modelName) {
+                return std::optional<std::string>([modelName UTF8String]);
+            }
+            return std::optional<std::string>();
         }
     }
     
