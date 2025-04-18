@@ -201,9 +201,10 @@ FlirCamera::~FlirCamera()
 bool FlirCamera::connect(const ConnectionParameters &params)
 {
   spdlog::info("Connecting to camera...");
-  ACS_Identity *identity = params.ip.empty() ? FlirCamera::Impl::discoverCamera(
-                             static_cast<ACS_CommunicationInterface_>(params.communication_interface))
-                                             : ACS_Identity_fromIpAddress(params.ip.c_str());
+  ACS_Identity *identity =
+    params.ip.empty()
+      ? FlirCamera::Impl::discoverCamera(static_cast<ACS_CommunicationInterface_>(params.communication_interface))
+      : ACS_Identity_fromIpAddress(params.ip.c_str());
   if (identity == nullptr) {
     spdlog::error("Could not discover any camera");
     disconnect();

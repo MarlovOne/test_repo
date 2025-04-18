@@ -87,7 +87,7 @@ if [[ -z "${BUILD_DIR}" ]]; then
 fi
 
 # Create necessary directories
-mkdir -p "$BUILD_DIR"
+# mkdir -p "$BUILD_DIR"
 mkdir -p ./install/ios
 mkdir -p ./artifacts/ios
 
