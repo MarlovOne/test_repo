@@ -2,6 +2,7 @@
 #import <Foundation/Foundation.h>
 // Import FLIR SDK headers for iOS
 #import <ThermalSDK/ThermalSDK.h>
+#import <objc/runtime.h> // For objc_setAssociatedObject and objc_getAssociatedObject
 
 // C++ standard library and OpenCV
 #include <mutex>
@@ -10,6 +11,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <optional>
 #include <test_repo/flir_camera.hpp>
+
+// Forward declaration
+namespace netxten::camera {
+class FlirCameraImpl;
+}
 
 // First, let's define our Objective-C interfaces at global scope
 @interface DiscoveryDelegate : NSObject <FLIRDiscoveryEventDelegate>
@@ -47,6 +53,44 @@
 
 @end
 
+@interface StreamDelegate : NSObject <FLIRStreamDelegate>
+@property (nonatomic, copy) void (^frameReceivedCallback)(FLIRThermalImage *thermalImage);
+@property (nonatomic, copy) void (^errorCallback)(NSError *error);
+@end
+
+@implementation StreamDelegate
+- (void)onImageReceived {
+    if (_frameReceivedCallback) {
+        // Get the thermal image from the thermal streamer
+        FLIRThermalStreamer *thermalStreamer = (FLIRThermalStreamer *)objc_getAssociatedObject(self, "thermalStreamer");
+        if (!thermalStreamer) return;
+        
+        NSError *error = nil;
+        if (![thermalStreamer update:&error]) {
+            NSLog(@"Update error: %@", error.localizedDescription);
+            if (_errorCallback) {
+                _errorCallback(error);
+            }
+            return;
+        }
+        
+        // Process the thermal image using the callback
+        [thermalStreamer withThermalImage:^(FLIRThermalImage *thermalImage) {
+            if (self.frameReceivedCallback) {
+                self.frameReceivedCallback(thermalImage);
+            }
+        }];
+    }
+}
+
+- (void)onError:(NSError *)error {
+    NSLog(@"Stream error: %@", error.localizedDescription);
+    if (_errorCallback) {
+        _errorCallback(error);
+    }
+}
+@end
+
 namespace netxten::camera {
 
 // Static variable for error status codes
@@ -66,6 +110,9 @@ private:
   cv::Mat m_latest_frame;                   // The most recently captured frame
   uint64_t m_frame_counter = 0;             // Counter for received frames
   std::mutex m_frame_mutex;                 // Mutex for thread-safe frame access
+  FLIRStream *m_stream = nullptr;           // FLIR stream object
+  FLIRThermalStreamer *m_thermal_streamer = nullptr; // FLIR thermal streamer
+  friend class StreamDelegate;
 
   // Helper method to discover a single camera
   FLIRIdentity* discover(FLIRCommunicationInterface interface, NSTimeInterval timeout = 10.0);
@@ -290,25 +337,191 @@ void FlirCamera::FlirCameraImpl::freeSnapshot(void *snapshot) {
 }
 
 void FlirCamera::FlirCameraImpl::startStream() {
-  // To be implemented
+    @autoreleasepool {
+        if (!m_is_connected || m_camera == nil) {
+            NSLog(@"Cannot start streaming - camera not connected");
+            return;
+        }
+        
+        if (m_is_streaming) {
+            NSLog(@"Streaming already active");
+            return;
+        }
+        
+        // Get available streams from the camera
+        NSArray<FLIRStream *> *streams = [m_camera getStreams];
+        if (streams.count == 0) {
+            NSLog(@"No streams found on camera!");
+            return;
+        }
+        
+        // Use the first stream
+        m_stream = streams[0];
+        
+        // Create and store the stream delegate
+        StreamDelegate *delegate = [[StreamDelegate alloc] init];
+        
+        // Set up the frame received callback
+        delegate.frameReceivedCallback = ^(FLIRThermalImage *thermalImage) {
+            // Get image dimensions
+            int width = [thermalImage getWidth];
+            int height = [thermalImage getHeight];
+            
+            // Create OpenCV mat for visual representation
+            cv::Mat frame(height, width, CV_8UC1);
+            
+            // Use the thermal streamer to get a visualization of the thermal image
+            UIImage *image = [m_thermal_streamer getImage];
+            if (image) {
+                // Convert UIImage to OpenCV Mat
+                CGImageRef imageRef = image.CGImage;
+                CGColorSpaceRef colorSpace = CGImageGetColorSpace(imageRef);
+                CGFloat cols = CGImageGetWidth(imageRef);
+                CGFloat rows = CGImageGetHeight(imageRef);
+                
+                cv::Mat colorMat(rows, cols, CV_8UC4); // 8 bits per component, 4 channels
+                
+                CGContextRef contextRef = CGBitmapContextCreate(colorMat.data,
+                                                               cols,
+                                                               rows,
+                                                               8,
+                                                               colorMat.step[0],
+                                                               colorSpace,
+                                                               kCGImageAlphaNoneSkipLast |
+                                                               kCGBitmapByteOrderDefault);
+                
+                CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), imageRef);
+                CGContextRelease(contextRef);
+                
+                // Convert to grayscale
+                cv::Mat grayMat;
+                cv::cvtColor(colorMat, grayMat, cv::COLOR_RGBA2GRAY);
+                
+                // Resize if needed
+                if (grayMat.rows != height || grayMat.cols != width) {
+                    cv::resize(grayMat, frame, cv::Size(width, height));
+                } else {
+                    grayMat.copyTo(frame);
+                }
+                
+                // Lock the mutex for thread-safe access
+                std::lock_guard<std::mutex> lock(m_frame_mutex);
+                
+                // Update our latest frame
+                m_latest_frame = frame.clone();
+                m_frame_counter++;
+            }
+        };
+        
+        // Set up the error callback
+        delegate.errorCallback = ^(NSError *callbackError) {
+            NSLog(@"Stream error: %@", callbackError.localizedDescription);
+        };
+        
+        m_stream_delegate = delegate;
+        m_stream.delegate = delegate;
+        
+        // Create thermal streamer
+        m_thermal_streamer = [[FLIRThermalStreamer alloc] initWithStream:m_stream];
+        [m_thermal_streamer setRenderScale:YES];
+        
+        // Associate the thermal streamer with the delegate for later use
+        objc_setAssociatedObject(delegate, "thermalStreamer", m_thermal_streamer, OBJC_ASSOCIATION_ASSIGN);
+        
+        // Start the stream with error parameter (matching the example code)
+        NSError *error = nil;
+        if (![m_stream start:&error]) {
+            NSLog(@"Failed to start stream: %@", error.localizedDescription);
+            g_lastStatusCode = static_cast<int>(error.code);
+            m_stream_delegate = nil;
+            m_stream = nil;
+            m_thermal_streamer = nil;
+            return;
+        }
+        
+        m_is_streaming = true;
+        m_frame_counter = 0;
+        NSLog(@"Stream started successfully");
+    }
 }
 
 void FlirCamera::FlirCameraImpl::stopStream() {
-  // To be implemented
+    @autoreleasepool {
+        if (!m_is_streaming || m_stream == nil) {
+            return;
+        }
+        
+        // Stop the stream
+        [m_stream stop];
+        
+        // Release resources
+        m_stream_delegate = nil;
+        m_stream = nil;
+        m_thermal_streamer = nil;
+        m_is_streaming = false;
+        
+        NSLog(@"Stream stopped");
+    }
 }
 
 void FlirCamera::FlirCameraImpl::playStream() {
-  // To be implemented
+    @autoreleasepool {
+        if (!m_is_connected || !m_is_streaming) {
+            NSLog(@"Cannot play stream - camera not connected or stream not started");
+            return;
+        }
+        
+        // Get an image from the thermal streamer
+        UIImage *image = [m_thermal_streamer getImage];
+        if (image) {
+            NSLog(@"Image received from thermal streamer (size: %f x %f)", 
+                  image.size.width, image.size.height);
+        } else {
+            NSLog(@"No image available from thermal streamer");
+        }
+        
+        // Note: In a real UI application, you would display this image in a UIImageView
+        NSLog(@"Stream is available for display. Use thermal_streamer.getImage() to get UI image");
+    }
 }
 
 void FlirCamera::FlirCameraImpl::playStreamCV() {
-  // To be implemented
+    if (!m_is_connected || !m_is_streaming) {
+        NSLog(@"Cannot play stream with OpenCV - camera not connected or stream not started");
+        return;
+    }
+    
+    // Get the latest frame
+    auto [frameCounter, frame] = getLatestFrame(0);
+    
+    if (!frame.has_value()) {
+        NSLog(@"No valid frame available to display");
+        return;
+    }
+    
+    // In a real application, this would display the frame in an OpenCV window
+    // Using cv::imshow or similar. For now, we'll just log that the frame is ready
+    NSLog(@"OpenCV frame ready for display (size: %dx%d)", 
+          frame.value().cols, frame.value().rows);
 }
 
 std::pair<uint64_t, std::optional<cv::Mat>>
 FlirCamera::FlirCameraImpl::getLatestFrame(uint64_t lastSeenFrame) {
-  // To be implemented
-  return {lastSeenFrame, std::nullopt};
+    // If no new frames since last request, return the same frame counter with no frame
+    if (lastSeenFrame >= m_frame_counter) {
+        return {m_frame_counter, std::nullopt};
+    }
+    
+    // Lock the mutex for thread-safe access
+    std::lock_guard<std::mutex> lock(m_frame_mutex);
+    
+    // If we have a valid frame, return a copy of it
+    if (!m_latest_frame.empty()) {
+        return {m_frame_counter, m_latest_frame.clone()};
+    }
+    
+    // No valid frame available
+    return {m_frame_counter, std::nullopt};
 }
 
 std::optional<std::string> FlirCamera::FlirCameraImpl::getModelName() const {
