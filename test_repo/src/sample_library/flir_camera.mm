@@ -324,7 +324,37 @@ void FlirCamera::FlirCameraImpl::disconnect() {
 }
 
 void FlirCamera::FlirCameraImpl::autofocus() {
-  // To be implemented
+ @autoreleasepool {
+        if (!m_is_connected || m_camera == nil) {
+            NSLog(@"Cannot perform autofocus - camera not connected");
+            return;
+        }
+        
+        // Get the camera's remote control interface
+        FLIRRemoteControl *remoteControl = [m_camera getRemoteControl];
+        if (!remoteControl) {
+            NSLog(@"Remote control interface not available for this camera");
+            return;
+        }
+        
+        // Get the focus controller
+        FLIRFocus *flirFocus = [remoteControl getFocus];
+        if (!flirFocus) {
+            NSLog(@"Focus controller not available for this camera");
+            return;
+        }
+        
+        NSError *error = nil;
+        
+        // Trigger autofocus
+        if (![flirFocus autofocus:&error]) {
+            NSLog(@"Failed to perform autofocus: %@", error.localizedDescription);
+            g_lastStatusCode = static_cast<int>(error.code);
+            return;
+        }
+        
+        NSLog(@"Autofocus operation triggered successfully");
+    } 
 }
 
 void *FlirCamera::FlirCameraImpl::captureSnapshot() {
