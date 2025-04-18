@@ -1,0 +1,42 @@
+---
+# This is specifically for Objective-C and Objective-C++ files
+Language: ObjC
+# Base style
+BasedOnStyle: LLVM
+# Column width
+ColumnLimit: 120
+# Indentation
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+# Braces
+BreakBeforeBraces: Attach
+# Alignment
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Right
+AlignOperands: true
+AlignTrailingComments: true
+# Objective-C specific
+ObjCBinPackProtocolList: Auto
+ObjCBlockIndentWidth: 2
+ObjCBreakBeforeNestedBlockParam: true
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: false
+# Pointer alignment
+PointerAlignment: Right
+# Include sorting
+SortIncludes: true
+# Spacing
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+--- 

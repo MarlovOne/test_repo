@@ -1,14 +1,6 @@
 // FLIR Camera implementation for iOS using Objective-C++
 #import <Foundation/Foundation.h>
 // Import FLIR SDK headers for iOS
-#import <ThermalSDK/FLIRCamera.h>
-#import <ThermalSDK/FLIRCameraImport.h>
-#import <ThermalSDK/FLIRDiscovery.h>
-#import <ThermalSDK/FLIRIdentity.h>
-#import <ThermalSDK/FLIRRemoteControl.h>
-#import <ThermalSDK/FLIRRenderer.h>
-#import <ThermalSDK/FLIRStreamer.h>
-#import <ThermalSDK/FLIRThermalImage.h>
 #import <ThermalSDK/ThermalSDK.h>
 
 // C++ standard library and OpenCV
@@ -18,6 +10,42 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <optional>
 #include <test_repo/flir_camera.hpp>
+
+// First, let's define our Objective-C interfaces at global scope
+@interface DiscoveryDelegate : NSObject <FLIRDiscoveryEventDelegate>
+@property (nonatomic, copy) void (^completionHandler)(FLIRIdentity *identity);
+@property (nonatomic, copy) void (^errorHandler)(NSString *errorMessage);
+@end
+
+@implementation DiscoveryDelegate
+
+- (instancetype)initWithCompletionHandler:(void (^)(FLIRIdentity *))completion 
+                             errorHandler:(void (^)(NSString *))error {
+    self = [super init];
+    if (self) {
+        _completionHandler = completion;
+        _errorHandler = error;
+    }
+    return self;
+}
+
+- (void)cameraDiscovered:(FLIRDiscoveredCamera *)discoveredCamera {
+    if (_completionHandler) {
+        _completionHandler(discoveredCamera.identity);
+    }
+}
+
+- (void)discoveryError:(NSString *)error 
+        netServiceError:(int32_t)nsnetserviceserror 
+                     on:(FLIRCommunicationInterface)iface {
+    if (_errorHandler) {
+        NSString *errorMsg = [NSString stringWithFormat:@"%@ (code: %d, interface: %lu)",
+                             error, nsnetserviceserror, (unsigned long)iface];
+        _errorHandler(errorMsg);
+    }
+}
+
+@end
 
 namespace netxten::camera {
 
@@ -30,15 +58,17 @@ static int g_lastStatusCode = 0;
  */
 class FlirCamera::FlirCameraImpl {
 private:
-  FLIRCamera *m_camera = nullptr; // FLIR camera object
-  id m_stream_delegate = nullptr; // Stream delegate for handling frames
-  dispatch_queue_t m_dispatch_queue =
-      nullptr;                  // Dispatch queue for async operations
-  bool m_is_connected = false;  // Connection status
-  bool m_is_streaming = false;  // Streaming status
-  cv::Mat m_latest_frame;       // The most recently captured frame
-  uint64_t m_frame_counter = 0; // Counter for received frames
-  std::mutex m_frame_mutex;     // Mutex for thread-safe frame access
+  FLIRCamera *m_camera = nullptr;           // FLIR camera object
+  id m_stream_delegate = nullptr;           // Stream delegate for handling frames
+  dispatch_queue_t m_dispatch_queue = nullptr; // Dispatch queue for async operations
+  bool m_is_connected = false;              // Connection status
+  bool m_is_streaming = false;              // Streaming status
+  cv::Mat m_latest_frame;                   // The most recently captured frame
+  uint64_t m_frame_counter = 0;             // Counter for received frames
+  std::mutex m_frame_mutex;                 // Mutex for thread-safe frame access
+
+  // Helper method to discover a single camera
+  FLIRIdentity* discover(FLIRCommunicationInterface interface, NSTimeInterval timeout = 10.0);
 
 public:
   FlirCameraImpl();
@@ -66,15 +96,20 @@ public:
   std::optional<netxten::types::FrameSize> getFrameSize() const;
   bool isConnected() const;
   bool isStreaming() const;
+  
+  // Public method to discover multiple cameras
+  std::vector<FLIRIdentity*> discoverCameras(int communicationInterface, NSTimeInterval timeout = 10.0);
 };
 
 // Implementation of FlirCameraImpl constructor
 FlirCamera::FlirCameraImpl::FlirCameraImpl()
-    : m_camera(nil), m_stream_delegate(nil), m_is_connected(false),
-      m_is_streaming(false), m_frame_counter(0) {
+    : m_camera(nil),
+      m_stream_delegate(nil),
+      m_is_connected(false),
+      m_is_streaming(false),
+      m_frame_counter(0) {
   // Create a serial dispatch queue for camera operations
-  m_dispatch_queue =
-      dispatch_queue_create("com.flir.camera.queue", DISPATCH_QUEUE_SERIAL);
+  m_dispatch_queue = dispatch_queue_create("com.flir.camera.queue", DISPATCH_QUEUE_SERIAL);
 }
 
 // Implementation of FlirCameraImpl destructor
@@ -83,15 +118,162 @@ FlirCamera::FlirCameraImpl::~FlirCameraImpl() {
   m_dispatch_queue = nullptr;
 }
 
-// Empty implementations of required methods
+// Implementation of the discover method
+FLIRIdentity* FlirCamera::FlirCameraImpl::discover(FLIRCommunicationInterface interface, NSTimeInterval timeout) {
+  @autoreleasepool {
+    // Perform camera discovery
+    FLIRDiscovery *discovery = [[FLIRDiscovery alloc] init];
+    
+    __block bool discoveryCompleted = false;
+    __block FLIRIdentity *discoveredIdentity = nil;
+    
+    // Setup discovery delegate
+    DiscoveryDelegate *delegate = [[DiscoveryDelegate alloc] 
+        initWithCompletionHandler:^(FLIRIdentity *foundIdentity) {
+            discoveredIdentity = foundIdentity;
+            discoveryCompleted = true;
+        } 
+        errorHandler:^(NSString *errorMsg) {
+            NSLog(@"Discovery error: %@", errorMsg);
+            discoveryCompleted = true;
+        }];
+    
+    discovery.delegate = delegate;
+    [discovery start:interface];
+    
+    // Wait for discovery to complete (with timeout)
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:timeout];
+    while (!discoveryCompleted && [timeoutDate timeIntervalSinceNow] > 0) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+    
+    [discovery stop];
+    
+    if (!discoveredIdentity) {
+        NSLog(@"No camera discovered within timeout period");
+    }
+    
+    return discoveredIdentity;
+  }
+}
+
+// Now implement the connect method
 bool FlirCamera::FlirCameraImpl::connect(
     const FlirCamera::ConnectionParameters &params) {
-  // To be implemented
-  return false;
+    
+    if (m_is_connected) {
+        disconnect();
+    }
+    
+    @autoreleasepool {
+        NSError *error = nil;
+        
+        // Skip explicit SDK initialization as it appears to be unnecessary
+        // in the current version of the SDK
+        
+        FLIRIdentity *identity = nil;
+        
+        if (params.ip.empty()) {
+            // Convert the C++ interface value to Objective-C enum
+            FLIRCommunicationInterface interface = FLIRCommunicationInterfaceNetwork;
+            if (params.communication_interface == FlirCamera::CommunicationInterface::emulator) {
+                interface = FLIRCommunicationInterfaceEmulator;
+            } else if (params.communication_interface == FlirCamera::CommunicationInterface::usb) {
+                interface = FLIRCommunicationInterfaceLightning; // Use Lightning for iOS as USB equivalent
+            }
+            
+            // Use the discover method to find a camera
+            identity = discover(interface);
+            
+            if (!identity) {
+                return false; // Already logged the error in discover method
+            }
+        } else {
+            // Connect to camera with known IP address
+            NSString *ipAddress = [NSString stringWithUTF8String:params.ip.c_str()];
+            identity = [[FLIRIdentity alloc] initWithIpAddr:ipAddress];
+        }
+
+        // Continue with the rest of the connection code
+        if (!identity) {
+            NSLog(@"Failed to create camera identity");
+            return false;
+        }
+        
+        // Create camera instance
+        m_camera = [[FLIRCamera alloc] init];
+        
+        // Authenticate with camera if needed
+        if ([identity cameraType] != FLIRCameraType_flirOne && 
+            [identity cameraType] != FLIRCameraType_flirOneEdge) {
+            
+            FLIRAuthenticationStatus status = pending;
+            
+            // Authentication might require user interaction on the camera
+            int authAttempts = 0;
+            while (status == pending && authAttempts < 5) {
+                NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+                if (!appName) {
+                    appName = @"FlirApp";
+                }
+                NSString *deviceName = [[UIDevice currentDevice] name];
+                NSString *connectionName = [NSString stringWithFormat:@"%@ %@", deviceName, appName];
+                
+                status = [m_camera authenticate:identity trustedConnectionName:connectionName];
+                
+                if (status == pending) {
+                    NSLog(@"Authentication pending. Please approve connection on camera.");
+                    // Wait a bit before trying again
+                    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2.0]];
+                    authAttempts++;
+                }
+            }
+            
+            if (status != approved) {
+                NSLog(@"Authentication failed with status: %d", (int)status);
+                m_camera = nil;
+                return false;
+            }
+        }
+        
+        // Connect to the camera
+        if (![m_camera connect:identity error:&error]) {
+            NSLog(@"Failed to connect to camera: %@", error.localizedDescription);
+            g_lastStatusCode = static_cast<int>(error.code);
+            m_camera = nil;
+            return false;
+        }
+        
+        // Successfully connected
+        m_is_connected = true;
+        return true;
+    }
 }
 
 void FlirCamera::FlirCameraImpl::disconnect() {
-  // To be implemented
+  @autoreleasepool {
+    if (!m_is_connected || m_camera == nil) {
+      return;
+    }
+
+    // Stop streaming if active
+    if (m_is_streaming) {
+      stopStream();
+    }
+
+    // Disconnect from the camera
+    NSError *error = nil;
+    [m_camera disconnect];
+
+    if (error) {
+      NSLog(@"Error while disconnecting: %@", error.localizedDescription);
+      g_lastStatusCode = static_cast<int>(error.code);
+    }
+
+    // Release the camera object
+    m_camera = nil;
+    m_is_connected = false;
+  }
 }
 
 void FlirCamera::FlirCameraImpl::autofocus() {
@@ -145,9 +327,71 @@ FlirCamera::FlirCameraImpl::getFrameSize() const {
   return std::nullopt;
 }
 
-bool FlirCamera::FlirCameraImpl::isConnected() const { return m_is_connected; }
+bool FlirCamera::FlirCameraImpl::isConnected() const { 
+    return m_is_connected; 
+}
 
-bool FlirCamera::FlirCameraImpl::isStreaming() const { return m_is_streaming; }
+bool FlirCamera::FlirCameraImpl::isStreaming() const { 
+    return m_is_streaming; 
+}
+
+// Implementation of the DiscoverCameras methods
+std::vector<FLIRIdentity*> FlirCamera::FlirCameraImpl::discoverCameras(
+    int communicationInterface, NSTimeInterval timeout) {
+  
+  std::vector<FLIRIdentity*> discoveredCameras;
+  
+  @autoreleasepool {
+    // Perform camera discovery
+    FLIRDiscovery *discovery = [[FLIRDiscovery alloc] init];
+    
+    // Convert the C++ interface value to Objective-C enum
+    FLIRCommunicationInterface interface = FLIRCommunicationInterfaceNetwork;
+    if (communicationInterface == FlirCamera::CommunicationInterface::emulator) {
+        interface = FLIRCommunicationInterfaceEmulator;
+    } else if (communicationInterface == FlirCamera::CommunicationInterface::usb) {
+        interface = FLIRCommunicationInterfaceLightning; // Use Lightning for iOS as USB equivalent
+    }
+    
+    __block bool discoveryCompleted = false;
+    __block NSMutableArray<FLIRIdentity*> *identities = [NSMutableArray array];
+    
+    // Setup discovery delegate with multi-camera collection
+    DiscoveryDelegate *delegate = [[DiscoveryDelegate alloc] 
+        initWithCompletionHandler:^(FLIRIdentity *foundIdentity) {
+            // Add the identity to our array
+            [identities addObject:foundIdentity];
+            
+            // Don't set discoveryCompleted - we want to find all cameras
+            // until the timeout occurs
+        } 
+        errorHandler:^(NSString *errorMsg) {
+            NSLog(@"Discovery error: %@", errorMsg);
+            discoveryCompleted = true;
+        }];
+    
+    discovery.delegate = delegate;
+    [discovery start:interface];
+    
+    // Wait for the discovery timeout period to give time to find multiple cameras
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:timeout]];
+    
+    [discovery stop];
+    
+    // Convert NSArray to std::vector
+    for (FLIRIdentity *identity in identities) {
+        discoveredCameras.push_back(identity);
+    }
+    
+    if (discoveredCameras.empty()) {
+        NSLog(@"No cameras discovered within timeout period");
+    } else {
+        NSLog(@"Discovered %lu cameras", (unsigned long)discoveredCameras.size());
+    }
+  }
+  
+  return discoveredCameras;
+}
 
 //============================================================================
 // FlirCamera Class Implementation
