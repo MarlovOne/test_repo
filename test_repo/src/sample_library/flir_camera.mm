@@ -357,14 +357,74 @@ void FlirCamera::FlirCameraImpl::autofocus() {
     } 
 }
 
+
 void *FlirCamera::FlirCameraImpl::captureSnapshot() {
-  // To be implemented
-  return nullptr;
+    @autoreleasepool {
+        if (!m_is_connected || m_camera == nil) {
+            NSLog(@"Cannot capture snapshot - camera not connected");
+            return nullptr;
+        }
+        
+        if (!m_is_streaming) {
+            NSLog(@"Cannot capture snapshot - camera not streaming");
+            return nullptr;
+        }
+        
+        // Create a snapshot container
+        FLIRThermalImage *snapshotImage = nil;
+        
+        // Get a snapshot from the thermal streamer
+        if (m_thermal_streamer) {
+            NSError *error = nil;
+            if (![m_thermal_streamer update:&error]) {
+                NSLog(@"Failed to update thermal streamer for snapshot: %@", error.localizedDescription);
+                return nullptr;
+            }
+            
+            // Use withThermalImage to get the current thermal image
+            __block FLIRThermalImage *capturedImage = nil;
+            [m_thermal_streamer withThermalImage:^(FLIRThermalImage *thermalImage) {
+                // Create a deep copy of the thermal image to keep it around
+                capturedImage = [thermalImage copy];
+            }];
+            
+            if (capturedImage) {
+                // Store image in a new instance that we'll return to the caller
+                snapshotImage = capturedImage;
+            } else {
+                NSLog(@"Failed to capture thermal image snapshot");
+                return nullptr;
+            }
+        } else {
+            NSLog(@"Thermal streamer not available");
+            return nullptr;
+        }
+        
+        // Retain the snapshot object so it's not released when we exit autoreleasepool
+        if (snapshotImage) {
+            CFRetain((__bridge CFTypeRef)snapshotImage);
+        }
+        
+        // Return the retained snapshot as a void pointer
+        // The caller will need to call freeSnapshot to release it
+        return (__bridge_retained void *)snapshotImage;
+    }
 }
 
 void FlirCamera::FlirCameraImpl::freeSnapshot(void *snapshot) {
-  // To be implemented
+    if (snapshot == nullptr) {
+        return;
+    }
+    
+    @autoreleasepool {
+        // Convert back from void pointer to FLIRThermalImage and release it
+        FLIRThermalImage *snapshotImage = (__bridge_transfer FLIRThermalImage *)snapshot;
+        
+        // By transferring the bridge, ARC will handle releasing the object
+        snapshotImage = nil;
+    }
 }
+
 
 void FlirCamera::FlirCameraImpl::startStream() {
     @autoreleasepool {
