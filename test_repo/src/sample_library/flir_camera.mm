@@ -452,10 +452,6 @@ void FlirCamera::FlirCameraImpl::startStream() {
         
         // Create and store the stream delegate
         StreamDelegate *delegate = [[StreamDelegate alloc] init];
-
-        // Reset frame dimensions
-        m_frame_width = 0;
-        m_frame_height = 0;
         
         // Set up the frame received callback
         delegate.frameReceivedCallback = ^(FLIRThermalImage *thermalImage) {
@@ -665,8 +661,28 @@ std::optional<std::string> FlirCamera::FlirCameraImpl::getModelName() const {
 }
 
 std::optional<double> FlirCamera::FlirCameraImpl::getFrameRate() const {
-  // To be implemented
-  return std::nullopt;
+    if (!m_is_connected) {
+        NSLog(@"Cannot get frame rate - camera not connected");
+        return std::nullopt;
+    }
+    
+    if (!m_is_streaming || m_stream == nullptr) {
+        NSLog(@"Cannot get frame rate - camera not streaming");
+        return std::nullopt;
+    }
+    
+    @autoreleasepool {
+        // Use the stream's built-in getFrameRate method
+        double frameRate = [m_stream getFrameRate];
+        
+        // If the frame rate is zero, it usually means it couldn't be fetched
+        if (frameRate <= 0.0) {
+            NSLog(@"Frame rate not available or could not be fetched");
+            return std::nullopt;
+        }
+        
+        return frameRate;
+    }
 }
 
 std::optional<netxten::types::FrameSize>
