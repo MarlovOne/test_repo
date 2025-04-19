@@ -155,4 +155,15 @@ setopt nonomatch
 rm -rf ./blabla/ios/libsample_library.xcframework
 cp -rf ./artifacts/ios/libsample_library.xcframework ./blabla/ios/libsample_library.xcframework
 
+FLIR_SDK_PATH="$(pwd)/${BUILD_DIR}/_deps/flir-sdk-src"
+# Copy FLIR SDK frameworks to the blabla iOS directory
+if [ -d "$FLIR_SDK_PATH" ]; then
+  echo "Copying FLIR ThermalSDK frameworks to blabla/ios..."
+  cp -R "$FLIR_SDK_PATH/ThermalSDK.xcframework" ./blabla/ios/ || true
+  cp -R "$FLIR_SDK_PATH/MeterLink.xcframework" ./blabla/ios/ || true
+else
+  echo "Warning: FLIR_SDK_PATH not set or directory doesn't exist. FLIR SDK frameworks not copied."
+  echo "Please make sure to set --flir-sdk-path when running this script."
+fi
+
 popd > /dev/null
