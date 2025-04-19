@@ -92,6 +92,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS" OR IOS)
             "-framework AudioToolbox"
             "-framework VideoToolbox"
             "-framework CoreVideo"
+            "-framework ThermalSDK"
+            "-framework MeterLink"
             "-liconv")
 endif()
 
