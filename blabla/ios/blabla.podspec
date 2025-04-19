@@ -22,7 +22,9 @@ A new Flutter FFI plugin project.
   
   # Include the required frameworks
   s.vendored_frameworks = [
-    'libsample_library.xcframework'
+    'libsample_library.xcframework',
+    'ThermalSDK.xcframework',
+    'MeterLink.xcframework'
   ]
 
   s.dependency 'Flutter'
