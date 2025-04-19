@@ -112,6 +112,8 @@ private:
   std::mutex m_frame_mutex;                 // Mutex for thread-safe frame access
   FLIRStream *m_stream = nullptr;           // FLIR stream object
   FLIRThermalStreamer *m_thermal_streamer = nullptr; // FLIR thermal streamer
+  unsigned int m_frame_width = 0;  // Width of the frames
+  unsigned int m_frame_height = 0; // Height of the frames
   friend class StreamDelegate;
 
   // Helper method to discover a single camera
@@ -450,12 +452,21 @@ void FlirCamera::FlirCameraImpl::startStream() {
         
         // Create and store the stream delegate
         StreamDelegate *delegate = [[StreamDelegate alloc] init];
+
+        // Reset frame dimensions
+        m_frame_width = 0;
+        m_frame_height = 0;
         
         // Set up the frame received callback
         delegate.frameReceivedCallback = ^(FLIRThermalImage *thermalImage) {
             // Get image dimensions
             int width = [thermalImage getWidth];
             int height = [thermalImage getHeight];
+
+            if (m_frame_width != width || m_frame_height != height) {
+                m_frame_width = width;
+                m_frame_height = height;
+            }
             
             // Create OpenCV mat for visual representation
             cv::Mat frame(height, width, CV_8UC1);
@@ -660,8 +671,24 @@ std::optional<double> FlirCamera::FlirCameraImpl::getFrameRate() const {
 
 std::optional<netxten::types::FrameSize>
 FlirCamera::FlirCameraImpl::getFrameSize() const {
-  // To be implemented
-  return std::nullopt;
+    if (!m_is_connected) {
+        NSLog(@"Cannot get frame size - camera not connected");
+        return std::nullopt;
+    }
+    
+    if (!m_is_streaming) {
+        NSLog(@"Cannot get frame size - camera not streaming");
+        return std::nullopt;
+    }
+    
+    // If we have valid dimensions, return them
+    if (m_frame_width > 0 && m_frame_height > 0) {
+        return netxten::types::FrameSize{m_frame_width, m_frame_height};
+    }
+    
+    // If we haven't received any frames yet, we won't have the dimensions
+    NSLog(@"Frame dimensions not yet available - no frames received");
+    return std::nullopt;
 }
 
 bool FlirCamera::FlirCameraImpl::isConnected() const { 
