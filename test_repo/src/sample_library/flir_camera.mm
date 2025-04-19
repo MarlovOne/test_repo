@@ -615,8 +615,42 @@ FlirCamera::FlirCameraImpl::getLatestFrame(uint64_t lastSeenFrame) {
 }
 
 std::optional<std::string> FlirCamera::FlirCameraImpl::getModelName() const {
-  // To be implemented
-  return std::nullopt;
+    if (!m_is_connected || m_camera == nil) {
+        NSLog(@"Cannot get model name - camera not connected");
+        return std::nullopt;
+    }
+    
+    @autoreleasepool {
+        // First get the remote control interface
+        FLIRRemoteControl *remoteControl = [m_camera getRemoteControl];
+        if (!remoteControl) {
+            NSLog(@"Remote control interface not available for this camera");
+            return std::nullopt;
+        }
+        
+        // Get the camera information through the remote control interface
+        NSError *error = nil;
+        FLIRCameraInformation *cameraInfo = [remoteControl getCameraInformation:&error];
+        
+        if (!cameraInfo) {
+            NSLog(@"Failed to get camera information: %@", error ? error.localizedDescription : @"Unknown error");
+            return std::nullopt;
+        }
+        
+        // Get the model name
+        NSString *modelName = [cameraInfo modelName];
+        if (!modelName || modelName.length == 0) {
+            // Try camera description if model name is unavailable
+            modelName = [cameraInfo cameraDescription];
+            if (!modelName || modelName.length == 0) {
+                NSLog(@"Model name not available");
+                return std::nullopt;
+            }
+        }
+        
+        // Convert NSString to std::string and return
+        return std::optional<std::string>(modelName.UTF8String);
+    }
 }
 
 std::optional<double> FlirCamera::FlirCameraImpl::getFrameRate() const {
