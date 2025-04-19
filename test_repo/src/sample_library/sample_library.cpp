@@ -75,7 +75,7 @@ void test_repo::test()
 
 #if FLIR_SDK_FOUND
   netxten::camera::FlirCamera flir_camera;
-  bool ret = flir_camera.connect({})
+  bool ret = flir_camera.connect({});
   flir_camera.startStream();
   auto [frame_number, frame] = flir_camera.getLatestFrame(0);
 #endif
