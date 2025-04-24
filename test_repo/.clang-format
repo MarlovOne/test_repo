@@ -92,7 +92,6 @@ AlignAfterOpenBracket: Align
 AlignTrailingComments: true
 ObjCBinPackProtocolList: Auto
 ObjCBlockIndentWidth: 2
-ObjCBreakBeforeNestedBlockParam: true
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: false
 SpacesBeforeTrailingComments: 1
