@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <pugixml.hpp>
 #include <spdlog/spdlog.h>
+#include <test_repo/flir_camera.hpp>
 #include <test_repo/sample_library.hpp>
 
 #ifndef FLIR_SDK_FOUND
@@ -71,4 +72,11 @@ void test_repo::test()
   ACS_Discovery *discovery = ACS_Discovery_alloc();
 #endif
   SLATrace("Hello world!");
+
+#if FLIR_SDK_FOUND
+  netxten::camera::FlirCamera flir_camera;
+  bool ret = flir_camera.connect({});
+  flir_camera.startStream();
+  auto [frame_number, frame] = flir_camera.getLatestFrame(0);
+#endif
 }
