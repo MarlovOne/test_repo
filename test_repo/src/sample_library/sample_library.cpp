@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 #include <test_repo/flir_camera.hpp>
 #include <test_repo/sample_library.hpp>
+#include <fineftp/server.h>
 
 #ifndef FLIR_SDK_FOUND
 #define FLIR_SDK_FOUND 1
@@ -79,4 +80,5 @@ void test_repo::test()
   flir_camera.startStream();
   auto [frame_number, frame] = flir_camera.getLatestFrame(0);
 #endif
+  fineftp::FtpServer ftp_server(2121);
 }

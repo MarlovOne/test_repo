@@ -249,6 +249,19 @@ function(netxten_isolate_dependencies)
     cpmaddpackage("gl:libeigen/eigen#3.4")
   endif()
 
+  if(NOT TARGET fineftp::server)
+    cpmaddpackage(
+      NAME
+      fineftp
+      GIT_TAG
+      v1.5.1
+      GITHUB_REPOSITORY
+      eclipse-ecal/fineftp-server
+      OPTIONS
+      "BUILD_SHARED_LIBS OFF"
+      "FINEFTP_SERVER_BUILD_SAMPLES OFF")
+  endif()
+
   if(NOT TARGET spdlog::spdlog)
     # Install on macos and iOS since we're building static libraries there
     set(SPDLOG_INSTALL OFF)

@@ -112,7 +112,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     pugixml
     pugixml-static
     ffmpeg_interface
-    flir_sdk)
+    flir_sdk
+    fineftp)
 
   if(${SLA_SDK_FOUND})
     list(APPEND ADDITIONAL_TARGETS sla_sdk)

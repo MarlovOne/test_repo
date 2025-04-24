@@ -29,7 +29,8 @@ target_link_libraries(
           $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
           $<BUILD_INTERFACE:charls>
           $<BUILD_INTERFACE:pugixml::pugixml>
-          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>)
+          $<BUILD_INTERFACE:${FFMPEG_LIBRARIES}>
+          $<BUILD_INTERFACE:fineftp::server>)
 
 if(${FLIR_SDK_IOS_FOUND})
   target_compile_definitions(sample_library PUBLIC FLIR_SDK_IOS_FOUND=1)
