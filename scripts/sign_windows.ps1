@@ -191,6 +191,52 @@ Write-Host "[OK] Required environment variables found."
 $signingCertFingerprint = $env:SM_CODE_SIGNING_CERT_SHA1_HASH
 $apiKey = $env:SM_API_KEY # Needed for MSI download
 
+# --- Handle Base64 Encoded Certificate ---
+$tempCertPath = $null
+$tempCertDir = $null
+if (Test-Path Env:\SM_CERTIFICATE_CONTENT) {
+    Write-Host "Found SM_CERTIFICATE_CONTENT. Attempting to decode certificate..."
+    try {
+        # Create a temporary directory
+        $tempCertDir = Join-Path $env:TEMP ([System.Guid]::NewGuid().ToString())
+        New-Item -ItemType Directory -Path $tempCertDir -Force | Out-Null
+        $base64CertFile = Join-Path $tempCertDir "certificate.txt"
+        $tempCertPath = Join-Path $tempCertDir "certificate.p12"
+
+        # Write Base64 content to temp file
+        $env:SM_CERTIFICATE_CONTENT | Out-File -FilePath $base64CertFile -Encoding ASCII -NoNewline
+
+        # Decode using certutil
+        certutil.exe -decode $base64CertFile $tempCertPath
+        if ($LASTEXITCODE -ne 0) {
+            throw "certutil.exe failed to decode the certificate. Exit code: $LASTEXITCODE"
+        }
+
+        if (-not (Test-Path $tempCertPath -PathType Leaf)) {
+            throw "Decoded certificate file not found at $tempCertPath"
+        }
+
+        Write-Host "[OK] Certificate decoded and saved to temporary file: $tempCertPath"
+        # Override the environment variable for this script session
+        $env:SM_CLIENT_CERT_FILE = $tempCertPath
+
+        # Clean up the Base64 temp file
+        Remove-Item -Path $base64CertFile -Force
+    }
+    catch {
+        Write-Error "Failed to process SM_CERTIFICATE_CONTENT: $($_.Exception.Message)"
+        # Clean up potentially partially created files/dirs
+        if ($tempCertDir -and (Test-Path $tempCertDir)) { Remove-Item -Path $tempCertDir -Recurse -Force }
+        exit 1
+    }
+} else {
+    # Ensure the original SM_CLIENT_CERT_FILE exists if we didn't decode
+    if (-not (Test-Path $env:SM_CLIENT_CERT_FILE -PathType Leaf)) {
+        Write-Error "SM_CLIENT_CERT_FILE path not found: $($env:SM_CLIENT_CERT_FILE). Either provide a valid path or use SM_CERTIFICATE_CONTENT."
+        exit 1
+    }
+    Write-Host "[OK] Using provided SM_CLIENT_CERT_FILE: $($env:SM_CLIENT_CERT_FILE)"
+}
 
 # --- KSP and smctl Setup Section ---
 
@@ -247,6 +293,33 @@ if ($needsSetup) {
     if (-not (Test-Path -Path $smkspSyncPath -PathType Leaf)) { Write-Error "smksp_cert_sync.exe not found at '$smkspSyncPath' after installation."; exit 1 }
     Write-Host "[OK] KeyLocker Tools executables verified."
 
+    # --- Ensure smctl is callable and run healthcheck ---
+    Write-Host "Ensuring smctl is callable and running healthcheck..."
+    try {
+        # Add tools path to PATH for this session if not already present
+        $pathArray = $env:PATH -split ';'
+        if (-not ($pathArray -contains $keylockerToolsPath)) {
+            Write-Host "Adding '$keylockerToolsPath' to PATH for this session..."
+            $env:PATH = "$keylockerToolsPath;$env:PATH"
+        }
+        # Verify smctl is now callable
+        if (-not (Get-Command smctl.exe -ErrorAction SilentlyContinue)) {
+             throw "smctl.exe is still not found or callable after setup attempt. Check installation and PATH configuration."
+        }
+
+        # Run healthcheck
+        Write-Host "  Running healthcheck..."
+        smctl healthcheck
+        if ($LASTEXITCODE -ne 0) {
+            throw "smctl healthcheck failed with exit code: $LASTEXITCODE. Check smctl configuration, connectivity, and authentication certificate ($($env:SM_CLIENT_CERT_FILE))."
+        }
+        Write-Host "[OK] smctl healthcheck successful."
+    }
+    catch {
+        Write-Error "An error occurred during smctl path check or healthcheck: $($_.Exception.Message)"
+        exit 1
+    }
+
     # Register KSP and Sync Certs (Requires Admin)
     Write-Host "Configuring KeyLocker KSP (requires Administrator)..."
     try {
@@ -269,20 +342,6 @@ if ($needsSetup) {
     }
     Remove-Item -Path $msiDownloadPath -Force -ErrorAction SilentlyContinue
 } # End of $needsSetup block
-
-# --- Ensure smctl is callable ---
-$pathArray = $env:PATH -split ';'
-if (-not ($pathArray -contains $keylockerToolsPath)) {
-    Write-Warning "KeyLocker Tools path '$keylockerToolsPath' not found in current session PATH."
-    Write-Host "Adding '$keylockerToolsPath' to PATH for this session..."
-    $env:PATH = "$keylockerToolsPath;$env:PATH"
-}
-$smctlExists = Get-Command smctl.exe -ErrorAction SilentlyContinue
-if (-not $smctlExists) {
-    Write-Error "smctl.exe is still not found or callable after setup attempt. Check installation and PATH configuration."
-    exit 1
-}
-Write-Host "[OK] smctl.exe is available."
 
 # --- Signing Process ---
 
@@ -354,4 +413,12 @@ if (-not $overallSuccess) {
 else {
     Write-Host "All targeted files signed and verified successfully."
     exit 0
+}
+
+# --- Cleanup Temporary Certificate File ---
+finally {
+    if ($tempCertDir -and (Test-Path $tempCertDir)) {
+        Write-Host "Cleaning up temporary certificate directory: $tempCertDir"
+        Remove-Item -Path $tempCertDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
 }
