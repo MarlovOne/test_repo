@@ -53,7 +53,6 @@ Source: "{#GetEnv("LIB_PATH")}\libliquid.dll"; DestDir: "{app}"; Flags: ignoreve
 Source: "{#GetEnv("LIB_PATH")}\postproc.lib"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LIB_PATH")}\postproc-58.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LIB_PATH")}\sample_library.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#GetEnv("LIB_PATH")}\screen_retriever_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LIB_PATH")}\swresample.lib"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LIB_PATH")}\swresample-5.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LIB_PATH")}\swscale.lib"; DestDir: "{app}"; Flags: ignoreversion
