@@ -319,7 +319,7 @@ jobs:
         if: ${{ contains(matrix.os, 'windows' ) && matrix.build_type == 'Release' }}
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         env:
-          OUTPUT_DIR: ${{ env.BUILD_DIR }}/app/inno_compiler_ci
+          OUTPUT_DIR: ${{ env.BUILD_DIR }}
         with:
-          path: app/inno_compiler_ci.iss
+          path: app/inoo_compiler_ci.iss
           options: /O+

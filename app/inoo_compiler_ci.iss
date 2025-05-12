@@ -33,36 +33,36 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "build/windows/x64/runner/Release/{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avcodec.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avcodec-61.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avdevice.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avdevice-61.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avfilter.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avfilter-10.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avformat.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avformat-61.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avutil.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/avutil-59.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/blabla.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/blabla.exp"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/blabla.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/libliquid.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/postproc.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/postproc-58.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/sample_library.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/screen_retriever_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/swresample.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/swresample-5.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/swscale.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/swscale-8.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build/windows/x64/runner/Release/data/*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT\msvcp140_1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT\msvcp140_2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT\vcruntime140_1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avcodec.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avcodec-61.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avdevice.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avdevice-61.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avfilter.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avfilter-10.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avformat.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avformat-61.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avutil.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\avutil-59.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\blabla.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\blabla.exp"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\blabla.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\libliquid.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\postproc.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\postproc-58.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\sample_library.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\screen_retriever_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\swresample.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\swresample-5.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\swscale.lib"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\swscale-8.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("APP_PATH")}\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#GetEnv("VCToolsRedistDir")}\x64\Microsoft.VC143.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("VCToolsRedistDir")}\x64\Microsoft.VC143.CRT\msvcp140_1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("VCToolsRedistDir")}\x64\Microsoft.VC143.CRT\msvcp140_2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("VCToolsRedistDir")}\x64\Microsoft.VC143.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("VCToolsRedistDir")}\x64\Microsoft.VC143.CRT\vcruntime140_1.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent 
