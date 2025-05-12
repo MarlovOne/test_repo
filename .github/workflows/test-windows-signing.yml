@@ -31,6 +31,34 @@ jobs:
           # Create a dummy .exe file
           "This is a test file" | Out-File -FilePath "test-signing/test.exe" -Encoding ASCII
 
+      - name: Set up signtool
+        shell: pwsh
+        run: |
+          # Find signtool.exe in the Windows SDK
+          $sdkPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.0.22000.0\x64"
+          if (Test-Path $sdkPath) {
+            $env:PATH = "$sdkPath;$env:PATH"
+            Write-Host "Added signtool to PATH: $sdkPath"
+          } else {
+            Write-Host "Searching for signtool.exe..."
+            $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" | Select-Object -First 1
+            if ($signtool) {
+              $env:PATH = "$($signtool.DirectoryName);$env:PATH"
+              Write-Host "Added signtool to PATH: $($signtool.DirectoryName)"
+            } else {
+              Write-Error "Could not find signtool.exe in Windows SDK"
+              exit 1
+            }
+          }
+
+      - name: Set variables
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
+          echo "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools" >> $GITHUB_PATH
+          echo "C:\Program Files\DigiCert\DigiCert Keylocker Tools" >> $GITHUB_PATH
+
       - name: Test signing script
         run: |
           # Run the script with -ForceKSPSetup to test the setup process
