@@ -88,7 +88,7 @@ jobs:
           
           # Exclude Release builds if tag is not present
           - is_tagged: false
-            build_type: Release  
+            build_type: Debug  
           
           # Remove arm builds for untagged commits
           - is_tagged: false
@@ -314,3 +314,12 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           files: |
             ${{ env.APP_PATH }}/*-*${{ matrix.build_type }}*-*.*
+
+      - name: Compile .ISS to .EXE Installer
+        if: ${{ matrix.os == 'windows' && matrix.build_type == 'Release' }}
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        env:
+          OUTPUT_DIR: ${{ env.BUILD_DIR }}/app/inno_compiler_ci
+        with:
+          path: app/inno_compiler_ci.iss
+          options: /O+
