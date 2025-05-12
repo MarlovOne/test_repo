@@ -307,6 +307,12 @@ jobs:
           Compress-Archive -Path .\* -DestinationPath $ZIP_FILE -Force
           Get-ChildItem $ZIP_FILE | Format-Table Name, Length
 
+      - name: Sign Windows App
+        if: ${{ matrix.build_type == 'Release' && contains(matrix.os, 'windows') }}
+        shell: pwsh
+        run: |
+          .\scripts\sign_windows.ps1 -InputPath ${{ env.APP_PATH }} -ForceKSPSetup 
+
       - name: Publish Tagged Release (App)
         if: ${{ matrix.is_tagged && matrix.build_type == 'Release' }}
         uses: softprops/action-gh-release@v2
