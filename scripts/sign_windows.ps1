@@ -166,6 +166,23 @@ if (-not (Test-Path -Path $InputPath)) {
 }
 $isInputDirectory = Test-Path -Path $InputPath -PathType Container
 Write-Host "[OK] Input path found. Is Directory: $isInputDirectory"
+          
+# Find signtool.exe in the Windows SDK
+$sdkPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.0.22000.0\x64"
+if (Test-Path $sdkPath) {
+  $env:PATH = "$sdkPath;$env:PATH"
+  Write-Host "Added signtool to PATH: $sdkPath"
+} else {
+  Write-Host "Searching for signtool.exe..."
+  $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" | Select-Object -First 1
+  if ($signtool) {
+    $env:PATH = "$($signtool.DirectoryName);$env:PATH"
+    Write-Host "Added signtool to PATH: $($signtool.DirectoryName)"
+  } else {
+    Write-Error "Could not find signtool.exe in Windows SDK"
+    exit 1
+  }
+}
 
 # 2. Check for signtool.exe in PATH
 $signtoolExists = Get-Command signtool.exe -ErrorAction SilentlyContinue
