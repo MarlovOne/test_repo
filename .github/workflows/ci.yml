@@ -319,6 +319,7 @@ jobs:
         if: ${{ contains(matrix.os, 'windows' ) && matrix.build_type == 'Release' }}
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         env:
+          LIB_PATH: "build/windows/x64/runner/Release"
           OUTPUT_DIR: ${{ env.BUILD_DIR }}
         with:
           path: app/inoo_compiler_ci.iss
