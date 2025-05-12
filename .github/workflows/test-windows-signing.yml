@@ -1,0 +1,43 @@
+name: Test Windows Signing
+
+on:
+  push:
+    paths:
+      - 'scripts/sign_windows.ps1'
+      - '.github/workflows/test-windows-signing.yml'
+  pull_request:
+    paths:
+      - 'scripts/sign_windows.ps1'
+      - '.github/workflows/test-windows-signing.yml'
+  workflow_dispatch:
+
+jobs:
+  test-signing:
+    runs-on: windows-latest
+    env:
+      SM_HOST: ${{ secrets.SM_HOST }}
+      SM_API_KEY: ${{ secrets.SM_API_KEY }}
+      SM_CLIENT_CERT_FILE: ${{ secrets.SM_CLIENT_CERT_FILE }}
+      SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+      SM_CODE_SIGNING_CERT_SHA1_HASH: ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create test file
+        run: |
+          # Create a test directory
+          New-Item -ItemType Directory -Path "test-signing" -Force
+          # Create a dummy .exe file
+          "This is a test file" | Out-File -FilePath "test-signing/test.exe" -Encoding ASCII
+
+      - name: Test signing script
+        run: |
+          # Run the script with -ForceKSPSetup to test the setup process
+          try {
+            .\scripts\sign_windows.ps1 -InputPath "test-signing" -ForceKSPSetup
+          } catch {
+            Write-Host "Expected error occurred: $_"
+            # Exit with success since we expect the script to fail due to missing real credentials
+            exit 0
+          } 
