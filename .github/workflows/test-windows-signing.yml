@@ -14,35 +14,23 @@ on:
 jobs:
   test-signing:
     runs-on: windows-latest
-    env:
-      SM_HOST: ${{ secrets.SM_HOST }}
-      SM_API_KEY: ${{ secrets.SM_API_KEY }}
-      SM_CLIENT_CERT_FILE: ${{ secrets.SM_CLIENT_CERT_FILE }}
-      SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
-      SM_CODE_SIGNING_CERT_SHA1_HASH: ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }}
-      SM_CERTIFICATE_CONTENT: ${{ secrets.SM_CERTIFICATE_CONTENT }}
-      SM_CERT_ALIAS: ${{ secrets.SM_CERT_ALIAS }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Create test file
         run: |
-          # Create a test directory
           New-Item -ItemType Directory -Path "test-signing" -Force
-          # Create a dummy .exe file
           "This is a test file" | Out-File -FilePath "test-signing/test.exe" -Encoding ASCII
 
-      - name: Set variables
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: |
-          echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
-          echo "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools" >> $GITHUB_PATH
-          echo "C:\Program Files\DigiCert\DigiCert Keylocker Tools" >> $GITHUB_PATH
-
       - name: Test signing script
+        env:
+          SM_HOST: ${{ secrets.SM_HOST }}
+          SM_API_KEY: ${{ secrets.SM_API_KEY }}
+          SM_CLIENT_CERT_FILE: ${{ secrets.SM_CLIENT_CERT_FILE }}
+          SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+          SM_CODE_SIGNING_CERT_SHA1_HASH: ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }}
+          SM_CERTIFICATE_CONTENT: ${{ secrets.SM_CERTIFICATE_CONTENT }}
+          SM_CERT_ALIAS: ${{ secrets.SM_CERT_ALIAS }}
         run: |
-          # Run the script with -ForceKSPSetup to test the setup process
-          # The script should now exit with an error code if signing/verification fails
           .\scripts\sign_windows.ps1 -InputPath "test-signing" -ForceKSPSetup 
