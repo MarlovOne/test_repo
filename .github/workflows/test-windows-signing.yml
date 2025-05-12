@@ -21,6 +21,7 @@ jobs:
       SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
       SM_CODE_SIGNING_CERT_SHA1_HASH: ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }}
       SM_CERTIFICATE_CONTENT: ${{ secrets.SM_CERTIFICATE_CONTENT }}
+      SM_CERT_ALIAS: ${{ secrets.SM_CERT_ALIAS }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

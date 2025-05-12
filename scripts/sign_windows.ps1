@@ -176,7 +176,7 @@ if (-not $signtoolExists) {
 Write-Host "[OK] signtool.exe found in PATH."
 
 # 3. Check for required environment variables
-$requiredVars = @("SM_HOST", "SM_API_KEY", "SM_CLIENT_CERT_FILE", "SM_CLIENT_CERT_PASSWORD", "SM_CODE_SIGNING_CERT_SHA1_HASH")
+$requiredVars = @("SM_HOST", "SM_API_KEY", "SM_CLIENT_CERT_FILE", "SM_CLIENT_CERT_PASSWORD", "SM_CODE_SIGNING_CERT_SHA1_HASH", "SM_CERT_ALIAS")
 $missingVars = @()
 foreach ($varName in $requiredVars) {
     if (-not (Test-Path Env:\$varName)) {
@@ -319,6 +319,11 @@ if ($needsSetup) {
         Write-Error "An error occurred during smctl path check or healthcheck: $($_.Exception.Message)"
         exit 1
     }
+
+    Write-Host "Listing certificates..."
+    smctl certificate ls
+    Write-Host "Syncing certificates..."
+    smctl windows certsync --keypair-alias=$env:SM_CERT_ALIAS
 
     # Register KSP and Sync Certs (Requires Admin)
     Write-Host "Configuring KeyLocker KSP (requires Administrator)..."
