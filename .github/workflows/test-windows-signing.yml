@@ -62,10 +62,5 @@ jobs:
       - name: Test signing script
         run: |
           # Run the script with -ForceKSPSetup to test the setup process
-          try {
-            .\scripts\sign_windows.ps1 -InputPath "test-signing" -ForceKSPSetup
-          } catch {
-            Write-Host "Expected error occurred: $_"
-            # Exit with success since we expect the script to fail due to missing real credentials
-            exit 0
-          } 
+          # The script should now exit with an error code if signing/verification fails
+          .\scripts\sign_windows.ps1 -InputPath "test-signing" -ForceKSPSetup 

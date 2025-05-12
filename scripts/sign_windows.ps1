@@ -116,31 +116,38 @@ function Invoke-SignAndVerify {
             # Optionally add specific error guidance here
         }
         else {
-            Write-Host "  [SUCCESS] File successfully signed: $TargetFilePath"
+            Write-Host "  [SUCCESS] smctl sign command reported success for: $TargetFilePath"
             $signSuccess = $true
         }
     }
     catch {
         Write-Error "  An unexpected error occurred during signing '$TargetFilePath': $($_.Exception.Message)"
+        $signSuccess = $false # Ensure failure on exception
     }
 
-    # Verification Step (only if signing appeared successful)
+    # Verification Step (only if signing command appeared successful)
+    $verificationSuccess = $false
     if ($signSuccess) {
         Write-Host "  --> Attempting to verify signature for: $TargetFilePath"
         try {
+            # Clear $LASTEXITCODE before calling signtool
+            $LASTEXITCODE = 0
             signtool verify /pa /v $TargetFilePath
             if ($LASTEXITCODE -ne 0) {
                 Write-Warning "  signtool verification reported an issue for '$TargetFilePath'. See output above. Exit code: $LASTEXITCODE"
             }
             else {
                 Write-Host "  [OK] Signature verification successful for '$TargetFilePath'."
+                $verificationSuccess = $true
             }
         }
         catch {
             Write-Warning "  An error occurred during signtool verification for '$TargetFilePath': $($_.Exception.Message)"
         }
+    } else {
+        Write-Warning "  Skipping signtool verification for '$TargetFilePath' because signing failed or was skipped."
     }
-    return $signSuccess # Return status for the file
+    return ($signSuccess -and $verificationSuccess) # Return true only if both sign and verify (if attempted) succeed
 }
 
 
@@ -328,8 +335,9 @@ foreach ($file in $filesToSign) {
     $fileSuccess = Invoke-SignAndVerify -TargetFilePath $filePath -CertFingerprint $signingCertFingerprint
     if (-not $fileSuccess) {
         $overallSuccess = $false
-        # Decide if you want to stop on the first error
-        # Write-Error "Stopping script due to signing failure on $filePath"; exit 1
+        Write-Error "Stopping script due to signing or verification failure on $filePath" # Make this an error
+        # Decide if you want to stop on the first error - let's stop for now.
+        exit 1
     }
     Write-Host "--------------------------------------------------"
     Start-Sleep -Seconds 1 # Small delay between files
@@ -339,7 +347,7 @@ foreach ($file in $filesToSign) {
 # --- Final Status ---
 Write-Host "Signing script finished."
 if (-not $overallSuccess) {
-    Write-Error "One or more files failed to sign. Please review the logs above."
+    Write-Error "One or more files failed to sign or verify. Please review the logs above."
     # Exit with a non-zero code to indicate failure in automation pipelines
     exit 1
 }
