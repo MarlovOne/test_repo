@@ -184,8 +184,8 @@ if(WIN32)
   install(FILES "${FLIR_SDK_DIR}/lib/atlas_c_sdk.lib" DESTINATION lib)
 
   # Install the FLIR Science SDK libraries
-  install(FILES 
-          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/bhpSDK.lib"
+  install(
+    FILES "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/bhpSDK.lib"
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/CommLayer.lib"
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnv.lib"
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvcam.lib"
@@ -202,11 +202,8 @@ if(WIN32)
     DESTINATION lib)
 
   # Install the FLIR Science SDK shared libraries (.dll files)
-  install(FILES 
-    "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll"
-    "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll" 
-    "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll"
-    DESTINATION bin)
+  install(FILES "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll" "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll"
+                "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll" DESTINATION bin)
 
 endif()
 
@@ -268,4 +265,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT IOS)
           ${FLIR_SDK_LIBRARY_DIRS}/liblive666.dylib
           ${FLIR_SDK_LIBRARY_DIRS}/libswscale.5.dylib
     DESTINATION flir-sdk/lib)
+
+  # Install all FLIR Science SDK .dylib files
+  file(GLOB FLIR_SCIENCE_DYLIB_FILES "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/*.dylib")
+  install(FILES ${FLIR_SCIENCE_DYLIB_FILES} DESTINATION flir-science-sdk/lib)
+
 endif()

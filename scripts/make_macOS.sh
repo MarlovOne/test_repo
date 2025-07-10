@@ -156,6 +156,7 @@ echo "Continuing with macOS artifact preparation..."
 mkdir -p ./blabla/macos/dylibs
 cp -rf ./artifacts/macos/ffmpeg/lib/* ./blabla/macos/dylibs/
 cp -rf ./artifacts/macos/flir-sdk/lib/* ./blabla/macos/dylibs/
+cp -rf ./artifacts/macos/flir-science-sdk/lib/* ./blabla/macos/dylibs/
 
 echo "make_macos.sh completed."
 popd > /dev/null
