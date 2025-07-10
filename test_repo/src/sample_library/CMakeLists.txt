@@ -11,6 +11,10 @@ elseif(FLIR_SDK_FOUND)
   set(COMMON_SOURCES ${COMMON_SOURCES} "flir_camera.cpp")
 endif()
 
+if(FLIR_SCIENCE_SDK_FOUND)
+  set(COMMON_SOURCES ${COMMON_SOURCES} "flir_science.cpp")
+endif()
+
 add_library(sample_library ${COMMON_SOURCES})
 
 add_library(test_repo::sample_library ALIAS sample_library)
@@ -64,6 +68,11 @@ if(${FLIR_SDK_FOUND})
     message(STATUS "Linking flir_sdk as PRIVATE")
     target_link_libraries(sample_library PRIVATE flir_sdk)
   endif()
+endif()
+
+if(${FLIR_SCIENCE_SDK_FOUND})
+  message(STATUS "Linking flir_science_sdk")
+  target_link_libraries(sample_library PRIVATE flir_science_sdk)
 endif()
 
 if(${SLA_SDK_FOUND})

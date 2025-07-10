@@ -50,6 +50,17 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:tests> $<TARGET_FILE_DIR:tests>
     COMMAND_EXPAND_LISTS)
+
+  if(${FLIR_SCIENCE_SDK_FOUND})
+    add_custom_command(
+      TARGET tests
+      PRE_BUILD
+      COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll"
+        "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll" "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll"
+        $<TARGET_FILE_DIR:tests>
+      COMMAND_EXPAND_LISTS)
+  endif()
 endif()
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
@@ -85,6 +96,17 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:constexpr_tests> $<TARGET_FILE_DIR:constexpr_tests>
     COMMAND_EXPAND_LISTS)
+
+  if(${FLIR_SCIENCE_SDK_FOUND})
+    add_custom_command(
+      TARGET constexpr_tests
+      PRE_BUILD
+      COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll"
+        "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll" "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll"
+        $<TARGET_FILE_DIR:constexpr_tests>
+      COMMAND_EXPAND_LISTS)
+  endif()
 endif()
 
 catch_discover_tests(
@@ -121,6 +143,17 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:relaxed_constexpr_tests>
             $<TARGET_FILE_DIR:relaxed_constexpr_tests>
     COMMAND_EXPAND_LISTS)
+
+  if(${FLIR_SCIENCE_SDK_FOUND})
+    add_custom_command(
+      TARGET relaxed_constexpr_tests
+      PRE_BUILD
+      COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll"
+        "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll" "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll"
+        $<TARGET_FILE_DIR:relaxed_constexpr_tests>
+      COMMAND_EXPAND_LISTS)
+  endif()
 endif()
 
 catch_discover_tests(

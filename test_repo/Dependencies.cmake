@@ -10,6 +10,7 @@ macro(test_repo_setup_dependencies)
   add_ffmpeg_dependency_isolated()
   add_flir_sdk_dependency()
   add_sla_sdk_dependency()
+  add_flir_science_sdk_dependency()
 
   # Include OpenCV
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -597,5 +598,156 @@ macro(add_sla_sdk_dependency)
   cpmaddpackage("gh:MarlovOne/sla-sdk@3.08.04")
   set(SLA_SDK_FOUND TRUE)
   message(STATUS "SLA SDK found at ${sla-sdk_SOURCE_DIR}")
+
+endmacro()
+
+macro(add_flir_science_sdk_dependency)
+
+  set(FLIR_SCIENCE_SDK_FOUND FALSE)
+  add_library(flir_science_sdk INTERFACE)
+
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # Linux support - only x86_64 available
+    if(NOT
+       CMAKE_SYSTEM_PROCESSOR
+       STREQUAL
+       "x86_64")
+      message(
+        WARNING
+          "FLIR Science SDK: Only x86_64 architecture is supported on Linux. Current architecture: ${CMAKE_SYSTEM_PROCESSOR}"
+      )
+      return()
+    endif()
+
+    cpmaddpackage(
+      NAME
+      flir_science_sdk
+      GIT_REPOSITORY
+      git@github.com:Aquanta-Vision/flir-science-camera-sdk.git
+      GIT_TAG
+      linux-2024.5.0)
+
+    set(FLIR_SCIENCE_SDK_FOUND
+        TRUE
+        PARENT_SCOPE)
+    set(FLIR_SCIENCE_SDK_FOUND TRUE)
+    set(FLIR_SCIENCE_SDK_INCLUDE_DIRS "${flir_science_sdk_SOURCE_DIR}/include")
+    set(FLIR_SCIENCE_SDK_LIBRARY_DIRS "${flir_science_sdk_SOURCE_DIR}/lib")
+
+    # Core required libraries for Linux
+    set(FLIR_SCIENCE_LIBS
+        CommLayer
+        ResourceTree
+        bhpSDK
+        fnv
+        fnvcam
+        fnvcamBHP
+        fnvcamMercury
+        fnvcamPlatinum
+        fnvfile
+        fnvreduce
+        CharLS
+        tbb)
+
+    # Transform to full paths with .so extension
+    list(TRANSFORM FLIR_SCIENCE_LIBS PREPEND "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/lib")
+    list(TRANSFORM FLIR_SCIENCE_LIBS APPEND ".so")
+
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    # macOS support
+    cpmaddpackage(
+      NAME
+      flir_science_sdk
+      GIT_REPOSITORY
+      git@github.com:Aquanta-Vision/flir-science-camera-sdk.git
+      GIT_TAG
+      macOS-2024.5.0)
+
+    set(FLIR_SCIENCE_SDK_FOUND
+        TRUE
+        PARENT_SCOPE)
+    set(FLIR_SCIENCE_SDK_FOUND TRUE)
+    set(FLIR_SCIENCE_SDK_INCLUDE_DIRS "${flir_science_sdk_SOURCE_DIR}/include")
+    set(FLIR_SCIENCE_SDK_LIBRARY_DIRS "${flir_science_sdk_SOURCE_DIR}/lib")
+
+    # Core required libraries for macOS
+    set(FLIR_SCIENCE_LIBS
+        CommLayer
+        ResourceTree
+        bhpSDK
+        fnv
+        fnvcam
+        fnvcamBHP
+        fnvcamMercury
+        fnvcamPlatinum
+        fnvfile
+        fnvreduce
+        CharLS
+        tbb)
+
+    # Transform to full paths with .dylib extension
+    list(TRANSFORM FLIR_SCIENCE_LIBS PREPEND "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/lib")
+    list(TRANSFORM FLIR_SCIENCE_LIBS APPEND ".dylib")
+
+  elseif(WIN32)
+    # Windows support
+    cpmaddpackage(
+      NAME
+      flir_science_sdk
+      GIT_REPOSITORY
+      git@github.com:Aquanta-Vision/flir-science-camera-sdk.git
+      GIT_TAG
+      windows-2024.5.0)
+
+    set(FLIR_SCIENCE_SDK_FOUND
+        TRUE
+        PARENT_SCOPE)
+    set(FLIR_SCIENCE_SDK_FOUND TRUE)
+    set(FLIR_SCIENCE_SDK_INCLUDE_DIRS "${flir_science_sdk_SOURCE_DIR}/include")
+    set(FLIR_SCIENCE_SDK_LIBRARY_DIRS "${flir_science_sdk_SOURCE_DIR}/lib/Release")
+    set(FLIR_SCIENCE_SDK_BINARY_DIRS "${flir_science_sdk_SOURCE_DIR}/bin/Release")
+
+    # Core required libraries for Windows
+    set(FLIR_SCIENCE_LIBS
+        CommLayer
+        ResourceTree
+        bhpSDK
+        fnv
+        fnvcam
+        fnvcamBHP
+        fnvcamMercury
+        fnvcamPlatinum
+        fnvfile
+        fnvreduce)
+
+    # For each library, create an IMPORTED target that links the .lib and .dll
+    foreach(LIB_NAME ${FLIR_SCIENCE_LIBS})
+      add_library(flir_science::${LIB_NAME} SHARED IMPORTED)
+      set_target_properties(
+        flir_science::${LIB_NAME} PROPERTIES IMPORTED_LOCATION "${FLIR_SCIENCE_SDK_BINARY_DIRS}/${LIB_NAME}.dll"
+                                             IMPORTED_IMPLIB "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/${LIB_NAME}.lib")
+      # Add the imported target to our main interface library
+      target_link_libraries(flir_science_sdk INTERFACE flir_science::${LIB_NAME})
+      message(STATUS "FLIR Science SDK library ${LIB_NAME} added as imported target.")
+    endforeach()
+
+  else()
+    message(WARNING "FLIR Science SDK is not supported on this platform: ${CMAKE_SYSTEM_NAME}")
+    return()
+  endif()
+
+  # Create interface library
+  target_include_directories(flir_science_sdk INTERFACE ${FLIR_SCIENCE_SDK_INCLUDE_DIRS})
+  if(NOT WIN32)
+    target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_LIBS})
+  endif()
+  add_library(flir::flir_science_sdk ALIAS flir_science_sdk)
+
+  # Set RPATH on Linux and macOS for runtime library discovery
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_options(flir_science_sdk INTERFACE "-Wl,-rpath,${FLIR_SCIENCE_SDK_LIBRARY_DIRS}")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_link_options(flir_science_sdk INTERFACE "-Wl,-rpath,${FLIR_SCIENCE_SDK_LIBRARY_DIRS}")
+  endif()
 
 endmacro()
