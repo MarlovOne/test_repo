@@ -201,6 +201,13 @@ if(WIN32)
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/ResourceTree.lib"
     DESTINATION lib)
 
+  # Install the FLIR Science SDK shared libraries (.dll files)
+  install(FILES 
+    "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll"
+    "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll" 
+    "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll"
+    DESTINATION bin)
+
 endif()
 
 if(ANDROID)

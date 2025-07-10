@@ -80,7 +80,21 @@ if(WIN32)
       "${test_repo_root_DIR}/bin/swscale-5.dll"
       
       # Add liquid libraries
-      "${test_repo_root_DIR}/bin/libliquid.dll")
+      "${test_repo_root_DIR}/bin/libliquid.dll"
+      
+      # Add the flir-science-sdk shared libraries
+      "${test_repo_root_DIR}/bin/bhpSDK.dll"
+      "${test_repo_root_DIR}/bin/CommLayer.dll"
+      "${test_repo_root_DIR}/bin/fnv.dll"
+      "${test_repo_root_DIR}/bin/fnvcam.dll"
+      "${test_repo_root_DIR}/bin/fnvcamBHP.dll"
+      "${test_repo_root_DIR}/bin/fnvcamMercury.dll"
+      "${test_repo_root_DIR}/bin/fnvcamPlatinum.dll"
+      "${test_repo_root_DIR}/bin/fnvreduce.dll"
+      "${test_repo_root_DIR}/bin/ResourceTree.dll"
+      "${test_repo_root_DIR}/bin/CharLS.dll"
+      "${test_repo_root_DIR}/bin/zlib1.dll" 
+      "${test_repo_root_DIR}/bin/minizip.dll")
 
 
   # Define the FFmpeg dependency .lib files.
