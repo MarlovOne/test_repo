@@ -715,13 +715,12 @@ macro(add_flir_science_sdk_dependency)
     set(FLIR_SCIENCE_IMPORTED_TARGETS)
     foreach(LIB_NAME ${FLIR_SCIENCE_LIBS})
       add_library(${LIB_NAME} SHARED IMPORTED)
-      set_target_properties(
-        ${LIB_NAME} PROPERTIES IMPORTED_LOCATION "${FLIR_SCIENCE_SDK_BINARY_DIRS}/${LIB_NAME}.dll"
-                    IMPORTED_IMPLIB "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/${LIB_NAME}.lib")
+      set_target_properties(${LIB_NAME} PROPERTIES IMPORTED_LOCATION "${FLIR_SCIENCE_SDK_BINARY_DIRS}/${LIB_NAME}.dll"
+                                                   IMPORTED_IMPLIB "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/${LIB_NAME}.lib")
       list(APPEND FLIR_SCIENCE_IMPORTED_TARGETS ${LIB_NAME})
       message(STATUS "FLIR Science SDK library ${LIB_NAME} added as imported target.")
     endforeach()
-    
+
     # Link all imported targets to the interface library
     target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_IMPORTED_TARGETS})
 
@@ -731,7 +730,6 @@ macro(add_flir_science_sdk_dependency)
 
   if(${FLIR_SCIENCE_SDK_FOUND})
     # Create interface library
-    target_include_directories(flir_science_sdk INTERFACE ${FLIR_SCIENCE_SDK_INCLUDE_DIRS})
     if(NOT WIN32)
       target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_LIBS})
     endif()
