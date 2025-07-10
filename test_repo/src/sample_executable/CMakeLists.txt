@@ -22,12 +22,12 @@ if(WIN32 AND BUILD_SHARED_LIBS)
   # Copy FLIR Science SDK runtime dependencies if available
   if(${FLIR_SCIENCE_SDK_FOUND})
     add_custom_command(
-      TARGET netxten_benchmarks
+      TARGET sample_executable
       PRE_BUILD
       COMMAND
         ${CMAKE_COMMAND} -E copy_if_different "${FLIR_SCIENCE_SDK_BINARY_DIRS}/CharLS.dll"
         "${FLIR_SCIENCE_SDK_BINARY_DIRS}/zlib1.dll" "${FLIR_SCIENCE_SDK_BINARY_DIRS}/minizip.dll"
-        $<TARGET_FILE_DIR:netxten_benchmarks>
+        $<TARGET_FILE_DIR:sample_executable>
       COMMAND_EXPAND_LISTS)
   endif()
 endif()
