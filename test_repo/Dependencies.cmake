@@ -627,9 +627,6 @@ macro(add_flir_science_sdk_dependency)
       GIT_TAG
       linux-2024.5.0)
 
-    set(FLIR_SCIENCE_SDK_FOUND
-        TRUE
-        PARENT_SCOPE)
     set(FLIR_SCIENCE_SDK_FOUND TRUE)
     set(FLIR_SCIENCE_SDK_INCLUDE_DIRS "${flir_science_sdk_SOURCE_DIR}/include")
     set(FLIR_SCIENCE_SDK_LIBRARY_DIRS "${flir_science_sdk_SOURCE_DIR}/lib")
@@ -663,9 +660,6 @@ macro(add_flir_science_sdk_dependency)
       GIT_TAG
       macOS-2024.5.0)
 
-    set(FLIR_SCIENCE_SDK_FOUND
-        TRUE
-        PARENT_SCOPE)
     set(FLIR_SCIENCE_SDK_FOUND TRUE)
     set(FLIR_SCIENCE_SDK_INCLUDE_DIRS "${flir_science_sdk_SOURCE_DIR}/include")
     set(FLIR_SCIENCE_SDK_LIBRARY_DIRS "${flir_science_sdk_SOURCE_DIR}/lib")
@@ -699,9 +693,6 @@ macro(add_flir_science_sdk_dependency)
       GIT_TAG
       windows-2024.5.0)
 
-    set(FLIR_SCIENCE_SDK_FOUND
-        TRUE
-        PARENT_SCOPE)
     set(FLIR_SCIENCE_SDK_FOUND TRUE)
     set(FLIR_SCIENCE_SDK_INCLUDE_DIRS "${flir_science_sdk_SOURCE_DIR}/include")
     set(FLIR_SCIENCE_SDK_LIBRARY_DIRS "${flir_science_sdk_SOURCE_DIR}/lib/Release")
