@@ -113,6 +113,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS"
     pugixml-static
     ffmpeg_interface
     flir_sdk
+    flir_science_sdk
     server)
 
   if(${SLA_SDK_FOUND})
