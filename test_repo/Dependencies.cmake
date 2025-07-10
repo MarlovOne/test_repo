@@ -733,21 +733,22 @@ macro(add_flir_science_sdk_dependency)
 
   else()
     message(WARNING "FLIR Science SDK is not supported on this platform: ${CMAKE_SYSTEM_NAME}")
-    return()
   endif()
 
-  # Create interface library
-  target_include_directories(flir_science_sdk INTERFACE ${FLIR_SCIENCE_SDK_INCLUDE_DIRS})
-  if(NOT WIN32)
-    target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_LIBS})
-  endif()
-  add_library(flir::flir_science_sdk ALIAS flir_science_sdk)
+  if(${FLIR_SCIENCE_SDK_FOUND})
+    # Create interface library
+    target_include_directories(flir_science_sdk INTERFACE ${FLIR_SCIENCE_SDK_INCLUDE_DIRS})
+    if(NOT WIN32)
+      target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_LIBS})
+    endif()
+    add_library(flir::flir_science_sdk ALIAS flir_science_sdk)
 
-  # Set RPATH on Linux and macOS for runtime library discovery
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_options(flir_science_sdk INTERFACE "-Wl,-rpath,${FLIR_SCIENCE_SDK_LIBRARY_DIRS}")
-  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    target_link_options(flir_science_sdk INTERFACE "-Wl,-rpath,${FLIR_SCIENCE_SDK_LIBRARY_DIRS}")
+    # Set RPATH on Linux and macOS for runtime library discovery
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+      target_link_options(flir_science_sdk INTERFACE "-Wl,-rpath,${FLIR_SCIENCE_SDK_LIBRARY_DIRS}")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+      target_link_options(flir_science_sdk INTERFACE "-Wl,-rpath,${FLIR_SCIENCE_SDK_LIBRARY_DIRS}")
+    endif()
   endif()
 
 endmacro()
