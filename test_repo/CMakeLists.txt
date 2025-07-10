@@ -127,7 +127,8 @@ if(WIN32)
     APPEND
     ADDITIONAL_TARGETS
     ffmpeg_interface
-    flir_sdk)
+    flir_sdk
+    flir_science_sdk)
 endif()
 
 # Add other targets that you want installed here

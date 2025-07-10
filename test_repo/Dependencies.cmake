@@ -712,15 +712,18 @@ macro(add_flir_science_sdk_dependency)
         fnvreduce)
 
     # For each library, create an IMPORTED target that links the .lib and .dll
+    set(FLIR_SCIENCE_IMPORTED_TARGETS)
     foreach(LIB_NAME ${FLIR_SCIENCE_LIBS})
-      add_library(flir_science::${LIB_NAME} SHARED IMPORTED)
+      add_library(${LIB_NAME} SHARED IMPORTED)
       set_target_properties(
-        flir_science::${LIB_NAME} PROPERTIES IMPORTED_LOCATION "${FLIR_SCIENCE_SDK_BINARY_DIRS}/${LIB_NAME}.dll"
-                                             IMPORTED_IMPLIB "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/${LIB_NAME}.lib")
-      # Add the imported target to our main interface library
-      target_link_libraries(flir_science_sdk INTERFACE flir_science::${LIB_NAME})
+        ${LIB_NAME} PROPERTIES IMPORTED_LOCATION "${FLIR_SCIENCE_SDK_BINARY_DIRS}/${LIB_NAME}.dll"
+                    IMPORTED_IMPLIB "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/${LIB_NAME}.lib")
+      list(APPEND FLIR_SCIENCE_IMPORTED_TARGETS ${LIB_NAME})
       message(STATUS "FLIR Science SDK library ${LIB_NAME} added as imported target.")
     endforeach()
+    
+    # Link all imported targets to the interface library
+    target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_IMPORTED_TARGETS})
 
   else()
     message(WARNING "FLIR Science SDK is not supported on this platform: ${CMAKE_SYSTEM_NAME}")
@@ -732,7 +735,6 @@ macro(add_flir_science_sdk_dependency)
     if(NOT WIN32)
       target_link_libraries(flir_science_sdk INTERFACE ${FLIR_SCIENCE_LIBS})
     endif()
-    add_library(flir::flir_science_sdk ALIAS flir_science_sdk)
 
     # Set RPATH on Linux and macOS for runtime library discovery
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

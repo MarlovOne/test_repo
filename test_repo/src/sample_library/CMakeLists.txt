@@ -74,10 +74,10 @@ if(${FLIR_SCIENCE_SDK_FOUND})
   message(STATUS "Linking flir_science_sdk")
   if(WIN32 OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     message(STATUS "Linking flir_sdk as PUBLIC (Windows/macOS)")
-    target_link_libraries(sample_library PUBLIC flir::flir_science_sdk)
+    target_link_libraries(sample_library PUBLIC flir_science_sdk)
   else()
     message(STATUS "Linking flir_sdk as PRIVATE")
-    target_link_libraries(sample_library PRIVATE flir::flir_science_sdk)
+    target_link_libraries(sample_library PRIVATE flir_science_sdk)
   endif()
 endif()
 
@@ -122,7 +122,8 @@ target_include_directories(
   PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include"
           $<BUILD_INTERFACE:${CPPYSTRUCT_SOURCE_DIR}/include>
           $<BUILD_INTERFACE:${FFMPEG_INCLUDE_DIRS}>
-          $<BUILD_INTERFACE:${FLIR_SDK_INCLUDE_DIRS}>)
+          $<BUILD_INTERFACE:${FLIR_SDK_INCLUDE_DIRS}>
+          $<BUILD_INTERFACE:${FLIR_SCIENCE_SDK_INCLUDE_DIRS}>)
 
 # Include ffmpeg definitions
 target_compile_definitions(sample_library PRIVATE ${FFMPEG_DEFINITIONS})
@@ -196,6 +197,7 @@ if(WIN32)
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvmat.lib"
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvreduce.lib"
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvui.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvfile.lib"
           "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/ResourceTree.lib"
     DESTINATION lib)
 
