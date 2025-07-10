@@ -182,6 +182,23 @@ if(WIN32)
 
   install(FILES "${FLIR_SDK_DIR}/lib/atlas_c_sdk.lib" DESTINATION lib)
 
+  # Install the FLIR Science SDK libraries
+  install(FILES 
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/bhpSDK.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/CommLayer.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnv.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvcam.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvcamBHP.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvcamMercury.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvcamPlatinum.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvcamui.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvhsdr.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvmat.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvreduce.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/fnvui.lib"
+          "${FLIR_SCIENCE_SDK_LIBRARY_DIRS}/ResourceTree.lib"
+    DESTINATION lib)
+
 endif()
 
 if(ANDROID)
