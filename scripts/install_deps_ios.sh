@@ -23,14 +23,14 @@ install_opencv_macos() {
     -DBUILD_OBJC=OFF \
     -DSWIFT_DISABLED=1 \
     -DBUILD_opencv_apps=OFF \
-    -DBUILD_LIST=core,imgproc,features2d,flann,calib3d,videoio,video,highgui \
+    -DBUILD_LIST=core,imgproc,features2d,photo,flann,calib3d,videoio,video,highgui \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_opencv_flann=ON \
     -DBUILD_opencv_calib3d=ON \
     -DBUILD_opencv_dnn=OFF \
     -DBUILD_opencv_features2d=ON \
-    -DBUILD_opencv_photo=OFF \
+    -DBUILD_opencv_photo=ON \
     -DBUILD_opencv_objdetect=OFF \
     -DBUILD_opencv_ml=OFF \
     -DBUILD_opencv_video=ON \
