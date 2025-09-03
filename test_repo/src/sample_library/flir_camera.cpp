@@ -18,6 +18,7 @@ using namespace netxten::camera;
 
 /**
  * @brief Private implementation class for FlirCamera. Manages low-level interactions with
+ *
  * FLIR SDK.
  */
 class FlirCamera::FlirCameraImpl
